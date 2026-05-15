@@ -222,7 +222,7 @@ function render(){
   document.getElementById("accounts-tbody").innerHTML = rows.map(r => {
     const m = r.m[currentWindow] || {cost:0, conv:0, cpa:null};
     return `
-      <tr data-cust="${esc(r.customer_id)}">
+      <tr data-cust="${esc(r.customer_id)}" onclick="window.location.href='account.html?id='+encodeURIComponent(r.customer_id)" style="cursor:pointer">
         <td><span class="score-cell score-cell-${r.status}">${r.score}</span></td>
         <td><div style="font-weight:500;color:var(--ink-soft)">${esc(r.name)}</div><div class="account-id">${esc(r.customer_id)}${r.is_lsa ? " · LSA" : ""}</div></td>
         <td><span class="badge badge-${STATUS_TONE[r.status]}">${r.status.replace(/_/g," ")}</span></td>
