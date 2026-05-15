@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Timeline · Skyway OS</title>
+<style>
+:root{
+  --bg:#f5f5f7;--surface:#ffffff;--surface-raised:#fafafa;--surface-sunken:#f5f5f7;
+  --ink:#0a0a0a;--ink-soft:#1d1d1f;--ink-muted:#6e6e73;--ink-subtle:#86868b;
+  --line:#e5e5ea;
+  --good:#34c759;--warn:#ff9f0a;--bad:#ff3b30;--info:#0a84ff;
+  --accent:#5e5ce6;--accent-soft:#eeeefd;
+  --shadow-card:0 1px 2px rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.04);
+  --shadow-floating:0 1px 2px rgba(0,0,0,0.04),0 8px 24px rgba(0,0,0,0.06),0 16px 48px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'SF Pro Text',-apple-system,BlinkMacSystemFont,'Inter',system-ui,sans-serif;font-feature-settings:"ss01","cv11";-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-size:14px;line-height:1.5}
+h1,h2,h3,h4{font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Inter',system-ui,sans-serif;margin:0}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{font-family:inherit;font-size:inherit;color:inherit}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,0.2)}
+::-webkit-scrollbar-track{background:transparent}
+
+.layout{min-height:100vh;display:flex}
+.sidebar{width:240px;flex-shrink:0;padding:24px 16px;display:flex;flex-direction:column;gap:4px}
+.sidebar-logo{display:flex;align-items:center;gap:8px;padding:0 12px;margin-bottom:24px}
+.sidebar-logo-mark{width:32px;height:32px;border-radius:14px;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:600;font-size:14px}
+.sidebar-logo-name{font-size:14px;font-weight:600;color:var(--ink-soft);line-height:1.2;letter-spacing:-0.01em}
+.sidebar-logo-sub{font-size:11px;color:var(--ink-muted)}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:14px;font-size:14px;color:var(--ink-muted);transition:background-color .15s ease,color .15s ease;font-weight:500}
+.nav-item:hover{background:rgba(10,10,10,0.05);color:var(--ink-soft)}
+.nav-item.active{background:var(--ink);color:#fff}
+.sidebar-footer{margin-top:auto;padding:24px 12px 0;font-size:11px;color:var(--ink-muted);line-height:1.5}
+
+main{flex:1;min-width:0}
+.container{max-width:1400px;margin:0 auto;padding:32px}
+.topbar{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px}
+.topbar h1{font-size:28px;font-weight:600;letter-spacing:-0.02em;color:var(--ink-soft)}
+.topbar-desc{font-size:14px;color:var(--ink-muted);margin-top:4px;max-width:680px}
+.topbar-badges{display:flex;gap:8px;flex-shrink:0}
+
+.card{background:var(--surface);border-radius:18px;box-shadow:var(--shadow-card);border:1px solid rgba(229,229,234,0.6);padding:20px}
+.card+.card{margin-top:12px}
+
+.section-label{font-size:11px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;margin:24px 0 12px;display:flex;align-items:center;gap:8px}
+.section-label:first-of-type{margin-top:0}
+.section-label-count{background:rgba(10,10,10,0.05);color:var(--ink-muted);padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;letter-spacing:0}
+
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:500;box-shadow:inset 0 0 0 1px transparent;white-space:nowrap}
+.badge-good{background:rgba(52,199,89,0.1);color:var(--good);box-shadow:inset 0 0 0 1px rgba(52,199,89,0.2)}
+.badge-warn{background:rgba(255,159,10,0.1);color:var(--warn);box-shadow:inset 0 0 0 1px rgba(255,159,10,0.2)}
+.badge-bad{background:rgba(255,59,48,0.1);color:var(--bad);box-shadow:inset 0 0 0 1px rgba(255,59,48,0.2)}
+.badge-info{background:rgba(10,132,255,0.1);color:var(--info);box-shadow:inset 0 0 0 1px rgba(10,132,255,0.2)}
+.badge-neutral{background:rgba(10,10,10,0.05);color:var(--ink-muted);box-shadow:inset 0 0 0 1px rgba(10,10,10,0.1)}
+.badge-accent{background:var(--accent-soft);color:var(--accent);box-shadow:inset 0 0 0 1px rgba(94,92,230,0.2)}
+
+.button{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:500;transition:background-color .15s ease,opacity .15s ease,transform .1s ease;white-space:nowrap}
+.button:active{transform:scale(0.98)}
+.button-primary{background:var(--ink);color:#fff;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
+.button-primary:hover{background:rgba(10,10,10,0.9)}
+.button-secondary{background:var(--surface);color:var(--ink-soft);border:1px solid var(--line)}
+.button-secondary:hover{background:var(--surface-raised)}
+.button-ghost{background:transparent;color:var(--ink-soft)}
+.button-ghost:hover{background:rgba(10,10,10,0.05)}
+.button[disabled]{opacity:0.5;cursor:not-allowed}
+
+.demo-banner{background:rgba(10,132,255,0.08);border:1px solid rgba(10,132,255,0.2);color:#0a4ea0;border-radius:14px;padding:12px 16px;font-size:13px;margin-bottom:20px;display:flex;align-items:flex-start;gap:10px}
+.demo-banner-dot{width:8px;height:8px;border-radius:999px;background:var(--info);margin-top:6px;flex-shrink:0}
+
+.card-header{display:flex;align-items:start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.card-header h2{font-size:16px;font-weight:600;color:var(--ink-soft);letter-spacing:-0.01em}
+.card-header-sub{font-size:13px;color:var(--ink-muted);margin-top:2px}
+
+@media (max-width:768px){
+  .sidebar{display:none}
+  .container{padding:20px}
+  .topbar h1{font-size:24px}
+}
+
+.nav-item-phase{font-size:10px;text-transform:uppercase;letter-spacing:.05em;padding:2px 6px;border-radius:6px;background:rgba(10,10,10,0.05);color:var(--ink-muted)}
+.nav-item.active .nav-item-phase{background:rgba(255,255,255,0.15);color:#fff}
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-mark">S</div>
+      <div>
+        <div class="sidebar-logo-name">Skyway OS</div>
+        <div class="sidebar-logo-sub">Internal · v0.2</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a class="nav-item" href="google.html"><span>Overview</span></a>
+      <a class="nav-item" href="accounts.html"><span>Accounts</span></a>
+      <a class="nav-item active" href="timeline.html"><span>Timeline</span></a>
+      <a class="nav-item" href="reports.html"><span>Reports</span></a>
+      <a class="nav-item" href="approvals.html"><span>Approvals</span><span class="nav-item-phase">W2</span></a>
+      <a class="nav-item" href="settings.html"><span>Settings</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      Read-only mode. No live Google Ads changes are made without operator approval. MCC: analytics@skyway.media.
+    </div>
+  </aside>
+
+  <main>
+    <div class="container">
+      <header class="topbar">
+        <div>
+          <h1>Timeline</h1>
+          <p class="topbar-desc">Every sync, recommendation, report, and manual note in one cross-account stream. Newest first.</p>
+        </div>
+        <div class="topbar-badges">
+          <span class="badge badge-good">Live data</span>
+          <span class="badge badge-neutral">6 events</span>
+        </div>
+      </header>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Recent events</h2>
+            <div class="card-header-sub">Skyway OS bootstrap + scoring activity from this week. Filters arrive in Week 3.</div>
+          </div>
+        </div>
+        <div id="timeline-list"></div>
+      </div>
+
+      <style>
+        .tl-event{padding:16px 0;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:14px}
+        .tl-event:last-child{border-bottom:none}
+        .tl-event-dot{width:8px;height:8px;border-radius:999px;margin-top:8px;flex-shrink:0;background:var(--info)}
+        .tl-event-dot.system{background:var(--info)}
+        .tl-event-dot.ai{background:var(--accent)}
+        .tl-event-dot.operator{background:var(--good)}
+        .tl-event-content{flex:1;min-width:0}
+        .tl-event-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+        .tl-event-title{font-size:14px;font-weight:600;color:var(--ink-soft)}
+        .tl-event-time{font-size:11px;color:var(--ink-subtle);margin-left:auto}
+        .tl-event-details{font-size:13px;color:var(--ink-muted);line-height:1.55;max-width:780px}
+      </style>
+
+      <script>
+        const EVENTS = [{"id":"evt_boot_0001","occurred_at":"2026-05-15T14:33:07.353613+00:00","actor_kind":"system","event_type":"sync_completed","title":"Workspace initialized","details":"88 accounts loaded from Supermetrics accounts_discovery. is_active flags are provisional; will be reconciled against actual spend during next refresh."},{"id":"evt_calib_0002","occurred_at":"2026-05-15T15:09:44.383121+00:00","actor_kind":"system","event_type":"sync_completed","title":"Scoring calibration applied","details":"search_term_waste coefficient changed 150\u2192100; tracking_anomaly moved to weekly aggregation (4 trailing weeks, >500 clicks & 0 conv each); target_cpa_micros and monthly_budget_micros inferred for top 10 active accounts (target_cpa = 90d_aggregate_cpa \u00d7 1.2; monthly_budget = 30d_cost \u00d7 1.1); pct interpretation confirmed at coefficient 1.0; AccountScore extended with coverage_pct field."},{"id":"evt_persist_0003","occurred_at":"2026-05-15T15:09:44.383121+00:00","actor_kind":"system","event_type":"sync_completed","title":"State persisted to Google Drive","details":"Initial workspace mirrored to Drive at Skyway OS/skyway-os/. Drive is now the source of truth."},{"id":"evt_score_0004","occurred_at":"2026-05-15T15:58:45.113178+00:00","actor_kind":"system","event_type":"score_recomputed","title":"Scored all 50 active accounts (v3)","details":"All calibrations applied. Tier distribution: 16 excellent, 16 good, 11 needs_attention, 7 problem. Worst: Gulf Stream Boat Club (33), Corona FD Sarasota East (34), IVitalize (36)."},{"id":"evt_alerts_0005","occurred_at":"2026-05-15T16:30:07.601336+00:00","actor_kind":"system","event_type":"alerts_run","title":"Alerts engine ran on 13 target accounts","details":"10 critical + 13 warning. Volume floors applied: CPA/spend $100, conv 5, search-waste $200. Dormancy + LSA carve-outs active. Spend-spike+conv-direction suppression suppressed 1 false-positive(s)."},{"id":"evt_rule_0006","occurred_at":"2026-05-15T16:30:07.601336+00:00","actor_kind":"system","event_type":"rule_activated","title":"Spend-spike suppression rule active","details":"New rule: suppress spend_spike alert if spend_pct_change > 0 AND conv_pct_change >= spend_pct_change \u00d7 0.7. Prevents flagging deliberate scaling where conversions track with spend."}];
+
+        function esc(s){if(s==null)return"";return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+        function timeAgo(iso){
+          const ms = Date.now() - new Date(iso).getTime();
+          const m = Math.round(ms / 60000);
+          if (m < 60) return m+"m ago";
+          const h = Math.round(m/60);
+          if (h < 24) return h+"h ago";
+          const d = Math.round(h/24);
+          return d+"d ago";
+        }
+        function actorTone(actor){return actor==="ai"?"accent":actor==="operator"?"good":"info"}
+
+        const sorted = [...EVENTS].sort((a,b) => new Date(b.occurred_at) - new Date(a.occurred_at));
+        document.getElementById("timeline-list").innerHTML = sorted.map(e => `
+          <div class="tl-event">
+            <div class="tl-event-dot ${esc(e.actor_kind)}"></div>
+            <div class="tl-event-content">
+              <div class="tl-event-top">
+                <span class="tl-event-title">${esc(e.title)}</span>
+                <span class="badge badge-${actorTone(e.actor_kind)}">${esc(e.event_type.replace(/_/g," "))}</span>
+                <span class="tl-event-time">${timeAgo(e.occurred_at)}</span>
+              </div>
+              ${e.details ? `<div class="tl-event-details">${esc(e.details)}</div>` : ""}
+            </div>
+          </div>
+        `).join("");
+      </script>
+
+    </div>
+  </main>
+
+</div>
+</body>
+</html>
