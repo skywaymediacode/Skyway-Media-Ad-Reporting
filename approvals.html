@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Approvals · Skyway OS</title>
+<style>
+:root{
+  --bg:#f5f5f7;
+  --surface:#ffffff;
+  --surface-raised:#fafafa;
+  --surface-sunken:#f5f5f7;
+  --ink:#0a0a0a;
+  --ink-soft:#1d1d1f;
+  --ink-muted:#6e6e73;
+  --ink-subtle:#86868b;
+  --line:#e5e5ea;
+  --good:#34c759;
+  --warn:#ff9f0a;
+  --bad:#ff3b30;
+  --info:#0a84ff;
+  --accent:#5e5ce6;
+  --accent-soft:#eeeefd;
+  --radius-xl:14px;
+  --radius-2xl:18px;
+  --radius-3xl:24px;
+  --shadow-card:0 1px 2px rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.04);
+  --shadow-floating:0 1px 2px rgba(0,0,0,0.04),0 8px 24px rgba(0,0,0,0.06),0 16px 48px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'SF Pro Text',-apple-system,BlinkMacSystemFont,'Inter',system-ui,sans-serif;
+  font-feature-settings:"ss01","cv11";
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  font-size:14px;
+  line-height:1.5;
+}
+h1,h2,h3,h4{
+  font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Inter',system-ui,sans-serif;
+  margin:0;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,0.2)}
+::-webkit-scrollbar-track{background:transparent}
+
+.layout{min-height:100vh;display:flex}
+
+.sidebar{
+  width:240px;flex-shrink:0;padding:24px 16px;
+  display:flex;flex-direction:column;gap:4px;
+}
+.sidebar-logo{display:flex;align-items:center;gap:8px;padding:0 12px;margin-bottom:24px}
+.sidebar-logo-mark{
+  width:32px;height:32px;border-radius:14px;background:var(--ink);color:#fff;
+  display:grid;place-items:center;font-weight:600;font-size:14px;
+}
+.sidebar-logo-name{font-size:14px;font-weight:600;color:var(--ink-soft);line-height:1.2;letter-spacing:-0.01em}
+.sidebar-logo-sub{font-size:11px;color:var(--ink-muted)}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;border-radius:14px;
+  font-size:14px;color:var(--ink-muted);
+  transition:background-color .15s ease,color .15s ease;
+  font-weight:500;
+}
+.nav-item:hover{background:rgba(10,10,10,0.05);color:var(--ink-soft)}
+.nav-item.active{background:var(--ink);color:#fff}
+.nav-item-disabled{opacity:0.45;pointer-events:none;cursor:default}
+.nav-item-phase{
+  font-size:10px;text-transform:uppercase;letter-spacing:.05em;
+  padding:2px 6px;border-radius:6px;
+  background:rgba(10,10,10,0.05);color:var(--ink-muted);
+}
+.nav-item.active .nav-item-phase{background:rgba(255,255,255,0.15);color:#fff}
+.sidebar-footer{
+  margin-top:auto;padding:24px 12px 0;
+  font-size:11px;color:var(--ink-muted);line-height:1.5;
+}
+
+main{flex:1;min-width:0}
+.container{max-width:1400px;margin:0 auto;padding:32px}
+
+.topbar{
+  display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;
+  gap:16px;margin-bottom:24px;
+}
+.topbar h1{
+  font-size:28px;font-weight:600;letter-spacing:-0.02em;color:var(--ink-soft);
+}
+.topbar-desc{font-size:14px;color:var(--ink-muted);margin-top:4px;max-width:680px}
+.topbar-badges{display:flex;gap:8px;flex-shrink:0}
+
+.card{
+  background:var(--surface);
+  border-radius:18px;
+  box-shadow:var(--shadow-card);
+  border:1px solid rgba(229,229,234,0.6);
+  padding:20px;
+}
+.card+.card{margin-top:12px}
+
+.section-label{
+  font-size:11px;font-weight:600;color:var(--ink-muted);
+  text-transform:uppercase;letter-spacing:0.06em;
+  margin:32px 0 12px;
+  display:flex;align-items:center;gap:8px;
+}
+.section-label:first-of-type{margin-top:0}
+.section-label-count{
+  background:rgba(10,10,10,0.05);color:var(--ink-muted);
+  padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;
+  letter-spacing:0;
+}
+
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 10px;border-radius:999px;
+  font-size:11px;font-weight:500;
+  box-shadow:inset 0 0 0 1px transparent;
+  white-space:nowrap;
+}
+.badge-good{background:rgba(52,199,89,0.1);color:var(--good);box-shadow:inset 0 0 0 1px rgba(52,199,89,0.2)}
+.badge-warn{background:rgba(255,159,10,0.1);color:var(--warn);box-shadow:inset 0 0 0 1px rgba(255,159,10,0.2)}
+.badge-bad{background:rgba(255,59,48,0.1);color:var(--bad);box-shadow:inset 0 0 0 1px rgba(255,59,48,0.2)}
+.badge-info{background:rgba(10,132,255,0.1);color:var(--info);box-shadow:inset 0 0 0 1px rgba(10,132,255,0.2)}
+.badge-neutral{background:rgba(10,10,10,0.05);color:var(--ink-muted);box-shadow:inset 0 0 0 1px rgba(10,10,10,0.1)}
+.badge-accent{background:var(--accent-soft);color:var(--accent);box-shadow:inset 0 0 0 1px rgba(94,92,230,0.2)}
+
+.button{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:8px 16px;border-radius:999px;
+  font-size:13px;font-weight:500;
+  transition:background-color .15s ease,opacity .15s ease,transform .1s ease;
+  white-space:nowrap;
+}
+.button:active{transform:scale(0.98)}
+.button-primary{background:var(--ink);color:#fff;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
+.button-primary:hover{background:rgba(10,10,10,0.9)}
+.button-secondary{background:var(--surface);color:var(--ink-soft);border:1px solid var(--line)}
+.button-secondary:hover{background:var(--surface-raised)}
+.button-ghost{background:transparent;color:var(--ink-soft)}
+.button-ghost:hover{background:rgba(10,10,10,0.05)}
+.button-destructive{background:var(--bad);color:#fff}
+.button-destructive:hover{background:rgba(255,59,48,0.9)}
+.button[disabled]{opacity:0.5;cursor:not-allowed}
+
+.rec-card{position:relative;transition:opacity .25s ease,transform .25s ease}
+.rec-card.removing{opacity:0;transform:translateY(-4px);pointer-events:none}
+.portfolio-rec{border-left:3px solid var(--accent)}
+
+.rec-row{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:16px}
+.rec-left{flex:1;min-width:280px}
+.rec-chips{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px}
+.rec-account-link{font-size:12px;color:var(--info);font-weight:500}
+.rec-account-link:hover{text-decoration:underline}
+.rec-title{
+  font-size:15px;font-weight:600;color:var(--ink-soft);
+  margin-top:4px;letter-spacing:-0.01em;
+}
+.rec-reason{font-size:13.5px;color:var(--ink-muted);margin-top:6px;max-width:680px;line-height:1.5}
+
+.rec-meta{font-size:12px;color:var(--ink-muted);margin-top:8px}
+.rec-meta-label{
+  text-transform:uppercase;letter-spacing:0.06em;
+  font-size:10px;font-weight:500;color:var(--ink-subtle);
+}
+
+.rec-footer-chips{
+  display:flex;flex-wrap:wrap;gap:12px;
+  margin-top:10px;font-size:11px;color:var(--ink-subtle);
+}
+
+.rec-actions{display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0;align-self:flex-start}
+
+.portfolio-headline{
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;
+  margin-top:8px;
+  font-size:13.5px;font-weight:500;color:var(--ink-soft);
+}
+.portfolio-headline-dollar{font-weight:600;color:var(--ink)}
+.portfolio-headline-dot{color:var(--ink-subtle);font-weight:400}
+
+.portfolio-expand{
+  margin-top:14px;padding-top:14px;border-top:1px solid var(--line);
+  display:none;
+}
+.portfolio-expand.open{display:block}
+.portfolio-account-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;border-radius:10px;
+  font-size:12.5px;
+}
+.portfolio-account-row+.portfolio-account-row{border-top:1px solid rgba(229,229,234,0.5)}
+.portfolio-account-row:hover{background:var(--surface-raised)}
+.portfolio-account-name{color:var(--ink-soft);font-weight:500}
+.portfolio-account-meta{color:var(--ink-muted);font-size:11px}
+
+.toast{
+  position:fixed;top:24px;right:24px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:var(--shadow-floating);
+  padding:12px 16px;
+  font-size:13px;color:var(--ink-soft);
+  z-index:1000;
+  opacity:0;transform:translateY(-8px);
+  transition:opacity .2s ease,transform .2s ease;
+  display:flex;align-items:center;gap:10px;
+  max-width:380px;
+}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast-dot{width:8px;height:8px;border-radius:999px;flex-shrink:0}
+.toast-good .toast-dot{background:var(--good)}
+.toast-info .toast-dot{background:var(--info)}
+.toast-bad .toast-dot{background:var(--bad)}
+
+.demo-banner{
+  background:rgba(255,159,10,0.08);
+  border:1px solid rgba(255,159,10,0.2);
+  color:#9a6500;
+  border-radius:14px;
+  padding:12px 16px;
+  font-size:13px;margin-bottom:20px;
+  display:flex;align-items:flex-start;gap:10px;
+}
+.demo-banner-dot{
+  width:8px;height:8px;border-radius:999px;background:var(--warn);
+  margin-top:6px;flex-shrink:0;
+}
+
+.empty-state{
+  text-align:center;padding:60px 24px;color:var(--ink-muted);font-size:14px;
+}
+.empty-state-icon{
+  font-size:32px;margin-bottom:8px;color:var(--ink-subtle);
+}
+
+@media (max-width:900px){
+  .sidebar{display:none}
+  .container{padding:20px}
+  .topbar h1{font-size:24px}
+  .rec-actions{width:100%;justify-content:flex-end}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-mark">S</div>
+      <div>
+        <div class="sidebar-logo-name">Skyway OS</div>
+        <div class="sidebar-logo-sub">Internal · v0.2</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a class="nav-item" href="google.html">
+        <span>Overview</span>
+      </a>
+      <a class="nav-item nav-item-disabled" href="#" aria-disabled="true" title="Coming Week 3">
+        <span>Accounts</span>
+        <span class="nav-item-phase">W3</span>
+      </a>
+      <a class="nav-item nav-item-disabled" href="#" aria-disabled="true" title="Coming Week 3">
+        <span>Timeline</span>
+        <span class="nav-item-phase">W3</span>
+      </a>
+      <a class="nav-item nav-item-disabled" href="#" aria-disabled="true" title="Coming Week 4">
+        <span>Reports</span>
+        <span class="nav-item-phase">W4</span>
+      </a>
+      <a class="nav-item active" href="approvals.html">
+        <span>Approvals</span>
+        <span class="nav-item-phase">W2</span>
+      </a>
+      <a class="nav-item nav-item-disabled" href="#" aria-disabled="true" title="Coming Week 4">
+        <span>Settings</span>
+        <span class="nav-item-phase">W4</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      Read-only mode. No live Google Ads changes are made without operator approval. MCC: analytics@skyway.media.
+    </div>
+  </aside>
+
+  <main>
+    <div class="container">
+
+      <header class="topbar">
+        <div>
+          <h1>Approvals</h1>
+          <p class="topbar-desc">
+            Proposed Google Ads optimizations from the AI analysis pipeline.
+            Each recommendation requires operator review. "Open in Google Ads" copies the target term to clipboard and deep-links to the right section.
+          </p>
+        </div>
+        <div class="topbar-badges">
+          <span class="badge badge-warn">Demo data</span>
+          <span class="badge badge-neutral">Week 2</span>
+        </div>
+      </header>
+
+      <div class="demo-banner">
+        <span class="demo-banner-dot"></span>
+        <div>
+          <strong>Visual demo on 5-sample data.</strong> Actions remove from this view only — no persistence to Drive yet. 5 <code style="background:rgba(0,0,0,0.05);padding:1px 5px;border-radius:4px;font-size:11px">monitor_no_action</code> recs filtered out of the queue per UI rule (they surface in each account's drill-down under "Held / monitoring"). Buttons + persistence go live after deep-link verification + fanout.
+        </div>
+      </div>
+
+      <div class="section-label">
+        Portfolio recommendations
+        <span class="section-label-count" id="portfolio-count">1</span>
+      </div>
+      <div id="portfolio-list"></div>
+
+      <div class="section-label">
+        Per-account recommendations
+        <span class="section-label-count" id="per-account-count">11</span>
+      </div>
+      <div id="per-account-list"></div>
+
+    </div>
+  </main>
+
+</div>
+
+<div class="toast" id="toast">
+  <span class="toast-dot"></span>
+  <span id="toast-text">Done.</span>
+</div>
+
+<script>
+// ====================================================================
+// DATA — 5 sample account AI analyses produced 2026-05-15
+// ====================================================================
+const PORTFOLIO_RECS = [
+  {
+    id: "port_001",
+    kind: "portfolio_review_search_terms",
+    pattern_key: "high_waste_pct_ge_40",
+    title: "Sweep account-level negative keywords across high-waste accounts",
+    summary: "12 of 13 active non-LSA accounts have ≥40% of search-term spend going to zero-conversion queries. Same pattern (broad-match navigational + competitor names) repeats across the portfolio.",
+    risk_level: "medium",
+    est_monthly_recoverable: 5000,  // lower bound from Week 1 portfolio finding ($5K-$10K/mo range)
+    est_monthly_recoverable_display: "$5,000+/mo",
+    affected_accounts_count: 12,
+    ai_confidence: 0.85,
+    affected_accounts: [
+      { customer_id: "3996131001", name: "Corona Family Dental at Sarasota East", per_account_rec_id: "rec_3996131001_001", supporting: "5 zero-conv terms · $161/30d wasted" },
+      { customer_id: "6477324444", name: "Gulf Stream Boat Club", per_account_rec_id: "rec_6477324444_002", supporting: "8 zero-conv terms · $530/30d wasted" },
+      { customer_id: "2618982513", name: "Hampton Roads WL + Williamsburg", per_account_rec_id: "rec_2618982513_001", supporting: "10 zero-conv terms · $613/30d wasted" },
+      { customer_id: "1653178464", name: "Phillips, Hayden & Labbee, LLP", per_account_rec_id: "rec_1653178464_001", supporting: "6 zero-conv terms · $304/30d wasted" },
+      { customer_id: "preview", name: "+ 8 more accounts (preview — full sweep pending step 3 fanout)", per_account_rec_id: null, supporting: "Full impact estimate after all 50 accounts analyzed" },
+    ],
+  },
+];
+
+const PER_ACCOUNT_RECS = [
+  // Corona FD Sarasota East
+  {
+    id: "rec_3996131001_001",
+    customer_id: "3996131001",
+    account_name: "Corona Family Dental at Sarasota East",
+    kind: "add_negative_keyword",
+    title: "Add 5 zero-conv competitor + generic dentist terms as account-level negatives",
+    reason: "Save ~$161/mo wasted spend on competitor names ('Greenberg Dental', 'Scott Wenk Oral Surgeon') and broad-intent generics ('dentists near me' plural, 'kids dentist that takes medicaid').",
+    risk_level: "low", ai_confidence: 0.92, approval_required: true,
+    expected_impact: "Save ~$160/mo wasted spend; redirect budget to converting brand + non-brand queries",
+    implementation_notes: "Add at account level. 'Greenberg Dental' + 'Scott Wenk' as exact-match. Generic plurals as phrase-match.",
+    target: "greenberg dental sarasota bee ridge, dentists near me, kids dentist that takes medicaid near me, corona family dentistry, scott wenk oral surgeon",
+    deep_link: "https://ads.google.com/aw/keywords/negative?__c=3996131001",
+  },
+  {
+    id: "rec_3996131001_002",
+    customer_id: "3996131001",
+    account_name: "Corona Family Dental at Sarasota East",
+    kind: "review_search_terms",
+    title: "Review the Nonbrand campaign's search-term report for next-tier wasters under $25",
+    reason: "Pattern from top wasters suggests another $150–$300/mo of tier-2 waste in 5–25 dollar terms not yet visible in the high-cost report.",
+    risk_level: "low", ai_confidence: 0.78, approval_required: false,
+    expected_impact: "Identify ~$150–$300/mo additional waste under the $25 reporting threshold",
+    implementation_notes: "Filter search terms by Nonbrand campaign, sort by cost desc, look for any term with 5+ clicks and 0 conversions.",
+    target: "SWM - Corona Family Dental at Sarasota East - Nonbrand",
+    deep_link: "https://ads.google.com/aw/keywords/searchterms?__c=3996131001",
+  },
+
+  // Gulf Stream Boat Club
+  {
+    id: "rec_6477324444_001",
+    customer_id: "6477324444",
+    account_name: "Gulf Stream Boat Club",
+    kind: "pause_campaign",
+    title: "Pause 'SWM - GSBC - Tampa Bay - Nonbranded Terms - 2025' — $1,165 / 0 conv over 90 days",
+    reason: "Full quarter with zero conversions on $1,165 spend. Branded Tampa Bay equivalent is converting fine ($979/90d, 23.5 conv, $41 CPA), so the geography itself works — just not on broad nonbrand.",
+    risk_level: "medium", ai_confidence: 0.88, approval_required: true,
+    expected_impact: "Save ~$400/mo wasted spend; branded Tampa Bay campaign continues to capture intent",
+    implementation_notes: "Pause campaign. If client wants Tampa Bay nonbrand visibility back, rebuild in 2026 with single-keyword ad groups.",
+    target: "SWM - GSBC - Tampa Bay - Nonbranded Terms - 2025",
+    deep_link: "https://ads.google.com/aw/campaigns?__c=6477324444",
+  },
+  {
+    id: "rec_6477324444_002",
+    customer_id: "6477324444",
+    account_name: "Gulf Stream Boat Club",
+    kind: "add_negative_keyword",
+    title: "Add 8 high-cost zero-conv terms as account-level negatives",
+    reason: "$530/30d burning on broad navigational queries ('boat rental', 'boat club near me') and competitor names ('north palm beach country club', 'pontiki jupiter fl'). Gulf Stream is a membership club, not a rental business.",
+    risk_level: "low", ai_confidence: 0.90, approval_required: true,
+    expected_impact: "Save ~$530/30d ($6.4K/yr) on broad navigational and competitor-name searches",
+    implementation_notes: "'Boat rental' singular/plural — wrong service model. 'Reviews' indicates research-phase. Add as account-level negatives.",
+    target: "boat rental near me, gulfstream boat club reviews, boat rental, boat club delray beach, pontiki jupiter fl, north palm beach country club membership, boat club st pete, boat clubs near me",
+    deep_link: "https://ads.google.com/aw/keywords/negative?__c=6477324444",
+  },
+  {
+    id: "rec_6477324444_003",
+    customer_id: "6477324444",
+    account_name: "Gulf Stream Boat Club",
+    kind: "review_search_terms",
+    title: "Audit Hypoluxo and Lighthouse Point Nonbranded campaigns — $2,927 / 20 conv over 90d",
+    reason: "Both running at 20× inferred target CPA ($7.26). Likely cause is broad-match keyword + zero negatives layered on competitor and 'near me' generic queries.",
+    risk_level: "medium", ai_confidence: 0.75, approval_required: false,
+    expected_impact: "Potential $1–$1.5K/mo savings if restructured to SKAG-style tight ad groups",
+    implementation_notes: "Schedule a 1-hour campaign teardown. Alternative: pause and replace.",
+    target: "SWM - GSBC - Hypoluxo, SWM - GSBC - Lighthouse Point",
+    deep_link: "https://ads.google.com/aw/campaigns?__c=6477324444",
+  },
+
+  // Hampton Roads WL
+  {
+    id: "rec_2618982513_001",
+    customer_id: "2618982513",
+    account_name: "Hampton Roads Weight Loss + Williamsburg",
+    kind: "add_negative_keyword",
+    title: "Add 10 high-cost zero-conv generic + geographic terms as account-level negatives",
+    reason: "$613/30d burning on generic 'weight loss doctor near me' / 'weight loss clinic [city]' queries that don't convert. Converters search with brand or specific-service modifiers.",
+    risk_level: "low", ai_confidence: 0.91, approval_required: true,
+    expected_impact: "Save ~$610/30d ($7.3K/yr); bring CPA toward 30-day $72 baseline",
+    implementation_notes: "Keep 'weight loss clinic hampton va' / 'weight loss clinic near me' / 'weight loss clinic virginia beach' — they are converting. Only negate the $25+/30d zero-conv ones.",
+    target: "weight loss doctors near me, weight loss clinic, chesapeake weight loss, weight loss clinic newport news, weight loss virginia beach, weight loss clinic chesapeake va, weight loss clinic norfolk va, weight loss clinics near me, chesapeake weight loss clinic, weight loss doctor virginia beach",
+    deep_link: "https://ads.google.com/aw/keywords/negative?__c=2618982513",
+  },
+  {
+    id: "rec_2618982513_002",
+    customer_id: "2618982513",
+    account_name: "Hampton Roads Weight Loss + Williamsburg",
+    kind: "review_search_terms",
+    title: "Tier-2 review: 14 more zero-conv terms $26–$50/30d in same generic pattern",
+    reason: "After top-10 negatives go in, run a second sweep for tier-2 wasters: 'chesapeake weight loss consultants', 'medical weight loss virginia beach', 'weight loss specialist near me'. Same pattern: generic + location without 'hampton roads' brand modifier.",
+    risk_level: "low", ai_confidence: 0.80, approval_required: false,
+    expected_impact: "Additional ~$480/30d savings on tier-2 wasters",
+    implementation_notes: "Run after top-10 implementation; pattern is consistent so confidence should grow with each batch.",
+    target: null,
+    deep_link: "https://ads.google.com/aw/keywords/searchterms?__c=2618982513",
+  },
+
+  // PHL LLP
+  {
+    id: "rec_1653178464_001",
+    customer_id: "1653178464",
+    account_name: "Phillips, Hayden & Labbee, LLP",
+    kind: "add_negative_keyword",
+    title: "Add 6 zero-conv wrong-practice-area + competitor + generic terms as negatives",
+    reason: "PHL doesn't do real estate or pure civil-lawyer practice — these are mismatched intent. 'Denmon Pearlman' and 'Weber Crabb' are competitors. 'Florida bar attorney search' is research-phase.",
+    risk_level: "low", ai_confidence: 0.93, approval_required: true,
+    expected_impact: "Save ~$300/30d on wrong-intent traffic",
+    implementation_notes: "Add at account level.",
+    target: "civil lawyer tampa, real estate lawyer, denmon pearlman law firm, phl law firm, florida bar attorney search, weber crabb & wein p a",
+    deep_link: "https://ads.google.com/aw/keywords/negative?__c=1653178464",
+  },
+  {
+    id: "rec_1653178464_002",
+    customer_id: "1653178464",
+    account_name: "Phillips, Hayden & Labbee, LLP",
+    kind: "review_campaign_performance",
+    title: "Schedule Personal Injury campaign structural review for June",
+    reason: "Personal Injury at $124.80 CPA (90d) is 2.21× the account average ($56.52). Highest-CPA campaign in an otherwise-tight account. Not urgent — campaign is producing 20 conv/quarter — but candidates: keyword scope too broad, ad copy not differentiated, or competing with other PHL campaigns on same queries.",
+    risk_level: "medium", ai_confidence: 0.82, approval_required: false,
+    expected_impact: "If brought to account-average CPA, +10–15 conv/quarter at same spend",
+    implementation_notes: "Schedule a 1-hour campaign teardown in June.",
+    target: "SWM - PHL - Nonbrand - Personal Injury",
+    deep_link: "https://ads.google.com/aw/campaigns?__c=1653178464",
+  },
+
+  // PHL LSA
+  {
+    id: "rec_6413205909_001",
+    customer_id: "6413205909",
+    account_name: "Phillips, Hayden & Labbee LSA",
+    kind: "check_lsa_response_metrics",
+    title: "Audit lead response time and reply rate in Local Services dashboard",
+    reason: "Conv rate down 27% week-over-week. On Local Services, conv rate dips usually point to response time or review velocity rather than ad performance. Google rewards fast response on LSA.",
+    risk_level: "low", ai_confidence: 0.78, approval_required: false,
+    expected_impact: "Identify whether the conv-rate dip is operational (slow response) or algorithmic (ranking demotion)",
+    implementation_notes: "Pull the Insights tab in Local Services dashboard and compare last 14 vs prior 14 days.",
+    target: "PHL Local Service Ads",
+    deep_link: "https://ads.google.com/local-services-ads",
+  },
+  {
+    id: "rec_6413205909_002",
+    customer_id: "6413205909",
+    account_name: "Phillips, Hayden & Labbee LSA",
+    kind: "check_lsa_reviews_and_profile",
+    title: "Confirm Google Business Profile is current and check review delta",
+    reason: "Profile completeness and recent review activity affect LSA ranking. Any new 1–2 star reviews in the period could be suppressing impressions.",
+    risk_level: "low", ai_confidence: 0.65, approval_required: false,
+    expected_impact: "Catch any profile/review issues affecting LSA ranking",
+    implementation_notes: "Verify: profile photos current, services list matches actual practice areas, hours correct, recent reviews replied to.",
+    target: null,
+    deep_link: "https://www.google.com/maps",
+  },
+];
+
+// monitor_no_action recs are first-class but DO NOT appear in the approval queue.
+// They live in /accounts/<customer_id> drill-down under a "Held / monitoring" section
+// (rendered Week 3). Stored here for reference; not pushed into PER_ACCOUNT_RECS.
+const MONITOR_NO_ACTION_RECS = [
+  { id: "rec_3996131001_003", customer_id: "3996131001", account_name: "Corona Family Dental at Sarasota East", title: "Hold spend at current level; recheck Friday 5/22 — single-week rate move", reason: "Spend dropped 31% week-over-week; 30-day baseline ($34 CPA, 34 conv) is healthy." },
+  { id: "rec_6477324444_004", customer_id: "6477324444", account_name: "Gulf Stream Boat Club", title: "Don't touch PMax campaigns — week dip likely attribution lag", reason: "PB Gardens PMax + Tierra Verde PMax are the conversion engine. Known PMax 24–72hr attribution lag explains the week dip." },
+  { id: "rec_2618982513_003", customer_id: "2618982513", account_name: "Hampton Roads Weight Loss + Williamsburg", title: "Hold Chesapeake Nonbrand budget; expect CPA recovery after negatives ship", reason: "Chesapeake Nonbrand drives 71% of account spend; pausing mid-cleanup would suppress real volume." },
+  { id: "rec_1653178464_003", customer_id: "1653178464", account_name: "Phillips, Hayden & Labbee, LLP", title: "Bank the week — strong performance across primary campaigns", reason: "Conv +71%, CPA -49%, conv rate +109%. Don't reallocate budget away from Construction Law or PMax." },
+  { id: "rec_6413205909_003", customer_id: "6413205909", account_name: "Phillips, Hayden & Labbee LSA", title: "Hold budget; LSA weekly variance is high", reason: "LSA weekly conv volume routinely varies 15–25% week-to-week. Recheck 5/22." },
+];
+
+// Sort per-account: risk_level desc (high > medium > low), then by customer_id, then by id
+const RISK_ORDER = { high: 0, medium: 1, low: 2 };
+PER_ACCOUNT_RECS.sort((a, b) => {
+  const r = RISK_ORDER[a.risk_level] - RISK_ORDER[b.risk_level];
+  if (r !== 0) return r;
+  if (a.customer_id !== b.customer_id) return a.customer_id.localeCompare(b.customer_id);
+  return a.id.localeCompare(b.id);
+});
+
+// ====================================================================
+// RENDER
+// ====================================================================
+
+function escapeHtml(s) {
+  if (s == null) return "";
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+function badgeForRisk(r) {
+  const tone = r === "high" ? "bad" : r === "medium" ? "warn" : "good";
+  return `<span class="badge badge-${tone}">${r} risk</span>`;
+}
+
+function badgeForKind(k) {
+  return `<span class="badge badge-neutral">${k.replace(/_/g, " ")}</span>`;
+}
+
+function badgeForConfidence(c) {
+  if (c == null) return "";
+  return `<span class="badge badge-info">confidence ${Math.round(c * 100)}%</span>`;
+}
+
+function renderPortfolioCard(rec) {
+  const acctsHtml = rec.affected_accounts.map(a => `
+    <div class="portfolio-account-row">
+      <span class="portfolio-account-name">${escapeHtml(a.name)}</span>
+      <span class="portfolio-account-meta">${escapeHtml(a.supporting)}</span>
+    </div>
+  `).join("");
+
+  return `
+    <div class="card rec-card portfolio-rec" data-rec-id="${rec.id}" data-rec-type="portfolio">
+      <div class="rec-row">
+        <div class="rec-left">
+          <div class="rec-chips">
+            <span class="badge badge-accent">Portfolio</span>
+            ${badgeForKind(rec.kind)}
+            ${badgeForConfidence(rec.ai_confidence)}
+          </div>
+          <div class="rec-title">${escapeHtml(rec.title)}</div>
+          <div class="portfolio-headline">
+            <span>${rec.affected_accounts_count} accounts affected</span>
+            <span class="portfolio-headline-dot">·</span>
+            <span>est. <span class="portfolio-headline-dollar">${escapeHtml(rec.est_monthly_recoverable_display)}</span> wasted spend recoverable</span>
+            <span class="portfolio-headline-dot">·</span>
+            <span>${rec.risk_level} risk</span>
+          </div>
+          <p class="rec-reason">${escapeHtml(rec.summary)}</p>
+        </div>
+        <div class="rec-actions">
+          <button class="button button-primary" data-action="approve-all">Approve all</button>
+          <button class="button button-secondary" data-action="open-list">Open list of accounts</button>
+          <button class="button button-ghost" data-action="done-manually">Mark done manually</button>
+          <button class="button button-destructive" data-action="reject">Reject</button>
+        </div>
+      </div>
+      <div class="portfolio-expand">
+        ${acctsHtml}
+      </div>
+    </div>
+  `;
+}
+
+function renderPerAccountCard(rec) {
+  return `
+    <div class="card rec-card" data-rec-id="${rec.id}" data-rec-type="per-account" data-customer-id="${rec.customer_id}">
+      <div class="rec-row">
+        <div class="rec-left">
+          <div class="rec-chips">
+            <a class="rec-account-link" href="account-${rec.customer_id}.html">${escapeHtml(rec.account_name)}</a>
+            ${badgeForKind(rec.kind)}
+            ${badgeForRisk(rec.risk_level)}
+            ${badgeForConfidence(rec.ai_confidence)}
+          </div>
+          <div class="rec-title">${escapeHtml(rec.title)}</div>
+          <p class="rec-reason">${escapeHtml(rec.reason)}</p>
+          ${rec.expected_impact ? `<p class="rec-meta"><span class="rec-meta-label">Impact</span> · ${escapeHtml(rec.expected_impact)}</p>` : ""}
+          ${rec.implementation_notes ? `<p class="rec-meta"><span class="rec-meta-label">How</span> · ${escapeHtml(rec.implementation_notes)}</p>` : ""}
+          ${rec.target ? `<div class="rec-footer-chips"><span>Target: ${escapeHtml(rec.target.length > 80 ? rec.target.slice(0, 80) + "…" : rec.target)}</span></div>` : ""}
+        </div>
+        <div class="rec-actions">
+          <button class="button button-primary" data-action="approve">Approve</button>
+          ${rec.deep_link ? `<button class="button button-secondary" data-action="open-gads">Open in Google Ads</button>` : ""}
+          <button class="button button-ghost" data-action="done-manually">Mark done manually</button>
+          <button class="button button-destructive" data-action="reject">Reject</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function render() {
+  document.getElementById("portfolio-list").innerHTML =
+    PORTFOLIO_RECS.length ? PORTFOLIO_RECS.map(renderPortfolioCard).join("") : "";
+  document.getElementById("per-account-list").innerHTML =
+    PER_ACCOUNT_RECS.length ? PER_ACCOUNT_RECS.map(renderPerAccountCard).join("") : "";
+  updateCounts();
+  attachHandlers();
+}
+
+function updateCounts() {
+  document.getElementById("portfolio-count").textContent = PORTFOLIO_RECS.length;
+  document.getElementById("per-account-count").textContent = PER_ACCOUNT_RECS.length;
+}
+
+// ====================================================================
+// HANDLERS
+// ====================================================================
+
+let toastTimer = null;
+function showToast(text, tone) {
+  const t = document.getElementById("toast");
+  t.className = `toast show toast-${tone || "good"}`;
+  document.getElementById("toast-text").textContent = text;
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.classList.remove("show"); }, 2400);
+}
+
+function removeCard(cardEl) {
+  cardEl.classList.add("removing");
+  setTimeout(() => cardEl.remove(), 260);
+}
+
+function findRec(id, type) {
+  if (type === "portfolio") return PORTFOLIO_RECS.find(r => r.id === id);
+  return PER_ACCOUNT_RECS.find(r => r.id === id);
+}
+
+function removeRec(id, type) {
+  if (type === "portfolio") {
+    const i = PORTFOLIO_RECS.findIndex(r => r.id === id);
+    if (i >= 0) PORTFOLIO_RECS.splice(i, 1);
+  } else {
+    const i = PER_ACCOUNT_RECS.findIndex(r => r.id === id);
+    if (i >= 0) PER_ACCOUNT_RECS.splice(i, 1);
+  }
+}
+
+function copyToClipboard(text) {
+  if (!text) return Promise.resolve(false);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text).then(() => true).catch(() => false);
+  }
+  // fallback
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.top = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    return Promise.resolve(true);
+  } catch { return Promise.resolve(false); }
+}
+
+function attachHandlers() {
+  document.querySelectorAll(".rec-card").forEach(card => {
+    const id = card.dataset.recId;
+    const type = card.dataset.recType;
+
+    card.querySelectorAll("button[data-action]").forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const action = btn.dataset.action;
+        const rec = findRec(id, type);
+
+        if (action === "approve" || action === "approve-all") {
+          if (action === "approve-all" && type === "portfolio") {
+            const count = rec.affected_accounts.filter(a => a.per_account_rec_id).length;
+            // Also remove child per-account recs from the list
+            rec.affected_accounts.forEach(a => {
+              if (a.per_account_rec_id) {
+                const childEl = document.querySelector(`[data-rec-id="${a.per_account_rec_id}"]`);
+                if (childEl) removeCard(childEl);
+                removeRec(a.per_account_rec_id, "per-account");
+              }
+            });
+            showToast(`Approved portfolio rec + ${count} per-account recs`, "good");
+          } else {
+            showToast("Approved", "good");
+          }
+          removeRec(id, type);
+          removeCard(card);
+          setTimeout(updateCounts, 280);
+          return;
+        }
+
+        if (action === "open-gads") {
+          const ok = await copyToClipboard(rec.target);
+          if (ok && rec.target) showToast(`Copied target to clipboard — opening Google Ads`, "info");
+          else showToast(`Opening Google Ads`, "info");
+          if (rec.deep_link) window.open(rec.deep_link, "_blank");
+          return;
+        }
+
+        if (action === "open-list") {
+          card.querySelector(".portfolio-expand").classList.toggle("open");
+          return;
+        }
+
+        if (action === "done-manually") {
+          showToast("Marked done manually", "good");
+          removeRec(id, type);
+          removeCard(card);
+          setTimeout(updateCounts, 280);
+          return;
+        }
+
+        if (action === "reject") {
+          showToast("Rejected", "bad");
+          removeRec(id, type);
+          removeCard(card);
+          setTimeout(updateCounts, 280);
+          return;
+        }
+      });
+    });
+  });
+}
+
+render();
+</script>
+</body>
+</html>
