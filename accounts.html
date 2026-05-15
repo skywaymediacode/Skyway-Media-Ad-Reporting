@@ -12,7 +12,6 @@
   --good:#34c759;--warn:#ff9f0a;--bad:#ff3b30;--info:#0a84ff;
   --accent:#5e5ce6;--accent-soft:#eeeefd;
   --shadow-card:0 1px 2px rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.04);
-  --shadow-floating:0 1px 2px rgba(0,0,0,0.04),0 8px 24px rgba(0,0,0,0.06),0 16px 48px rgba(0,0,0,0.04);
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
@@ -21,10 +20,6 @@ h1,h2,h3,h4{font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Inter
 a{color:inherit;text-decoration:none}
 button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
 input,select{font-family:inherit;font-size:inherit;color:inherit}
-::-webkit-scrollbar{width:10px;height:10px}
-::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:8px}
-::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,0.2)}
-::-webkit-scrollbar-track{background:transparent}
 
 .layout{min-height:100vh;display:flex}
 .sidebar{width:240px;flex-shrink:0;padding:24px 16px;display:flex;flex-direction:column;gap:4px}
@@ -36,6 +31,8 @@ input,select{font-family:inherit;font-size:inherit;color:inherit}
 .nav-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:14px;font-size:14px;color:var(--ink-muted);transition:background-color .15s ease,color .15s ease;font-weight:500}
 .nav-item:hover{background:rgba(10,10,10,0.05);color:var(--ink-soft)}
 .nav-item.active{background:var(--ink);color:#fff}
+.nav-item-phase{font-size:10px;text-transform:uppercase;letter-spacing:.05em;padding:2px 6px;border-radius:6px;background:rgba(10,10,10,0.05);color:var(--ink-muted)}
+.nav-item.active .nav-item-phase{background:rgba(255,255,255,0.15);color:#fff}
 .sidebar-footer{margin-top:auto;padding:24px 12px 0;font-size:11px;color:var(--ink-muted);line-height:1.5}
 
 main{flex:1;min-width:0}
@@ -43,14 +40,14 @@ main{flex:1;min-width:0}
 .topbar{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px}
 .topbar h1{font-size:28px;font-weight:600;letter-spacing:-0.02em;color:var(--ink-soft)}
 .topbar-desc{font-size:14px;color:var(--ink-muted);margin-top:4px;max-width:680px}
-.topbar-badges{display:flex;gap:8px;flex-shrink:0}
+.topbar-right{display:flex;align-items:center;gap:12px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+
+.window-selector{display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border-radius:999px;border:1px solid var(--line)}
+.window-pill{padding:5px 14px;border-radius:999px;font-size:12px;font-weight:500;color:var(--ink-muted);transition:all .15s ease;background:transparent}
+.window-pill:hover{color:var(--ink-soft)}
+.window-pill.active{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,0.06)}
 
 .card{background:var(--surface);border-radius:18px;box-shadow:var(--shadow-card);border:1px solid rgba(229,229,234,0.6);padding:20px}
-.card+.card{margin-top:12px}
-
-.section-label{font-size:11px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;margin:24px 0 12px;display:flex;align-items:center;gap:8px}
-.section-label:first-of-type{margin-top:0}
-.section-label-count{background:rgba(10,10,10,0.05);color:var(--ink-muted);padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;letter-spacing:0}
 
 .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:500;box-shadow:inset 0 0 0 1px transparent;white-space:nowrap}
 .badge-good{background:rgba(52,199,89,0.1);color:var(--good);box-shadow:inset 0 0 0 1px rgba(52,199,89,0.2)}
@@ -58,33 +55,37 @@ main{flex:1;min-width:0}
 .badge-bad{background:rgba(255,59,48,0.1);color:var(--bad);box-shadow:inset 0 0 0 1px rgba(255,59,48,0.2)}
 .badge-info{background:rgba(10,132,255,0.1);color:var(--info);box-shadow:inset 0 0 0 1px rgba(10,132,255,0.2)}
 .badge-neutral{background:rgba(10,10,10,0.05);color:var(--ink-muted);box-shadow:inset 0 0 0 1px rgba(10,10,10,0.1)}
-.badge-accent{background:var(--accent-soft);color:var(--accent);box-shadow:inset 0 0 0 1px rgba(94,92,230,0.2)}
-
-.button{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:500;transition:background-color .15s ease,opacity .15s ease,transform .1s ease;white-space:nowrap}
-.button:active{transform:scale(0.98)}
-.button-primary{background:var(--ink);color:#fff;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
-.button-primary:hover{background:rgba(10,10,10,0.9)}
-.button-secondary{background:var(--surface);color:var(--ink-soft);border:1px solid var(--line)}
-.button-secondary:hover{background:var(--surface-raised)}
-.button-ghost{background:transparent;color:var(--ink-soft)}
-.button-ghost:hover{background:rgba(10,10,10,0.05)}
-.button[disabled]{opacity:0.5;cursor:not-allowed}
 
 .demo-banner{background:rgba(10,132,255,0.08);border:1px solid rgba(10,132,255,0.2);color:#0a4ea0;border-radius:14px;padding:12px 16px;font-size:13px;margin-bottom:20px;display:flex;align-items:flex-start;gap:10px}
 .demo-banner-dot{width:8px;height:8px;border-radius:999px;background:var(--info);margin-top:6px;flex-shrink:0}
 
-.card-header{display:flex;align-items:start;justify-content:space-between;gap:12px;margin-bottom:12px}
-.card-header h2{font-size:16px;font-weight:600;color:var(--ink-soft);letter-spacing:-0.01em}
-.card-header-sub{font-size:13px;color:var(--ink-muted);margin-top:2px}
+.filter-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:500;background:var(--surface);border:1px solid var(--line);color:var(--ink-muted);transition:all .15s ease}
+.filter-pill:hover{background:var(--surface-raised);color:var(--ink-soft)}
+.filter-pill.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.filter-pill.active .filter-count{color:rgba(255,255,255,0.7)}
+.filter-count{font-size:11px;color:var(--ink-subtle);font-weight:400}
+#search,#sort-by{padding:6px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);font-size:13px}
+#search:focus,#sort-by:focus{outline:none;border-color:var(--accent)}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{text-align:left;font-size:11px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;padding:10px 12px;border-bottom:1px solid var(--line)}
+thead th.num{text-align:right}
+tbody td{padding:12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr{cursor:pointer;transition:background-color .1s ease}
+tbody tr:hover{background:var(--surface-raised)}
+tbody td.num{text-align:right;font-variant-numeric:tabular-nums}
+.score-cell{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:999px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.score-cell-problem{background:rgba(255,59,48,0.1);color:var(--bad);box-shadow:inset 0 0 0 1px rgba(255,59,48,0.2)}
+.score-cell-needs_attention{background:rgba(255,159,10,0.1);color:var(--warn);box-shadow:inset 0 0 0 1px rgba(255,159,10,0.2)}
+.score-cell-good{background:rgba(10,132,255,0.1);color:var(--info);box-shadow:inset 0 0 0 1px rgba(10,132,255,0.2)}
+.score-cell-excellent{background:rgba(52,199,89,0.1);color:var(--good);box-shadow:inset 0 0 0 1px rgba(52,199,89,0.2)}
+.account-id{font-size:11px;color:var(--ink-muted)}
 
 @media (max-width:768px){
   .sidebar{display:none}
   .container{padding:20px}
   .topbar h1{font-size:24px}
 }
-
-.nav-item-phase{font-size:10px;text-transform:uppercase;letter-spacing:.05em;padding:2px 6px;border-radius:6px;background:rgba(10,10,10,0.05);color:var(--ink-muted)}
-.nav-item.active .nav-item-phase{background:rgba(255,255,255,0.15);color:#fff}
 </style>
 </head>
 <body>
@@ -106,21 +107,24 @@ main{flex:1;min-width:0}
       <a class="nav-item" href="approvals.html"><span>Approvals</span><span class="nav-item-phase">W2</span></a>
       <a class="nav-item" href="settings.html"><span>Settings</span></a>
     </nav>
-    <div class="sidebar-footer">
-      Read-only mode. No live Google Ads changes are made without operator approval. MCC: analytics@skyway.media.
-    </div>
+    <div class="sidebar-footer">Read-only mode. No live Google Ads changes are made without operator approval. MCC: analytics@skyway.media.</div>
   </aside>
 
   <main>
     <div class="container">
+
       <header class="topbar">
         <div>
           <h1>Accounts</h1>
-          <p class="topbar-desc">Every active client account, sortable and filterable. Score, alerts, and 30-day performance roll up automatically after each sync.</p>
+          <p class="topbar-desc">Every active client account, sortable and filterable. Score, alerts, and performance roll up automatically after each sync.</p>
         </div>
-        <div class="topbar-badges">
+        <div class="topbar-right">
+          <div class="window-selector" id="window-selector" role="tablist" aria-label="Time window">
+            <button class="window-pill" data-window="7d" role="tab">7 days</button>
+            <button class="window-pill active" data-window="30d" role="tab">30 days</button>
+            <button class="window-pill" data-window="90d" role="tab">90 days</button>
+          </div>
           <span class="badge badge-good">Live data</span>
-          <span class="badge badge-neutral">50 scored</span>
         </div>
       </header>
 
@@ -144,50 +148,24 @@ main{flex:1;min-width:0}
           <select id="sort-by">
             <option value="score_asc">Sort: Score (low to high)</option>
             <option value="score_desc">Sort: Score (high to low)</option>
-            <option value="cost_desc">Sort: 30d spend (high to low)</option>
-            <option value="cost_asc">Sort: 30d spend (low to high)</option>
+            <option value="cost_desc">Sort: Spend (high to low)</option>
+            <option value="cost_asc">Sort: Spend (low to high)</option>
             <option value="name_asc">Sort: Name (A–Z)</option>
           </select>
           <div style="margin-left:auto;font-size:12px;color:var(--ink-muted)" id="showing-count">50 of 50</div>
         </div>
       </div>
 
-      <style>
-        .filter-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:500;background:var(--surface);border:1px solid var(--line);color:var(--ink-muted);transition:all .15s ease}
-        .filter-pill:hover{background:var(--surface-raised);color:var(--ink-soft)}
-        .filter-pill.active{background:var(--ink);color:#fff;border-color:var(--ink)}
-        .filter-pill.active .filter-count{color:rgba(255,255,255,0.7)}
-        .filter-count{font-size:11px;color:var(--ink-subtle);font-weight:400}
-        #search,#sort-by{padding:6px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);font-size:13px}
-        #search:focus,#sort-by:focus{outline:none;border-color:var(--accent)}
-        .accounts-table{width:100%;border-collapse:collapse;font-size:13px}
-        .accounts-table thead th{text-align:left;font-size:11px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;padding:10px 12px;border-bottom:1px solid var(--line)}
-        .accounts-table thead th.num{text-align:right}
-        .accounts-table tbody td{padding:12px;border-bottom:1px solid var(--line);vertical-align:middle}
-        .accounts-table tbody tr{cursor:pointer;transition:background-color .1s ease}
-        .accounts-table tbody tr:hover{background:var(--surface-raised)}
-        .accounts-table tbody td.num{text-align:right;font-variant-numeric:tabular-nums}
-        .score-cell{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:999px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
-        .score-cell-problem{background:rgba(255,59,48,0.1);color:var(--bad);box-shadow:inset 0 0 0 1px rgba(255,59,48,0.2)}
-        .score-cell-needs_attention{background:rgba(255,159,10,0.1);color:var(--warn);box-shadow:inset 0 0 0 1px rgba(255,159,10,0.2)}
-        .score-cell-good{background:rgba(10,132,255,0.1);color:var(--info);box-shadow:inset 0 0 0 1px rgba(10,132,255,0.2)}
-        .score-cell-excellent{background:rgba(52,199,89,0.1);color:var(--good);box-shadow:inset 0 0 0 1px rgba(52,199,89,0.2)}
-        .account-id{font-size:11px;color:var(--ink-muted)}
-        .acct-detail-row{display:none;background:var(--surface-sunken)}
-        .acct-detail-row.open{display:table-row}
-        .acct-detail-cell{padding:14px 16px !important}
-      </style>
-
       <div class="card" style="padding:0;overflow:hidden">
-        <table class="accounts-table">
+        <table>
           <thead>
             <tr>
               <th style="width:48px"></th>
               <th>Account</th>
               <th>Status</th>
-              <th class="num">30d spend</th>
-              <th class="num">30d conv</th>
-              <th class="num">30d CPA</th>
+              <th class="num"><span id="th-spend">30d spend</span></th>
+              <th class="num"><span id="th-conv">30d conv</span></th>
+              <th class="num"><span id="th-cpa">30d CPA</span></th>
               <th>Next action</th>
             </tr>
           </thead>
@@ -195,61 +173,88 @@ main{flex:1;min-width:0}
         </table>
       </div>
 
-      <script>
-        const ACCOUNTS = [{"customer_id":"6477324444","name":"Gulf Stream Boat Club","score":33,"status":"problem","is_lsa":false,"top_risk":"cpa_trend","next_action":"Investigate CPA spike \u2014 review bid strategy and search-term changes","cost_30d":5655.45,"conv_30d":593.64,"cpa_30d":9.53},{"customer_id":"3996131001","name":"Corona Family Dental at Sarasota East","score":34,"status":"problem","is_lsa":false,"top_risk":"cpa_trend","next_action":"Investigate CPA spike \u2014 review bid strategy and search-term changes","cost_30d":1168.41,"conv_30d":34,"cpa_30d":34.36},{"customer_id":"2202624396","name":"IVitalize Mobile","score":36,"status":"problem","is_lsa":false,"top_risk":"cpa_trend","next_action":"Investigate CPA spike \u2014 review bid strategy and search-term changes","cost_30d":5640.67,"conv_30d":74,"cpa_30d":76.23},{"customer_id":"7905050380","name":"Adjust-U","score":37,"status":"problem","is_lsa":false,"top_risk":"conversion_trend","next_action":"Investigate conversion drop \u2014 check tracking and ad-copy changes","cost_30d":1204.29,"conv_30d":3,"cpa_30d":401.43},{"customer_id":"3219361576","name":"Be The New You","score":38,"status":"problem","is_lsa":false,"top_risk":"cpa_trend","next_action":"Investigate CPA spike \u2014 review bid strategy and search-term changes","cost_30d":903.89,"conv_30d":24,"cpa_30d":37.66},{"customer_id":"7809844784","name":"Phillips, Hayden & Labbee, LLP LSA","score":38,"status":"problem","is_lsa":true,"top_risk":"ctr_trend","next_action":"Test new ad creative to improve click-through rate","cost_30d":0,"conv_30d":0,"cpa_30d":null},{"customer_id":"4636798980","name":"LAURIES LOVE INC Grant Account","score":41,"status":"problem","is_lsa":false,"top_risk":"conversion_trend","next_action":"Investigate conversion drop \u2014 check tracking and ad-copy changes","cost_30d":821.16,"conv_30d":1,"cpa_30d":821.16},{"customer_id":"9517526297","name":"American Portable Air of Tampa","score":45,"status":"needs_attention","is_lsa":false,"top_risk":"conversion_trend","next_action":"Investigate conversion drop \u2014 check tracking and ad-copy changes","cost_30d":1449.34,"conv_30d":8,"cpa_30d":181.17},{"customer_id":"2618982513","name":"Hampton Roads Weight Loss + Williamsburg","score":52,"status":"needs_attention","is_lsa":false,"top_risk":"cpa_trend","next_action":"Investigate CPA spike \u2014 review bid strategy and search-term changes","cost_30d":3754.77,"conv_30d":52,"cpa_30d":72.21},{"customer_id":"4370201580","name":"Arts of Attraction","score":53,"status":"needs_attention","is_lsa":false,"top_risk":"cpc_trend","next_action":"Review bid caps and quality scores","cost_30d":2110.18,"conv_30d":289.5,"cpa_30d":7.29},{"customer_id":"8655147005","name":"Corona Family Dental Bradenton Location","score":55,"status":"needs_attention","is_lsa":false,"top_risk":"spend_efficiency","next_action":"Review bidding strategy against client target CPA","cost_30d":1133.43,"conv_30d":15,"cpa_30d":75.56},{"customer_id":"1140663533","name":"DMV Weight Loss","score":59,"status":"needs_attention","is_lsa":false,"top_risk":"campaign_status","next_action":"Reactivate paused high-spend campaigns or reallocate budget","cost_30d":105.09,"conv_30d":0,"cpa_30d":null},{"customer_id":"3106564882","name":"Dayton Weight Loss","score":59,"status":"needs_attention","is_lsa":false,"top_risk":"conversion_trend","next_action":"Investigate conversion drop \u2014 check tracking and ad-copy changes","cost_30d":1662.66,"conv_30d":25,"cpa_30d":66.51},{"customer_id":"8131747952","name":"Raleigh Weight Loss","score":59,"status":"needs_attention","is_lsa":false,"top_risk":"campaign_status","next_action":"Reactivate paused high-spend campaigns or reallocate budget","cost_30d":0,"conv_30d":0,"cpa_30d":null},{"customer_id":"8111279100","name":"Wilmington Weight Loss","score":59,"status":"needs_attention","is_lsa":false,"top_risk":"campaign_status","next_action":"Reactivate paused high-spend campaigns or reallocate budget","cost_30d":0,"conv_30d":0,"cpa_30d":null},{"customer_id":"7144803411","name":"Lucky Strike Fishing Charter","score":60,"status":"needs_attention","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":1480.53,"conv_30d":1,"cpa_30d":1480.53},{"customer_id":"3951878729","name":"Imagine Home Organization","score":61,"status":"needs_attention","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":719.93,"conv_30d":2,"cpa_30d":359.97},{"customer_id":"5668484456","name":"Legacy Staffing Associates","score":62,"status":"needs_attention","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":573.24,"conv_30d":4,"cpa_30d":143.31},{"customer_id":"4052972721","name":"Woodford Barn Repair","score":65,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":2937.75,"conv_30d":29,"cpa_30d":101.3},{"customer_id":"9782743260","name":"Eastside Weight Loss Clinic","score":68,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":3068.04,"conv_30d":70,"cpa_30d":43.83},{"customer_id":"6413205909","name":"Phillips, Hayden & Labbee LSA","score":69,"status":"good","is_lsa":true,"top_risk":"conversion_rate_trend","next_action":"Test new ad copy / landing-page variant to recover conversion rate","cost_30d":7915.3,"conv_30d":57,"cpa_30d":138.86},{"customer_id":"8456911944","name":"Delta Construction Partners","score":71,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":1101.39,"conv_30d":19,"cpa_30d":57.97},{"customer_id":"6251654285","name":"iCoStore, LLC","score":71,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":1139.52,"conv_30d":1,"cpa_30d":1139.52},{"customer_id":"1375948513","name":"1375948513","score":72,"status":"good","is_lsa":false,"top_risk":"cpc_trend","next_action":"Review bid caps and quality scores","cost_30d":329.3,"conv_30d":7,"cpa_30d":47.04},{"customer_id":"5509248249","name":"Montessori Academy of Carrollwood LSA","score":72,"status":"good","is_lsa":true,"top_risk":"budget_pacing","next_action":"Adjust daily budgets to hit monthly target","cost_30d":199.14,"conv_30d":3,"cpa_30d":66.38},{"customer_id":"5396325393","name":"ShadePro","score":73,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":3676.89,"conv_30d":41,"cpa_30d":89.68},{"customer_id":"6001909133","name":"Glades Dayz, LLC","score":73,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":2450.24,"conv_30d":7,"cpa_30d":350.03},{"customer_id":"5413071227","name":"Elevate You Dayton","score":73,"status":"good","is_lsa":false,"top_risk":"cpc_trend","next_action":"Review bid caps and quality scores","cost_30d":406.76,"conv_30d":4,"cpa_30d":101.69},{"customer_id":"8233486137","name":"SBCM: Slim Down Solutions OKC","score":73,"status":"good","is_lsa":false,"top_risk":null,"next_action":"Reactivate paused high-spend campaigns or reallocate budget","cost_30d":0,"conv_30d":0,"cpa_30d":null},{"customer_id":"1452954149","name":"Toledo Weight Loss","score":75,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":1481.51,"conv_30d":37.99,"cpa_30d":39.0},{"customer_id":"5745724421","name":"Southern Edge Painting","score":76,"status":"good","is_lsa":false,"top_risk":"budget_pacing","next_action":"Adjust daily budgets to hit monthly target","cost_30d":58.08,"conv_30d":1,"cpa_30d":58.08},{"customer_id":"7130768733","name":"Blackwell Auctions LLC","score":77,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":786.13,"conv_30d":126.83,"cpa_30d":6.2},{"customer_id":"2668596772","name":"Hampton Roads Weight Loss LSA","score":77,"status":"good","is_lsa":true,"top_risk":"cpc_trend","next_action":"Review bid caps and quality scores","cost_30d":238,"conv_30d":7,"cpa_30d":34},{"customer_id":"9351296668","name":"River Valley Weight Loss","score":78,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":965.27,"conv_30d":7,"cpa_30d":137.9},{"customer_id":"6068026900","name":"Northern Michigan Weight Loss","score":80,"status":"excellent","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":1543.41,"conv_30d":24,"cpa_30d":64.31},{"customer_id":"3443610521","name":"Rockford Weight Loss LSA","score":80,"status":"excellent","is_lsa":true,"top_risk":"cpc_trend","next_action":"Review bid caps and quality scores","cost_30d":329.16,"conv_30d":24,"cpa_30d":13.72},{"customer_id":"6450756470","name":"Suncoast SP ads","score":81,"status":"excellent","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":2548.05,"conv_30d":26.5,"cpa_30d":96.15},{"customer_id":"1390511960","name":"MCLI","score":82,"status":"excellent","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":7278.44,"conv_30d":155,"cpa_30d":46.96},{"customer_id":"3283010658","name":"Precision Tool & Mold","score":82,"status":"excellent","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":2091.6,"conv_30d":22,"cpa_30d":95.07},{"customer_id":"2067533092","name":"Ramps Plus","score":82,"status":"excellent","is_lsa":false,"top_risk":"ctr_trend","next_action":"Test new ad creative to improve click-through rate","cost_30d":861.96,"conv_30d":30,"cpa_30d":28.73},{"customer_id":"2241955303","name":"Adirondack Furniture","score":84,"status":"excellent","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":855.96,"conv_30d":15,"cpa_30d":57.06},{"customer_id":"5986318803","name":"Reno Bros","score":86,"status":"excellent","is_lsa":false,"top_risk":null,"next_action":"Reactivate paused high-spend campaigns or reallocate budget","cost_30d":0,"conv_30d":0,"cpa_30d":null},{"customer_id":"1012804178","name":"Lokal Showers","score":86,"status":"excellent","is_lsa":false,"top_risk":null,"next_action":"Reactivate paused high-spend campaigns or reallocate budget","cost_30d":0,"conv_30d":0,"cpa_30d":null},{"customer_id":"7250542091","name":"Wilmington Weight Loss LSA","score":86,"status":"excellent","is_lsa":true,"top_risk":null,"next_action":"Reactivate paused high-spend campaigns or reallocate budget","cost_30d":0,"conv_30d":0,"cpa_30d":null},{"customer_id":"1653178464","name":"Phillips, Hayden & Labbee, LLP","score":87,"status":"excellent","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":4578.31,"conv_30d":81,"cpa_30d":56.52},{"customer_id":"5745765360","name":"Rockford Weight Loss","score":94,"status":"excellent","is_lsa":false,"top_risk":null,"next_action":"Add negatives to cut zero-conversion search-term spend","cost_30d":1736.23,"conv_30d":22,"cpa_30d":78.92},{"customer_id":"1051342213","name":"Signature Payments","score":97,"status":"excellent","is_lsa":false,"top_risk":null,"next_action":"Adjust daily budgets to hit monthly target","cost_30d":499.27,"conv_30d":0,"cpa_30d":null},{"customer_id":"4576201947","name":"Corona Family Dental at Sarasota East LSA","score":100,"status":"excellent","is_lsa":true,"top_risk":null,"next_action":"Reactivate paused high-spend campaigns or reallocate budget","cost_30d":0,"conv_30d":0,"cpa_30d":null},{"customer_id":"5447160903","name":"Corona Family Dental Spring Forest LSA","score":100,"status":"excellent","is_lsa":true,"top_risk":null,"next_action":"Reactivate paused high-spend campaigns or reallocate budget","cost_30d":0,"conv_30d":0,"cpa_30d":null},{"customer_id":"8687248390","name":"door & co LSA","score":100,"status":"excellent","is_lsa":true,"top_risk":null,"next_action":"Reactivate paused high-spend campaigns or reallocate budget","cost_30d":0,"conv_30d":0,"cpa_30d":null}];
-        const STATUS_TONE = {problem:"bad",needs_attention:"warn",good:"info",excellent:"good"};
-        const FACTOR_LABELS = {cpa_trend:"CPA trending up",conversion_trend:"Conv trending down",conversion_rate_trend:"Conv rate slipping",ctr_trend:"CTR slipping",cpc_trend:"CPC trending up",spend_efficiency:"Spend efficiency low",budget_pacing:"Budget pacing off",search_term_waste:"High search-term waste",campaign_status:"Paused high-spend campaigns",tracking_anomaly:"Tracking anomaly",optimization_score:"Low Opt. score"};
-        let filter="all", search="", sortBy="score_asc";
-
-        function esc(s){if(s==null)return"";return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-        function money(n,c){return new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:c?2:0,maximumFractionDigits:c?2:0}).format(n||0)}
-        function num(n){return new Intl.NumberFormat("en-US").format(n||0)}
-
-        function render(){
-          let rows = ACCOUNTS.filter(r => filter==="all" ? true : r.status===filter);
-          if (search) {
-            const q = search.toLowerCase();
-            rows = rows.filter(r => r.name.toLowerCase().includes(q) || r.customer_id.includes(q));
-          }
-          rows.sort((a,b) => {
-            if(sortBy==="score_asc")return a.score-b.score;
-            if(sortBy==="score_desc")return b.score-a.score;
-            if(sortBy==="cost_desc")return b.cost_30d-a.cost_30d;
-            if(sortBy==="cost_asc")return a.cost_30d-b.cost_30d;
-            if(sortBy==="name_asc")return a.name.localeCompare(b.name);
-            return 0;
-          });
-
-          document.getElementById("showing-count").textContent = `${rows.length} of ${ACCOUNTS.length}`;
-
-          document.getElementById("accounts-tbody").innerHTML = rows.map(r => `
-            <tr data-cust="${esc(r.customer_id)}">
-              <td><span class="score-cell score-cell-${r.status}">${r.score}</span></td>
-              <td><div style="font-weight:500;color:var(--ink-soft)">${esc(r.name)}</div><div class="account-id">${esc(r.customer_id)}${r.is_lsa?" · LSA":""}</div></td>
-              <td><span class="badge badge-${STATUS_TONE[r.status]}">${r.status.replace(/_/g," ")}</span></td>
-              <td class="num">${r.cost_30d>0?money(r.cost_30d):"—"}</td>
-              <td class="num">${r.conv_30d>0?num(Math.round(r.conv_30d*10)/10):"—"}</td>
-              <td class="num">${r.cpa_30d!=null?money(r.cpa_30d,true):"—"}</td>
-              <td style="font-size:12px;color:var(--ink-muted)">${esc(r.next_action ? (r.next_action.length>56?r.next_action.slice(0,56)+"…":r.next_action) : "—")}</td>
-            </tr>
-          `).join("");
-        }
-
-        document.querySelectorAll(".filter-pill").forEach(p => p.addEventListener("click", () => {
-          document.querySelectorAll(".filter-pill").forEach(x => x.classList.remove("active"));
-          p.classList.add("active");
-          filter = p.dataset.filter;
-          render();
-        }));
-        document.getElementById("search").addEventListener("input", e => { search = e.target.value; render(); });
-        document.getElementById("sort-by").addEventListener("change", e => { sortBy = e.target.value; render(); });
-
-        render();
-      </script>
-
     </div>
   </main>
 
 </div>
+
+<script>
+const DATA = {"rows":[{"customer_id":"6477324444","name":"Gulf Stream Boat Club","score":33,"status":"problem","is_lsa":false,"top_risk":"cpa_trend","next_action":"Investigate CPA spike \u2014 review bid strategy and search-term changes","m":{"7d":{"cost":1074.2325,"conv":45.36,"cpa":23.6824},"30d":{"cost":5655.45,"conv":593.64,"cpa":9.53},"90d":{"cost":16228.0268,"conv":2605.21,"cpa":6.2291}}},{"customer_id":"3996131001","name":"Corona Family Dental at Sarasota East","score":34,"status":"problem","is_lsa":false,"top_risk":"cpa_trend","next_action":"Investigate CPA spike \u2014 review bid strategy and search-term changes","m":{"7d":{"cost":246.3391,"conv":3,"cpa":82.113},"30d":{"cost":1168.41,"conv":34,"cpa":34.36},"90d":{"cost":3760.8161,"conv":121,"cpa":31.0811}}},{"customer_id":"2202624396","name":"IVitalize Mobile","score":36,"status":"problem","is_lsa":false,"top_risk":"cpa_trend","next_action":"Investigate CPA spike \u2014 review bid strategy and search-term changes","m":{"7d":{"cost":1260.652,"conv":10,"cpa":126.0652},"30d":{"cost":5640.67,"conv":74,"cpa":76.23},"90d":{"cost":8410.1096,"conv":101,"cpa":83.2684}}},{"customer_id":"7905050380","name":"Adjust-U","score":37,"status":"problem","is_lsa":false,"top_risk":"conversion_trend","next_action":"Investigate conversion drop \u2014 check tracking and ad-copy changes","m":{"7d":{"cost":93.6271,"conv":0,"cpa":null},"30d":{"cost":1204.29,"conv":3,"cpa":401.43},"90d":{"cost":4416.3193,"conv":16,"cpa":276.02}}},{"customer_id":"3219361576","name":"Be The New You","score":38,"status":"problem","is_lsa":false,"top_risk":"cpa_trend","next_action":"Investigate CPA spike \u2014 review bid strategy and search-term changes","m":{"7d":{"cost":148.835,"conv":2,"cpa":74.4175},"30d":{"cost":903.89,"conv":24,"cpa":37.66},"90d":{"cost":2762.7523,"conv":61,"cpa":45.291}}},{"customer_id":"7809844784","name":"Phillips, Hayden & Labbee, LLP LSA","score":38,"status":"problem","is_lsa":true,"top_risk":"ctr_trend","next_action":"Test new ad creative to improve click-through rate","m":{"7d":{"cost":0,"conv":0,"cpa":null},"30d":{"cost":0,"conv":0,"cpa":null},"90d":{"cost":0,"conv":0,"cpa":null}}},{"customer_id":"4636798980","name":"LAURIES LOVE INC Grant Account","score":41,"status":"problem","is_lsa":false,"top_risk":"conversion_trend","next_action":"Investigate conversion drop \u2014 check tracking and ad-copy changes","m":{"7d":{"cost":138.6697,"conv":0,"cpa":null},"30d":{"cost":821.16,"conv":1,"cpa":821.16},"90d":{"cost":3886.1529,"conv":10,"cpa":388.6153}}},{"customer_id":"9517526297","name":"American Portable Air of Tampa","score":45,"status":"needs_attention","is_lsa":false,"top_risk":"conversion_trend","next_action":"Investigate conversion drop \u2014 check tracking and ad-copy changes","m":{"7d":{"cost":389.7901,"conv":0,"cpa":null},"30d":{"cost":1449.34,"conv":8,"cpa":181.17},"90d":{"cost":4664.0228,"conv":13,"cpa":358.771}}},{"customer_id":"2618982513","name":"Hampton Roads Weight Loss + Williamsburg","score":52,"status":"needs_attention","is_lsa":false,"top_risk":"cpa_trend","next_action":"Investigate CPA spike \u2014 review bid strategy and search-term changes","m":{"7d":{"cost":922.799,"conv":11,"cpa":83.8908},"30d":{"cost":3754.77,"conv":52,"cpa":72.21},"90d":{"cost":9587.0265,"conv":122,"cpa":78.5822}}},{"customer_id":"4370201580","name":"Arts of Attraction","score":53,"status":"needs_attention","is_lsa":false,"top_risk":"cpc_trend","next_action":"Review bid caps and quality scores","m":{"7d":{"cost":392.9553,"conv":32.33,"cpa":12.1545},"30d":{"cost":2110.18,"conv":289.5,"cpa":7.29},"90d":{"cost":6566.0044,"conv":874,"cpa":7.5126}}},{"customer_id":"8655147005","name":"Corona Family Dental Bradenton Location","score":55,"status":"needs_attention","is_lsa":false,"top_risk":"spend_efficiency","next_action":"Review bidding strategy against client target CPA","m":{"7d":{"cost":255.4367,"conv":2,"cpa":127.7184},"30d":{"cost":1133.43,"conv":15,"cpa":75.56},"90d":{"cost":3303.632,"conv":51,"cpa":64.7771}}},{"customer_id":"1140663533","name":"DMV Weight Loss","score":59,"status":"needs_attention","is_lsa":false,"top_risk":"campaign_status","next_action":"Reactivate paused high-spend campaigns or reallocate budget","m":{"7d":{"cost":0,"conv":0,"cpa":null},"30d":{"cost":105.09,"conv":0,"cpa":null},"90d":{"cost":5945.1996,"conv":54,"cpa":110.0963}}},{"customer_id":"3106564882","name":"Dayton Weight Loss","score":59,"status":"needs_attention","is_lsa":false,"top_risk":"conversion_trend","next_action":"Investigate conversion drop \u2014 check tracking and ad-copy changes","m":{"7d":{"cost":273.1601,"conv":3,"cpa":91.0534},"30d":{"cost":1662.66,"conv":25,"cpa":66.51},"90d":{"cost":4059.3033,"conv":69,"cpa":58.8305}}},{"customer_id":"8131747952","name":"Raleigh Weight Loss","score":59,"status":"needs_attention","is_lsa":false,"top_risk":"campaign_status","next_action":"Reactivate paused high-spend campaigns or reallocate budget","m":{"7d":{"cost":0,"conv":0,"cpa":null},"30d":{"cost":0,"conv":0,"cpa":null},"90d":{"cost":0,"conv":0,"cpa":null}}},{"customer_id":"8111279100","name":"Wilmington Weight Loss","score":59,"status":"needs_attention","is_lsa":false,"top_risk":"campaign_status","next_action":"Reactivate paused high-spend campaigns or reallocate budget","m":{"7d":{"cost":0,"conv":0,"cpa":null},"30d":{"cost":0,"conv":0,"cpa":null},"90d":{"cost":0,"conv":0,"cpa":null}}},{"customer_id":"7144803411","name":"Lucky Strike Fishing Charter","score":60,"status":"needs_attention","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":206.6512,"conv":0,"cpa":null},"30d":{"cost":1480.53,"conv":1,"cpa":1480.53},"90d":{"cost":4056.0859,"conv":6,"cpa":676.0143}}},{"customer_id":"3951878729","name":"Imagine Home Organization","score":61,"status":"needs_attention","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":240.5609,"conv":2,"cpa":120.2805},"30d":{"cost":719.93,"conv":2,"cpa":359.97},"90d":{"cost":2320.5612,"conv":12,"cpa":193.3801}}},{"customer_id":"5668484456","name":"Legacy Staffing Associates","score":62,"status":"needs_attention","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":69.7803,"conv":0,"cpa":null},"30d":{"cost":573.24,"conv":4,"cpa":143.31},"90d":{"cost":3031.3574,"conv":30,"cpa":101.0452}}},{"customer_id":"4052972721","name":"Woodford Barn Repair","score":65,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":741.8553,"conv":5,"cpa":148.3711},"30d":{"cost":2937.75,"conv":29,"cpa":101.3},"90d":{"cost":8616.569,"conv":77,"cpa":111.9035}}},{"customer_id":"9782743260","name":"Eastside Weight Loss Clinic","score":68,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":597.4297,"conv":12,"cpa":49.7858},"30d":{"cost":3068.04,"conv":70,"cpa":43.83},"90d":{"cost":4333.985,"conv":77,"cpa":56.2855}}},{"customer_id":"6413205909","name":"Phillips, Hayden & Labbee LSA","score":69,"status":"good","is_lsa":true,"top_risk":"conversion_rate_trend","next_action":"Test new ad copy / landing-page variant to recover conversion rate","m":{"7d":{"cost":2147.29,"conv":14,"cpa":153.3779},"30d":{"cost":7915.3,"conv":57,"cpa":138.86},"90d":{"cost":23993.11,"conv":184,"cpa":130.3973}}},{"customer_id":"8456911944","name":"Delta Construction Partners","score":71,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":0,"conv":0,"cpa":null},"30d":{"cost":1101.39,"conv":19,"cpa":57.97},"90d":{"cost":3692.4382,"conv":51,"cpa":72.4007}}},{"customer_id":"6251654285","name":"iCoStore, LLC","score":71,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":223.7622,"conv":1,"cpa":223.7622},"30d":{"cost":1139.52,"conv":1,"cpa":1139.52},"90d":{"cost":3286.836,"conv":1,"cpa":3286.836}}},{"customer_id":"1375948513","name":"1375948513","score":72,"status":"good","is_lsa":false,"top_risk":"cpc_trend","next_action":"Review bid caps and quality scores","m":{"7d":{"cost":107.15,"conv":2,"cpa":53.575},"30d":{"cost":329.3,"conv":7,"cpa":47.04},"90d":{"cost":707.67,"conv":16,"cpa":44.2294}}},{"customer_id":"5509248249","name":"Montessori Academy of Carrollwood LSA","score":72,"status":"good","is_lsa":true,"top_risk":"budget_pacing","next_action":"Adjust daily budgets to hit monthly target","m":{"7d":{"cost":199.14,"conv":3,"cpa":66.38},"30d":{"cost":199.14,"conv":3,"cpa":66.38},"90d":{"cost":199.14,"conv":3,"cpa":66.38}}},{"customer_id":"5396325393","name":"ShadePro","score":73,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":1141.9886,"conv":10,"cpa":114.1989},"30d":{"cost":3676.89,"conv":41,"cpa":89.68},"90d":{"cost":11126.5726,"conv":137,"cpa":81.2159}}},{"customer_id":"6001909133","name":"Glades Dayz, LLC","score":73,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":552.3668,"conv":2,"cpa":276.1834},"30d":{"cost":2450.24,"conv":7,"cpa":350.03},"90d":{"cost":9834.4667,"conv":50,"cpa":196.6893}}},{"customer_id":"5413071227","name":"Elevate You Dayton","score":73,"status":"good","is_lsa":false,"top_risk":"cpc_trend","next_action":"Review bid caps and quality scores","m":{"7d":{"cost":109.0822,"conv":1,"cpa":109.0822},"30d":{"cost":406.76,"conv":4,"cpa":101.69},"90d":{"cost":2730.7749,"conv":17,"cpa":160.6338}}},{"customer_id":"8233486137","name":"SBCM: Slim Down Solutions OKC","score":73,"status":"good","is_lsa":false,"top_risk":null,"next_action":"Reactivate paused high-spend campaigns or reallocate budget","m":{"7d":{"cost":0,"conv":0,"cpa":null},"30d":{"cost":0,"conv":0,"cpa":null},"90d":{"cost":0,"conv":0,"cpa":null}}},{"customer_id":"1452954149","name":"Toledo Weight Loss","score":75,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":351.9172,"conv":7,"cpa":50.2739},"30d":{"cost":1481.51,"conv":37.99,"cpa":39.0},"90d":{"cost":4498.4304,"conv":96,"cpa":46.8586}}},{"customer_id":"5745724421","name":"Southern Edge Painting","score":76,"status":"good","is_lsa":false,"top_risk":"budget_pacing","next_action":"Adjust daily budgets to hit monthly target","m":{"7d":{"cost":58.08,"conv":1,"cpa":58.08},"30d":{"cost":58.08,"conv":1,"cpa":58.08},"90d":{"cost":58.08,"conv":1,"cpa":58.08}}},{"customer_id":"7130768733","name":"Blackwell Auctions LLC","score":77,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":220.9247,"conv":31,"cpa":7.1266},"30d":{"cost":786.13,"conv":126.83,"cpa":6.2},"90d":{"cost":2561.5377,"conv":386.52,"cpa":6.6272}}},{"customer_id":"2668596772","name":"Hampton Roads Weight Loss LSA","score":77,"status":"good","is_lsa":true,"top_risk":"cpc_trend","next_action":"Review bid caps and quality scores","m":{"7d":{"cost":204,"conv":6,"cpa":34},"30d":{"cost":238,"conv":7,"cpa":34},"90d":{"cost":1904.12,"conv":56,"cpa":34.0021}}},{"customer_id":"9351296668","name":"River Valley Weight Loss","score":78,"status":"good","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":0,"conv":0,"cpa":null},"30d":{"cost":965.27,"conv":7,"cpa":137.9},"90d":{"cost":5638.6427,"conv":55,"cpa":102.5208}}},{"customer_id":"6068026900","name":"Northern Michigan Weight Loss","score":80,"status":"excellent","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":355.0451,"conv":5,"cpa":71.009},"30d":{"cost":1543.41,"conv":24,"cpa":64.31},"90d":{"cost":4209.4626,"conv":65,"cpa":64.761}}},{"customer_id":"3443610521","name":"Rockford Weight Loss LSA","score":80,"status":"excellent","is_lsa":true,"top_risk":"cpc_trend","next_action":"Review bid caps and quality scores","m":{"7d":{"cost":104,"conv":8,"cpa":13},"30d":{"cost":329.16,"conv":24,"cpa":13.72},"90d":{"cost":1135.16,"conv":86,"cpa":13.1995}}},{"customer_id":"6450756470","name":"Suncoast SP ads","score":81,"status":"excellent","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":562.7872,"conv":6,"cpa":93.7979},"30d":{"cost":2548.05,"conv":26.5,"cpa":96.15},"90d":{"cost":7638.8017,"conv":48.5,"cpa":157.5011}}},{"customer_id":"1390511960","name":"MCLI","score":82,"status":"excellent","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":1910.06,"conv":34,"cpa":56.1782},"30d":{"cost":7278.44,"conv":155,"cpa":46.96},"90d":{"cost":21335.4823,"conv":431.98,"cpa":49.39}}},{"customer_id":"3283010658","name":"Precision Tool & Mold","score":82,"status":"excellent","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":496.948,"conv":6,"cpa":82.8247},"30d":{"cost":2091.6,"conv":22,"cpa":95.07},"90d":{"cost":6130.3978,"conv":61,"cpa":100.4983}}},{"customer_id":"2067533092","name":"Ramps Plus","score":82,"status":"excellent","is_lsa":false,"top_risk":"ctr_trend","next_action":"Test new ad creative to improve click-through rate","m":{"7d":{"cost":242.5961,"conv":5,"cpa":48.5192},"30d":{"cost":861.96,"conv":30,"cpa":28.73},"90d":{"cost":2756.9063,"conv":99,"cpa":27.8475}}},{"customer_id":"2241955303","name":"Adirondack Furniture","score":84,"status":"excellent","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":224.9578,"conv":4,"cpa":56.2394},"30d":{"cost":855.96,"conv":15,"cpa":57.06},"90d":{"cost":2740.8536,"conv":23,"cpa":119.1675}}},{"customer_id":"5986318803","name":"Reno Bros","score":86,"status":"excellent","is_lsa":false,"top_risk":null,"next_action":"Reactivate paused high-spend campaigns or reallocate budget","m":{"7d":{"cost":0,"conv":0,"cpa":null},"30d":{"cost":0,"conv":0,"cpa":null},"90d":{"cost":0,"conv":0,"cpa":null}}},{"customer_id":"1012804178","name":"Lokal Showers","score":86,"status":"excellent","is_lsa":false,"top_risk":null,"next_action":"Reactivate paused high-spend campaigns or reallocate budget","m":{"7d":{"cost":0,"conv":0,"cpa":null},"30d":{"cost":0,"conv":0,"cpa":null},"90d":{"cost":0,"conv":0,"cpa":null}}},{"customer_id":"7250542091","name":"Wilmington Weight Loss LSA","score":86,"status":"excellent","is_lsa":true,"top_risk":null,"next_action":"Reactivate paused high-spend campaigns or reallocate budget","m":{"7d":{"cost":0,"conv":0,"cpa":null},"30d":{"cost":0,"conv":0,"cpa":null},"90d":{"cost":0,"conv":0,"cpa":null}}},{"customer_id":"1653178464","name":"Phillips, Hayden & Labbee, LLP","score":87,"status":"excellent","is_lsa":false,"top_risk":"search_term_waste","next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":1011.1481,"conv":22,"cpa":45.9613},"30d":{"cost":4578.31,"conv":81,"cpa":56.52},"90d":{"cost":13864.357,"conv":238.95,"cpa":58.022}}},{"customer_id":"5745765360","name":"Rockford Weight Loss","score":94,"status":"excellent","is_lsa":false,"top_risk":null,"next_action":"Add negatives to cut zero-conversion search-term spend","m":{"7d":{"cost":432.2916,"conv":8,"cpa":54.0365},"30d":{"cost":1736.23,"conv":22,"cpa":78.92},"90d":{"cost":5510.6975,"conv":96,"cpa":57.4031}}},{"customer_id":"1051342213","name":"Signature Payments","score":97,"status":"excellent","is_lsa":false,"top_risk":null,"next_action":"Adjust daily budgets to hit monthly target","m":{"7d":{"cost":0,"conv":0,"cpa":null},"30d":{"cost":499.27,"conv":0,"cpa":null},"90d":{"cost":499.2748,"conv":0,"cpa":null}}},{"customer_id":"4576201947","name":"Corona Family Dental at Sarasota East LSA","score":100,"status":"excellent","is_lsa":true,"top_risk":null,"next_action":"Reactivate paused high-spend campaigns or reallocate budget","m":{"7d":{"cost":0,"conv":0,"cpa":null},"30d":{"cost":0,"conv":0,"cpa":null},"90d":{"cost":0,"conv":0,"cpa":null}}},{"customer_id":"5447160903","name":"Corona Family Dental Spring Forest LSA","score":100,"status":"excellent","is_lsa":true,"top_risk":null,"next_action":"Reactivate paused high-spend campaigns or reallocate budget","m":{"7d":{"cost":0,"conv":0,"cpa":null},"30d":{"cost":0,"conv":0,"cpa":null},"90d":{"cost":0,"conv":0,"cpa":null}}},{"customer_id":"8687248390","name":"door & co LSA","score":100,"status":"excellent","is_lsa":true,"top_risk":null,"next_action":"Reactivate paused high-spend campaigns or reallocate budget","m":{"7d":{"cost":0,"conv":0,"cpa":null},"30d":{"cost":0,"conv":0,"cpa":null},"90d":{"cost":35.25,"conv":1,"cpa":35.25}}}]};
+const STATUS_TONE = {problem:"bad",needs_attention:"warn",good:"info",excellent:"good"};
+const WINDOW_LABELS = {"7d":"7d","30d":"30d","90d":"90d"};
+const STORAGE_KEY = "skyway_window";
+
+let filter = "all", search = "", sortBy = "score_asc";
+let currentWindow = "30d";
+try{
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if(saved && (saved === "7d" || saved === "30d" || saved === "90d")) currentWindow = saved;
+}catch(e){}
+
+function esc(s){if(s==null)return"";return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function money(n,c){return new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:c?2:0,maximumFractionDigits:c?2:0}).format(n||0)}
+function num(n){return new Intl.NumberFormat("en-US").format(n||0)}
+
+function render(){
+  const wl = WINDOW_LABELS[currentWindow];
+  document.getElementById("th-spend").textContent = wl + " spend";
+  document.getElementById("th-conv").textContent = wl + " conv";
+  document.getElementById("th-cpa").textContent = wl + " CPA";
+
+  let rows = DATA.rows.filter(r => filter === "all" ? true : r.status === filter);
+  if (search) {
+    const q = search.toLowerCase();
+    rows = rows.filter(r => r.name.toLowerCase().includes(q) || r.customer_id.includes(q));
+  }
+  rows.sort((a, b) => {
+    const am = a.m[currentWindow] || {cost:0};
+    const bm = b.m[currentWindow] || {cost:0};
+    if(sortBy === "score_asc") return a.score - b.score;
+    if(sortBy === "score_desc") return b.score - a.score;
+    if(sortBy === "cost_desc") return bm.cost - am.cost;
+    if(sortBy === "cost_asc") return am.cost - bm.cost;
+    if(sortBy === "name_asc") return a.name.localeCompare(b.name);
+    return 0;
+  });
+
+  document.getElementById("showing-count").textContent = rows.length + " of " + DATA.rows.length;
+
+  document.getElementById("accounts-tbody").innerHTML = rows.map(r => {
+    const m = r.m[currentWindow] || {cost:0, conv:0, cpa:null};
+    return `
+      <tr data-cust="${esc(r.customer_id)}">
+        <td><span class="score-cell score-cell-${r.status}">${r.score}</span></td>
+        <td><div style="font-weight:500;color:var(--ink-soft)">${esc(r.name)}</div><div class="account-id">${esc(r.customer_id)}${r.is_lsa ? " · LSA" : ""}</div></td>
+        <td><span class="badge badge-${STATUS_TONE[r.status]}">${r.status.replace(/_/g," ")}</span></td>
+        <td class="num">${m.cost > 0 ? money(m.cost) : "—"}</td>
+        <td class="num">${m.conv > 0 ? num(Math.round(m.conv * 10) / 10) : "—"}</td>
+        <td class="num">${m.cpa != null ? money(m.cpa, true) : "—"}</td>
+        <td style="font-size:12px;color:var(--ink-muted)">${esc(r.next_action ? (r.next_action.length > 56 ? r.next_action.slice(0, 56) + "…" : r.next_action) : "—")}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function setWindow(w){
+  currentWindow = w;
+  try{ localStorage.setItem(STORAGE_KEY, w); }catch(e){}
+  document.querySelectorAll(".window-pill").forEach(p => p.classList.toggle("active", p.dataset.window === w));
+  render();
+}
+
+document.querySelectorAll(".filter-pill").forEach(p => p.addEventListener("click", () => {
+  document.querySelectorAll(".filter-pill").forEach(x => x.classList.remove("active"));
+  p.classList.add("active");
+  filter = p.dataset.filter;
+  render();
+}));
+document.getElementById("search").addEventListener("input", e => { search = e.target.value; render(); });
+document.getElementById("sort-by").addEventListener("change", e => { sortBy = e.target.value; render(); });
+document.querySelectorAll(".window-pill").forEach(p => p.addEventListener("click", () => setWindow(p.dataset.window)));
+
+// Initial render
+document.querySelectorAll(".window-pill").forEach(p => p.classList.toggle("active", p.dataset.window === currentWindow));
+render();
+</script>
 </body>
 </html>
