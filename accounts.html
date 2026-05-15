@@ -71,8 +71,8 @@ table{width:100%;border-collapse:collapse;font-size:13px}
 thead th{text-align:left;font-size:11px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;padding:10px 12px;border-bottom:1px solid var(--line)}
 thead th.num{text-align:right}
 tbody td{padding:12px;border-bottom:1px solid var(--line);vertical-align:middle}
-tbody tr{cursor:pointer;transition:background-color .1s ease}
-tbody tr:hover{background:var(--surface-raised)}
+tbody tr.acct-row{cursor:pointer;transition:background-color .1s ease}
+tbody tr.acct-row:hover{background:var(--surface-raised)}
 tbody td.num{text-align:right;font-variant-numeric:tabular-nums}
 .score-cell{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:999px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
 .score-cell-problem{background:rgba(255,59,48,0.1);color:var(--bad);box-shadow:inset 0 0 0 1px rgba(255,59,48,0.2)}
@@ -124,6 +124,7 @@ tbody td.num{text-align:right;font-variant-numeric:tabular-nums}
             <button class="window-pill active" data-window="30d" role="tab">30 days</button>
             <button class="window-pill" data-window="90d" role="tab">90 days</button>
           </div>
+          <span class="badge badge-neutral" title="Skyway OS makes no changes to Google Ads. All actions require operator approval and are performed manually in Google Ads.">🔒 Read-only</span>
           <span class="badge badge-good">Live data</span>
         </div>
       </header>
@@ -222,7 +223,7 @@ function render(){
   document.getElementById("accounts-tbody").innerHTML = rows.map(r => {
     const m = r.m[currentWindow] || {cost:0, conv:0, cpa:null};
     return `
-      <tr data-cust="${esc(r.customer_id)}" onclick="window.location.href='account.html?id='+encodeURIComponent(r.customer_id)" style="cursor:pointer">
+      <tr data-cust="${esc(r.customer_id)}" class="acct-row">
         <td><span class="score-cell score-cell-${r.status}">${r.score}</span></td>
         <td><div style="font-weight:500;color:var(--ink-soft)">${esc(r.name)}</div><div class="account-id">${esc(r.customer_id)}${r.is_lsa ? " · LSA" : ""}</div></td>
         <td><span class="badge badge-${STATUS_TONE[r.status]}">${r.status.replace(/_/g," ")}</span></td>
@@ -233,6 +234,14 @@ function render(){
       </tr>
     `;
   }).join("");
+
+  // Wire row clicks to drill-down page (replaces broken inline onclick that referenced out-of-scope `r`)
+  document.querySelectorAll("#accounts-tbody tr.acct-row").forEach(tr => {
+    tr.addEventListener("click", () => {
+      const id = tr.getAttribute("data-cust");
+      if (id) window.location.href = "account.html?id=" + encodeURIComponent(id);
+    });
+  });
 }
 
 function setWindow(w){
