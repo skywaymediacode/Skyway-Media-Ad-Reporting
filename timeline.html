@@ -28,14 +28,22 @@ input,select{font-family:inherit;font-size:inherit;color:inherit}
 
 .layout{min-height:100vh;display:flex}
 .sidebar{width:240px;flex-shrink:0;padding:24px 16px;display:flex;flex-direction:column;gap:4px}
-.sidebar-logo{display:flex;align-items:center;gap:8px;padding:0 12px;margin-bottom:24px}
+.sidebar-logo{display:flex;align-items:center;gap:8px;padding:0 12px;margin-bottom:16px}
 .sidebar-logo-mark{width:32px;height:32px;border-radius:14px;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:600;font-size:14px}
 .sidebar-logo-name{font-size:14px;font-weight:600;color:var(--ink-soft);line-height:1.2;letter-spacing:-0.01em}
 .sidebar-logo-sub{font-size:11px;color:var(--ink-muted)}
+.platform-switcher{display:flex;gap:4px;padding:3px;background:var(--surface);border-radius:14px;margin:0 4px 16px;border:1px solid var(--line)}
+.platform-pill{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px 10px;border-radius:11px;font-size:12.5px;font-weight:500;color:var(--ink-muted);transition:all .15s ease}
+.platform-pill:hover{color:var(--ink-soft);background:rgba(10,10,10,0.03)}
+.platform-pill.active{background:var(--ink);color:#fff}
+.platform-pill-icon{width:18px;height:18px;border-radius:6px;background:rgba(10,10,10,0.08);display:grid;place-items:center;font-size:10px;font-weight:700;letter-spacing:0;color:var(--ink-muted)}
+.platform-pill.active .platform-pill-icon{background:rgba(255,255,255,0.18);color:#fff}
 .nav{display:flex;flex-direction:column;gap:2px}
 .nav-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:14px;font-size:14px;color:var(--ink-muted);transition:background-color .15s ease,color .15s ease;font-weight:500}
 .nav-item:hover{background:rgba(10,10,10,0.05);color:var(--ink-soft)}
 .nav-item.active{background:var(--ink);color:#fff}
+.nav-item-phase{font-size:10px;text-transform:uppercase;letter-spacing:.05em;padding:2px 6px;border-radius:6px;background:rgba(10,10,10,0.05);color:var(--ink-muted)}
+.nav-item.active .nav-item-phase{background:rgba(255,255,255,0.15);color:#fff}
 .sidebar-footer{margin-top:auto;padding:24px 12px 0;font-size:11px;color:var(--ink-muted);line-height:1.5}
 
 main{flex:1;min-width:0}
@@ -95,20 +103,30 @@ main{flex:1;min-width:0}
       <div class="sidebar-logo-mark">S</div>
       <div>
         <div class="sidebar-logo-name">Skyway OS</div>
-        <div class="sidebar-logo-sub">Internal · v0.2</div>
+        <div class="sidebar-logo-sub">Internal · v0.3</div>
       </div>
     </div>
-    <nav class="nav">
-      <a class="nav-item" href="google.html"><span>Overview</span></a>
-      <a class="nav-item" href="accounts.html"><span>Accounts</span></a>
-      <a class="nav-item active" href="timeline.html"><span>Timeline</span></a>
-      <a class="nav-item" href="reports.html"><span>Reports</span></a>
-      <a class="nav-item" href="approvals.html"><span>Approvals</span><span class="nav-item-phase">W2</span></a>
-      <a class="nav-item" href="settings.html"><span>Settings</span></a>
-    </nav>
-    <div class="sidebar-footer">
-      Read-only mode. No live Google Ads changes are made without operator approval. MCC: analytics@skyway.media.
+
+    <div class="platform-switcher">
+      <a class="platform-pill active" href="google.html" title="Google Ads dashboard">
+        <span class="platform-pill-icon">G</span>
+        <span>Google Ads</span>
+      </a>
+      <a class="platform-pill " href="meta.html" title="Meta Ads dashboard">
+        <span class="platform-pill-icon">M</span>
+        <span>Meta Ads</span>
+      </a>
     </div>
+
+    <nav class="nav">
+      <a class="nav-item " href="google.html"><span>Overview</span></a>
+      <a class="nav-item " href="accounts.html"><span>Accounts</span></a>
+      <a class="nav-item active" href="timeline.html"><span>Timeline</span></a>
+      <a class="nav-item " href="reports.html"><span>Reports</span></a>
+      <a class="nav-item " href="approvals.html"><span>Approvals</span><span class="nav-item-phase">W2</span></a>
+      <a class="nav-item " href="settings.html"><span>Settings</span></a>
+    </nav>
+    <div class="sidebar-footer">Read-only mode. No live ad-account changes are made without operator approval. MCC: analytics@skyway.media · Meta: Sara Rose login.</div>
   </aside>
 
   <main>

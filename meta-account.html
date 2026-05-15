@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Meta Account · Skyway OS</title>
+<style>
+:root{
+  --bg:#f5f5f7;--surface:#ffffff;--surface-raised:#fafafa;--surface-sunken:#f5f5f7;
+  --ink:#0a0a0a;--ink-soft:#1d1d1f;--ink-muted:#6e6e73;--ink-subtle:#86868b;
+  --line:#e5e5ea;
+  --good:#34c759;--warn:#ff9f0a;--bad:#ff3b30;--info:#0a84ff;
+  --accent:#5e5ce6;--accent-soft:#eeeefd;
+  --meta:#0866ff;--meta-soft:#e6f0ff;
+  --shadow-card:0 1px 2px rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'SF Pro Text',-apple-system,BlinkMacSystemFont,'Inter',system-ui,sans-serif;font-feature-settings:"ss01","cv11";-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-size:14px;line-height:1.5}
+h1,h2,h3,h4{font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Inter',system-ui,sans-serif;margin:0}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+.layout{min-height:100vh;display:flex}
+
+.sidebar{width:240px;flex-shrink:0;padding:24px 16px;display:flex;flex-direction:column;gap:4px}
+.sidebar-logo{display:flex;align-items:center;gap:8px;padding:0 12px;margin-bottom:16px}
+.sidebar-logo-mark{width:32px;height:32px;border-radius:14px;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:600;font-size:14px}
+.sidebar-logo-name{font-size:14px;font-weight:600;color:var(--ink-soft);line-height:1.2;letter-spacing:-0.01em}
+.sidebar-logo-sub{font-size:11px;color:var(--ink-muted)}
+
+.platform-switcher{display:flex;gap:4px;padding:3px;background:var(--surface);border-radius:14px;margin:0 4px 16px;border:1px solid var(--line)}
+.platform-pill{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px 10px;border-radius:11px;font-size:12.5px;font-weight:500;color:var(--ink-muted);transition:all .15s ease}
+.platform-pill:hover{color:var(--ink-soft);background:rgba(10,10,10,0.03)}
+.platform-pill.active{background:var(--ink);color:#fff}
+.platform-pill-icon{width:18px;height:18px;border-radius:6px;background:rgba(10,10,10,0.08);display:grid;place-items:center;font-size:10px;font-weight:700;letter-spacing:0;color:var(--ink-muted)}
+.platform-pill.active .platform-pill-icon{background:rgba(255,255,255,0.18);color:#fff}
+
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:14px;font-size:14px;color:var(--ink-muted);transition:background-color .15s ease,color .15s ease;font-weight:500}
+.nav-item:hover{background:rgba(10,10,10,0.05);color:var(--ink-soft)}
+.nav-item.active{background:var(--ink);color:#fff}
+.nav-item-phase{font-size:10px;text-transform:uppercase;letter-spacing:.05em;padding:2px 6px;border-radius:6px;background:rgba(10,10,10,0.05);color:var(--ink-muted)}
+.nav-item.active .nav-item-phase{background:rgba(255,255,255,0.15);color:#fff}
+.sidebar-footer{margin-top:auto;padding:24px 12px 0;font-size:11px;color:var(--ink-muted);line-height:1.5}
+
+main{flex:1;min-width:0}
+.container{max-width:1400px;margin:0 auto;padding:32px}
+
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-muted);margin-bottom:14px}
+.breadcrumb a:hover{color:var(--ink-soft);text-decoration:underline}
+.breadcrumb-sep{color:var(--ink-subtle)}
+
+.acct-header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:20px;flex-wrap:wrap}
+.acct-header-left{flex:1;min-width:0}
+.acct-header h1{font-size:28px;font-weight:600;letter-spacing:-0.02em;color:var(--ink-soft);line-height:1.1}
+.acct-header-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.acct-header-id{font-size:12px;color:var(--ink-muted);font-family:'SF Mono','Monaco',monospace}
+.acct-header-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;flex-shrink:0}
+
+.window-selector{display:inline-flex;gap:2px;padding:3px;background:var(--surface-sunken);border-radius:999px;border:1px solid var(--line)}
+.window-pill{padding:5px 14px;border-radius:999px;font-size:12px;font-weight:500;color:var(--ink-muted);transition:all .15s ease;background:transparent}
+.window-pill:hover{color:var(--ink-soft)}
+.window-pill.active{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,0.06)}
+
+.card{background:var(--surface);border-radius:18px;box-shadow:var(--shadow-card);border:1px solid rgba(229,229,234,0.6);padding:20px}
+
+.section-label{font-size:11px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;margin:24px 0 12px}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.kpi-card{padding:20px}
+.kpi-label{font-size:11px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em}
+.kpi-label-window{color:var(--ink-subtle);font-weight:500}
+.kpi-value{font-family:'SF Pro Display',sans-serif;font-size:28px;font-weight:600;letter-spacing:-0.02em;color:var(--ink-soft);margin-top:6px;line-height:1.05}
+.kpi-hint{font-size:12px;color:var(--ink-muted);margin-top:6px}
+
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:500;box-shadow:inset 0 0 0 1px transparent;white-space:nowrap}
+.badge-good{background:rgba(52,199,89,0.1);color:var(--good);box-shadow:inset 0 0 0 1px rgba(52,199,89,0.2)}
+.badge-warn{background:rgba(255,159,10,0.1);color:var(--warn);box-shadow:inset 0 0 0 1px rgba(255,159,10,0.2)}
+.badge-bad{background:rgba(255,59,48,0.1);color:var(--bad);box-shadow:inset 0 0 0 1px rgba(255,59,48,0.2)}
+.badge-info{background:rgba(10,132,255,0.1);color:var(--info);box-shadow:inset 0 0 0 1px rgba(10,132,255,0.2)}
+.badge-neutral{background:rgba(10,10,10,0.05);color:var(--ink-muted);box-shadow:inset 0 0 0 1px rgba(10,10,10,0.1)}
+.badge-meta{background:var(--meta-soft);color:var(--meta);box-shadow:inset 0 0 0 1px rgba(8,102,255,0.2)}
+
+.score-cell{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:999px;font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+.score-cell-problem{background:rgba(255,59,48,0.1);color:var(--bad);box-shadow:inset 0 0 0 1px rgba(255,59,48,0.2)}
+.score-cell-needs_attention{background:rgba(255,159,10,0.1);color:var(--warn);box-shadow:inset 0 0 0 1px rgba(255,159,10,0.2)}
+.score-cell-good{background:rgba(10,132,255,0.1);color:var(--info);box-shadow:inset 0 0 0 1px rgba(10,132,255,0.2)}
+.score-cell-excellent{background:rgba(52,199,89,0.1);color:var(--good);box-shadow:inset 0 0 0 1px rgba(52,199,89,0.2)}
+.score-cell-tracking_gap{background:rgba(255,159,10,0.15);color:var(--warn);box-shadow:inset 0 0 0 1px rgba(255,159,10,0.3)}
+.score-cell-dormant{background:rgba(10,10,10,0.05);color:var(--ink-subtle);box-shadow:inset 0 0 0 1px rgba(10,10,10,0.1)}
+
+.quick-action-btn{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-size:13px;color:var(--ink-soft);width:100%;text-align:left;transition:all .15s ease;margin-bottom:8px}
+.quick-action-btn:hover{background:var(--surface-raised);border-color:var(--ink-subtle)}
+.quick-action-arrow{color:var(--ink-subtle);font-size:14px}
+
+.empty-section{padding:40px 24px;text-align:center;color:var(--ink-muted);font-size:13.5px;line-height:1.6}
+.empty-section-icon{font-size:24px;color:var(--ink-subtle);margin-bottom:6px}
+
+.tracking-callout{background:rgba(255,159,10,0.08);border:1px solid rgba(255,159,10,0.25);border-radius:14px;padding:14px 18px;margin-bottom:24px}
+.tracking-callout-title{font-size:14px;font-weight:600;color:#a26500;margin-bottom:4px}
+.tracking-callout-body{font-size:13px;color:var(--ink-soft);line-height:1.5}
+
+@media (max-width:1024px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:768px){
+  .sidebar{display:none}
+  .container{padding:20px}
+  .acct-header h1{font-size:22px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-mark">S</div>
+      <div>
+        <div class="sidebar-logo-name">Skyway OS</div>
+        <div class="sidebar-logo-sub">Internal · v0.3</div>
+      </div>
+    </div>
+
+    <div class="platform-switcher">
+      <a class="platform-pill " href="google.html" title="Google Ads dashboard">
+        <span class="platform-pill-icon">G</span>
+        <span>Google Ads</span>
+      </a>
+      <a class="platform-pill active" href="meta.html" title="Meta Ads dashboard">
+        <span class="platform-pill-icon">M</span>
+        <span>Meta Ads</span>
+      </a>
+    </div>
+
+    <nav class="nav">
+      <a class="nav-item " href="meta.html"><span>Overview</span></a>
+      <a class="nav-item active" href="meta-accounts.html"><span>Accounts</span></a>
+      <a class="nav-item " href="timeline.html"><span>Timeline</span></a>
+      <a class="nav-item " href="reports.html"><span>Reports</span></a>
+      <a class="nav-item " href="approvals.html"><span>Approvals</span><span class="nav-item-phase">W2</span></a>
+      <a class="nav-item " href="settings.html"><span>Settings</span></a>
+    </nav>
+    <div class="sidebar-footer">Read-only mode. No live ad-account changes are made without operator approval. MCC: analytics@skyway.media · Meta: Sara Rose login.</div>
+  </aside>
+  <main>
+    <div class="container" id="container">
+      <!-- Rendered by JS -->
+    </div>
+  </main>
+</div>
+
+<script>
+const DATA = {"accounts":{"11198637":{"customer_id":"11198637","name":"Sara Rose Ads","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"74830341":{"customer_id":"74830341","name":"Jonathan Greye","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"10153909615245235":{"customer_id":"10153909615245235","name":"Imagine Home Organization","score":30,"status":"tracking_gap","spend_90d":691.02,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":108.5,"conv":0,"cpa":null,"clicks":431,"impr":10031},"30d":{"cost":270.54,"conv":0,"cpa":null,"clicks":698,"impr":25477},"90d":{"cost":691.02,"conv":0,"cpa":null,"clicks":1554,"impr":72273}}},"10100653332448629":{"customer_id":"10100653332448629","name":"Dollylocks","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"588399047928850":{"customer_id":"588399047928850","name":"Michael's Health Ad Account","score":72,"status":"good","spend_90d":3378.43,"conv_90d":36,"real_conv_90d":36,"cpa_90d":93.84527777777777,"leads_90d":0,"purch_90d":36,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":1107.29,"conv":24,"cpa":46.13708333333333,"clicks":1146,"impr":55354},"90d":{"cost":3378.43,"conv":36,"cpa":93.84527777777777,"clicks":3620,"impr":213609}}},"2068064716556613":{"customer_id":"2068064716556613","name":"Mike Sapienza","score":null,"status":"dormant","spend_90d":0.88,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0.88,"conv":0,"cpa":null,"clicks":13,"impr":433}}},"304330310171667":{"customer_id":"304330310171667","name":"Sara Rose","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"802027893484504":{"customer_id":"802027893484504","name":"House Buyers FL","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"2258459771150395":{"customer_id":"2258459771150395","name":"Brainman Entertainment","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"678567855931101":{"customer_id":"678567855931101","name":"Alto Mare","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"333458660541451":{"customer_id":"333458660541451","name":"Ethos Risk Services","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"2612303518779893":{"customer_id":"2612303518779893","name":"FuzzMMS","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"977168719294169":{"customer_id":"977168719294169","name":"Pearly Dog Ads","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"448235462704013":{"customer_id":"448235462704013","name":"DVM Bookkeeping Plus","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"290948805282504":{"customer_id":"290948805282504","name":"Britelites Color","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"138855850965509":{"customer_id":"138855850965509","name":"Beach Brain","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"3221766721483638":{"customer_id":"3221766721483638","name":"GMX7 (02)","score":85,"status":"excellent","spend_90d":71.86,"conv_90d":20,"real_conv_90d":0,"cpa_90d":3.593,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":71.86,"conv":20,"cpa":3.593,"clicks":122,"impr":2336},"30d":{"cost":71.86,"conv":20,"cpa":3.593,"clicks":122,"impr":2336},"90d":{"cost":71.86,"conv":20,"cpa":3.593,"clicks":122,"impr":2336}}},"751074779861391":{"customer_id":"751074779861391","name":"Door & Co 1","score":35,"status":"problem","spend_90d":1851.61,"conv_90d":1,"real_conv_90d":1,"cpa_90d":1851.61,"leads_90d":1,"purch_90d":0,"m":{"7d":{"cost":55.45,"conv":0,"cpa":null,"clicks":56,"impr":8267},"30d":{"cost":511.78,"conv":0,"cpa":null,"clicks":475,"impr":83922},"90d":{"cost":1851.61,"conv":1,"cpa":1851.61,"clicks":1911,"impr":270060}}},"461582549558217":{"customer_id":"461582549558217","name":"Lauries Love","score":30,"status":"tracking_gap","spend_90d":1262.86,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":250.28,"conv":0,"cpa":null,"clicks":447,"impr":172947},"30d":{"cost":995.47,"conv":0,"cpa":null,"clicks":1679,"impr":869449},"90d":{"cost":1262.86,"conv":0,"cpa":null,"clicks":2769,"impr":925222}}},"1486921958587099":{"customer_id":"1486921958587099","name":"Skyway Media Ad Account","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"1422864024995223":{"customer_id":"1422864024995223","name":"Shattered Glass DIY SRQ","score":85,"status":"excellent","spend_90d":4085.62,"conv_90d":153,"real_conv_90d":153,"cpa_90d":26.703398692810456,"leads_90d":9,"purch_90d":144,"m":{"7d":{"cost":331.92,"conv":9,"cpa":36.88,"clicks":1549,"impr":50773},"30d":{"cost":1734.4,"conv":48,"cpa":36.13333333333333,"clicks":7956,"impr":270914},"90d":{"cost":4085.62,"conv":153,"cpa":26.703398692810456,"clicks":21806,"impr":714522}}},"610271818554318":{"customer_id":"610271818554318","name":"Shattered Glass DIY St. Pete Beach Ad Account","score":85,"status":"excellent","spend_90d":8756.84,"conv_90d":303,"real_conv_90d":303,"cpa_90d":28.90046204620462,"leads_90d":0,"purch_90d":303,"m":{"7d":{"cost":720.3,"conv":12,"cpa":60.025,"clicks":2021,"impr":60513},"30d":{"cost":2770.43,"conv":96,"cpa":28.85864583333333,"clicks":9030,"impr":218073},"90d":{"cost":8756.84,"conv":303,"cpa":28.90046204620462,"clicks":32492,"impr":1060817}}},"1817071415746002":{"customer_id":"1817071415746002","name":"Elevate You","score":35,"status":"problem","spend_90d":11451.54,"conv_90d":10,"real_conv_90d":10,"cpa_90d":1145.154,"leads_90d":10,"purch_90d":0,"m":{"7d":{"cost":1279.95,"conv":4,"cpa":319.9875,"clicks":2391,"impr":99664},"30d":{"cost":3020.87,"conv":6,"cpa":503.4783333333333,"clicks":5728,"impr":244434},"90d":{"cost":11451.54,"conv":10,"cpa":1145.154,"clicks":15949,"impr":751711}}},"1374179246812994":{"customer_id":"1374179246812994","name":"Dayton Weight loss Secret","score":72,"status":"good","spend_90d":9120.56,"conv_90d":131,"real_conv_90d":131,"cpa_90d":69.62259541984733,"leads_90d":131,"purch_90d":0,"m":{"7d":{"cost":870.68,"conv":4,"cpa":217.67,"clicks":489,"impr":18066},"30d":{"cost":1975.9,"conv":6,"cpa":329.31666666666666,"clicks":1356,"impr":46399},"90d":{"cost":9120.56,"conv":131,"cpa":69.62259541984733,"clicks":8406,"impr":228204}}},"1717152123019764":{"customer_id":"1717152123019764","name":"Gulf Stream Boat Club","score":85,"status":"excellent","spend_90d":35883.73,"conv_90d":1786,"real_conv_90d":1786,"cpa_90d":20.09167413213886,"leads_90d":1786,"purch_90d":0,"m":{"7d":{"cost":1592.82,"conv":67,"cpa":23.773432835820895,"clicks":3369,"impr":99160},"30d":{"cost":7135.11,"conv":295,"cpa":24.186813559322033,"clicks":14194,"impr":448503},"90d":{"cost":35883.73,"conv":1786,"cpa":20.09167413213886,"clicks":71872,"impr":2272392}}},"1749336399009315":{"customer_id":"1749336399009315","name":"Toledo Weight Loss Secret","score":30,"status":"tracking_gap","spend_90d":1790.51,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":132.83,"conv":0,"cpa":null,"clicks":15,"impr":7558},"30d":{"cost":589.86,"conv":0,"cpa":null,"clicks":75,"impr":36098},"90d":{"cost":1790.51,"conv":0,"cpa":null,"clicks":429,"impr":117854}}},"795645873022538":{"customer_id":"795645873022538","name":"Adirondack Furniture","score":72,"status":"good","spend_90d":4411.5,"conv_90d":146,"real_conv_90d":146,"cpa_90d":30.215753424657535,"leads_90d":146,"purch_90d":0,"m":{"7d":{"cost":98.82,"conv":6,"cpa":16.47,"clicks":359,"impr":9624},"30d":{"cost":1221.52,"conv":37,"cpa":33.01405405405406,"clicks":2987,"impr":177817},"90d":{"cost":4411.5,"conv":146,"cpa":30.215753424657535,"clicks":12107,"impr":694269}}},"1123419839873925":{"customer_id":"1123419839873925","name":"Entry Co 1","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"1611752023504499":{"customer_id":"1611752023504499","name":"CUTA New","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"1646045113313106":{"customer_id":"1646045113313106","name":"Convert Wellness","score":null,"status":"dormant","spend_90d":0,"conv_90d":0,"real_conv_90d":0,"cpa_90d":null,"leads_90d":0,"purch_90d":0,"m":{"7d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"30d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0},"90d":{"cost":0,"conv":0,"cpa":null,"clicks":0,"impr":0}}},"2370933450049492":{"customer_id":"2370933450049492","name":"Delta Construction Partners","score":55,"status":"needs_attention","spend_90d":336.38,"conv_90d":3,"real_conv_90d":3,"cpa_90d":112.12666666666667,"leads_90d":3,"purch_90d":0,"m":{"7d":{"cost":333.97,"conv":3,"cpa":111.32333333333334,"clicks":934,"impr":51475},"30d":{"cost":336.38,"conv":3,"cpa":112.12666666666667,"clicks":943,"impr":51778},"90d":{"cost":336.38,"conv":3,"cpa":112.12666666666667,"clicks":943,"impr":51778}}}}};
+const STATUS_TONE = {problem:"bad",needs_attention:"warn",good:"info",excellent:"good",tracking_gap:"warn",dormant:"neutral"};
+const WINDOW_LABELS = {"7d":"7d","30d":"30d","90d":"90d"};
+const STORAGE_KEY = "skyway_window";
+
+function esc(s){if(s==null)return"";return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function money(n,c){return new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:c?2:0,maximumFractionDigits:c?2:0}).format(n||0)}
+function num(n){return new Intl.NumberFormat("en-US").format(Math.round(n||0))}
+function getQueryParam(name){return new URLSearchParams(window.location.search).get(name)}
+
+let currentWindow = "30d";
+try{
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved && (saved === "7d" || saved === "30d" || saved === "90d")) currentWindow = saved;
+} catch(e) {}
+
+const acctId = getQueryParam("id");
+const account = acctId ? DATA.accounts[acctId] : null;
+
+if (!account) {
+  document.getElementById("container").innerHTML = `
+    <div class="breadcrumb">
+      <a href="meta-accounts.html">Meta Accounts</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Not found</span>
+    </div>
+    <div class="card empty-section">
+      <div class="empty-section-icon">⊙</div>
+      <div><strong>Account not found.</strong></div>
+      <div style="margin-top:6px">${acctId ? "No Meta account with ID <strong>" + esc(acctId) + "</strong>." : "No account ID provided in the URL."}</div>
+      <div style="margin-top:14px"><a href="meta-accounts.html" style="color:var(--info)">← Back to all Meta accounts</a></div>
+    </div>
+  `;
+} else {
+  renderAccount();
+}
+
+function renderAccount() {
+  const a = account;
+  const isTrackingGap = a.status === "tracking_gap";
+  const isDormant = a.status === "dormant";
+
+  document.getElementById("container").innerHTML = `
+    <div class="breadcrumb">
+      <a href="meta-accounts.html">Meta Accounts</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>${esc(a.name)}</span>
+    </div>
+
+    <div class="acct-header">
+      <div class="acct-header-left">
+        <h1>${esc(a.name)}</h1>
+        <div class="acct-header-chips">
+          <span class="acct-header-id">act_${esc(a.customer_id)}</span>
+          <span class="badge badge-${STATUS_TONE[a.status]}">${a.status.replace(/_/g, " ")}</span>
+          <span class="badge badge-meta">Meta Ads</span>
+        </div>
+      </div>
+      <div class="acct-header-right">
+        <div style="display:flex;align-items:center;gap:14px">
+          <span class="score-cell score-cell-${a.status}">${a.score != null ? a.score : "—"}</span>
+          <div style="text-align:right">
+            <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Score</div>
+            <div style="font-size:11px;color:var(--ink-muted);margin-top:2px">${isDormant ? "no spend in 90d" : "V1 simplified"}</div>
+          </div>
+        </div>
+        <div class="window-selector" id="window-selector">
+          <button class="window-pill" data-window="7d">7 days</button>
+          <button class="window-pill" data-window="30d">30 days</button>
+          <button class="window-pill" data-window="90d">90 days</button>
+        </div>
+        <span class="badge badge-neutral" title="Skyway OS makes no changes to Meta Ads. All actions require operator approval and are performed manually." style="font-size:11px">🔒 Read-only · changes require approval</span>
+      </div>
+    </div>
+
+    ${isTrackingGap ? `
+      <div class="tracking-callout">
+        <div class="tracking-callout-title">⚠ Tracking gap detected</div>
+        <div class="tracking-callout-body">This account has spent <strong>${money(a.spend_90d)}</strong> over 90 days with <strong>zero attributed leads or purchases</strong>. Almost certainly the Meta pixel isn't firing correctly on the conversion event. Until tracking is verified, CPA-based decisions in this account aren't meaningful.</div>
+      </div>
+    ` : ""}
+
+    <div class="kpi-grid">
+      <div class="card kpi-card">
+        <div class="kpi-label">Spend · <span class="kpi-label-window" id="lbl-spend">${WINDOW_LABELS[currentWindow]}</span></div>
+        <div class="kpi-value" id="kpi-spend">—</div>
+        <div class="kpi-hint" id="kpi-spend-hint">—</div>
+      </div>
+      <div class="card kpi-card">
+        <div class="kpi-label">All conversions · <span class="kpi-label-window" id="lbl-conv">${WINDOW_LABELS[currentWindow]}</span></div>
+        <div class="kpi-value" id="kpi-conv">—</div>
+        <div class="kpi-hint" id="kpi-conv-hint">Includes view-content + page events</div>
+      </div>
+      <div class="card kpi-card">
+        <div class="kpi-label">CPA · <span class="kpi-label-window" id="lbl-cpa">${WINDOW_LABELS[currentWindow]}</span></div>
+        <div class="kpi-value" id="kpi-cpa">—</div>
+        <div class="kpi-hint" id="kpi-cpa-hint">All conv basis</div>
+      </div>
+      <div class="card kpi-card">
+        <div class="kpi-label">Leads + Purchases · <span class="kpi-label-window">90d</span></div>
+        <div class="kpi-value">${a.real_conv_90d > 0 ? num(a.real_conv_90d) : "0"}</div>
+        <div class="kpi-hint">${(a.leads_90d || 0) > 0 ? num(a.leads_90d) + " leads · " : ""}${(a.purch_90d || 0) > 0 ? num(a.purch_90d) + " purchases" : ((a.leads_90d || 0) === 0 ? "no real conv events" : "")}</div>
+      </div>
+    </div>
+
+    <div class="section-label">Quick actions</div>
+    <div class="card">
+      <a class="quick-action-btn" href="https://business.facebook.com/adsmanager/manage/campaigns?act=${a.customer_id}" target="_blank">
+        <span>Open account in Meta Ads Manager</span>
+        <span class="quick-action-arrow">↗</span>
+      </a>
+      <a class="quick-action-btn" href="https://business.facebook.com/events_manager2/list/pixel?act=${a.customer_id}" target="_blank">
+        <span>Open Events Manager (verify pixel + conversions)</span>
+        <span class="quick-action-arrow">↗</span>
+      </a>
+      <a class="quick-action-btn" href="https://business.facebook.com/ads/manager/audiences/manage/?act=${a.customer_id}" target="_blank">
+        <span>Audiences</span>
+        <span class="quick-action-arrow">↗</span>
+      </a>
+      <a class="quick-action-btn" href="https://business.facebook.com/adsmanager/manage/billing?act=${a.customer_id}" target="_blank">
+        <span>Billing &amp; payment</span>
+        <span class="quick-action-arrow">↗</span>
+      </a>
+    </div>
+
+    <div class="section-label">AI recommendations</div>
+    <div class="card empty-section">
+      <div class="empty-section-icon">⊙</div>
+      <div><strong>Pending Meta fanout.</strong></div>
+      <div style="margin-top:6px;font-size:12px">Meta integration just landed (V1). Full multi-window WoW scoring engine + AI rec fanout is the next major iteration. For now, this drill-down shows aggregate data and the tracking-gap diagnostic.</div>
+    </div>
+  `;
+
+  document.querySelectorAll(".window-pill").forEach(p => {
+    p.classList.toggle("active", p.dataset.window === currentWindow);
+    p.addEventListener("click", () => setWindow(p.dataset.window));
+  });
+
+  renderKPIs();
+}
+
+function renderKPIs() {
+  if (!account) return;
+  const m = account.m[currentWindow] || {cost:0, conv:0, cpa:null, clicks:0, impr:0};
+  const wl = WINDOW_LABELS[currentWindow];
+  document.getElementById("lbl-spend").textContent = wl;
+  document.getElementById("lbl-conv").textContent = wl;
+  document.getElementById("lbl-cpa").textContent = wl;
+  document.getElementById("kpi-spend").textContent = m.cost > 0 ? money(m.cost) : "—";
+  document.getElementById("kpi-spend-hint").textContent = m.clicks > 0 ? num(m.clicks) + " clicks · " + num(m.impr) + " impr" : "No spend in window";
+  document.getElementById("kpi-conv").textContent = m.conv > 0 ? num(m.conv) : "—";
+  document.getElementById("kpi-cpa").textContent = m.cpa != null ? money(m.cpa, true) : "—";
+}
+
+function setWindow(w) {
+  currentWindow = w;
+  try { localStorage.setItem(STORAGE_KEY, w); } catch(e) {}
+  document.querySelectorAll(".window-pill").forEach(p => p.classList.toggle("active", p.dataset.window === w));
+  renderKPIs();
+}
+</script>
+</body>
+</html>
