@@ -124,7 +124,7 @@ main{flex:1;min-width:0}
       <a class="nav-item " href="accounts.html"><span>Accounts</span></a>
       <a class="nav-item " href="timeline.html"><span>Timeline</span></a>
       <a class="nav-item " href="reports.html"><span>Reports</span></a>
-      <a class="nav-item " href="approvals.html"><span>Approvals</span><span class="nav-item-phase">W2</span></a>
+      <a class="nav-item " href="approvals.html"><span>Approvals</span></a>
       <a class="nav-item active" href="settings.html"><span>Settings</span></a>
     </nav>
     <div class="sidebar-footer">Read-only mode. No live ad-account changes are made without operator approval. MCC: analytics@skyway.media · Meta: Sara Rose login.</div>
@@ -451,7 +451,11 @@ function generateSyncPrompt() {
 function renderStateStats() {
   const state = skyLoad(SKY_REC_STATE_KEY, "{}");
   const counts = { done: 0, approved: 0, rejected: 0 };
-  Object.values(state).forEach(v => { if (counts.hasOwnProperty(v)) counts[v]++; });
+  // approvals.html stores entries as { state: "approved" | "done" | "rejected", ts: "..." }
+  Object.values(state).forEach(v => {
+    const s = v && typeof v === "object" ? v.state : v;
+    if (counts.hasOwnProperty(s)) counts[s]++;
+  });
   const total = counts.done + counts.approved + counts.rejected;
   const tile = (label, value, tone) => `
     <div>
@@ -473,9 +477,13 @@ function renderStateStats() {
 
 function exportStateCSV() {
   const state = skyLoad(SKY_REC_STATE_KEY, "{}");
-  const rows = [["rec_id", "state", "exported_at"]];
+  const rows = [["rec_id", "state", "marked_at", "exported_at"]];
   const now = new Date().toISOString();
-  Object.entries(state).forEach(([k, v]) => rows.push([k, v, now]));
+  Object.entries(state).forEach(([k, v]) => {
+    const s = v && typeof v === "object" ? v.state : v;
+    const ts = v && typeof v === "object" ? (v.ts || "") : "";
+    rows.push([k, s, ts, now]);
+  });
   if (rows.length === 1) { skyToast("Nothing to export"); return; }
   const csv = rows.map(r => r.map(c => /[,"\n]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c).join(",")).join("\n");
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });

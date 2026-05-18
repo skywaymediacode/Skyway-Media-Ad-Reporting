@@ -127,8 +127,8 @@ main{flex:1;min-width:0}
 .action-btn{font-size:12px;padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);cursor:pointer;font-family:inherit;font-weight:500;transition:all .12s ease}
 .action-btn:hover{background:var(--surface-raised);border-color:var(--ink-subtle)}
 .action-btn.active[data-action="done"]{background:var(--google-soft);border-color:var(--good);color:#1d6c3a}
-.action-btn.active[data-action="approve"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
-.action-btn.active[data-action="reject"]{background:#f2f2f2;border-color:var(--ink-subtle);color:var(--ink-muted)}
+.action-btn.active[data-action="approved"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.action-btn.active[data-action="rejected"]{background:#f2f2f2;border-color:var(--ink-subtle);color:var(--ink-muted)}
 .action-state-label{font-size:11px;color:var(--ink-muted);margin-left:auto}
 .queue-item.state-done{opacity:0.5}
 .queue-item.state-done .queue-item-title{text-decoration:line-through;text-decoration-color:var(--ink-subtle)}
@@ -186,7 +186,7 @@ main{flex:1;min-width:0}
       <a class="nav-item " href="accounts.html"><span>Accounts</span></a>
       <a class="nav-item " href="timeline.html"><span>Timeline</span></a>
       <a class="nav-item " href="reports.html"><span>Reports</span></a>
-      <a class="nav-item active" href="approvals.html"><span>Approvals</span><span class="nav-item-phase">W2</span></a>
+      <a class="nav-item active" href="approvals.html"><span>Approvals</span></a>
       <a class="nav-item " href="settings.html"><span>Settings</span></a>
     </nav>
     <div class="sidebar-footer">Read-only mode. No live ad-account changes are made without operator approval. MCC: analytics@skyway.media · Meta: Sara Rose login.</div>
@@ -472,9 +472,9 @@ function renderQueueItem(item, isHeld) {
   // Action buttons — only on actionable items, not on held/monitor_no_action
   const actions = isHeld ? "" : `
       <div class="queue-actions" onclick="event.stopPropagation()">
-        <button class="action-btn${state === "approve" ? " active" : ""}" data-action="approve" data-rec-id="${esc(item.id)}">Approve</button>
+        <button class="action-btn${state === "approved" ? " active" : ""}" data-action="approved" data-rec-id="${esc(item.id)}">Approve</button>
         <button class="action-btn${state === "done" ? " active" : ""}" data-action="done" data-rec-id="${esc(item.id)}">Mark done</button>
-        <button class="action-btn${state === "reject" ? " active" : ""}" data-action="reject" data-rec-id="${esc(item.id)}">Reject</button>
+        <button class="action-btn${state === "rejected" ? " active" : ""}" data-action="rejected" data-rec-id="${esc(item.id)}">Reject</button>
         ${state ? '<span class="action-state-label">marked ' + esc(state) + '</span>' : ''}
       </div>`;
   return `
@@ -519,10 +519,14 @@ document.getElementById("held-toggle").addEventListener("click", () => {
 
 // Action button event delegation — Approve / Mark done / Reject.
 // Clicking the active state again clears it. State persists in localStorage.
+// CAPTURE PHASE is required here: the parent .queue-actions div has an
+// inline onclick="event.stopPropagation()" (so action-button clicks don't
+// trigger the queue-item navigation). That stopPropagation also blocks
+// bubble-phase document handlers — so we register in the capture phase,
+// which fires before the bubble path reaches the inline handler.
 document.addEventListener("click", (e) => {
   const btn = e.target.closest(".action-btn");
   if (!btn) return;
-  e.stopPropagation();
   const recId = btn.getAttribute("data-rec-id");
   const action = btn.getAttribute("data-action");
   if (!recId || !action) return;
@@ -530,7 +534,8 @@ document.addEventListener("click", (e) => {
   const next = (current === action) ? null : action;
   setState(recId, next);
   renderQueue();
-});
+  renderStateSummary();
+}, true);
 
 // Platform context — read localStorage and adjust sidebar pills + links.
 // Defaults to "google" when no context is set. Saved on accounts.html / meta-accounts.html load.
