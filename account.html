@@ -146,6 +146,42 @@ main{flex:1;min-width:0}
   .container{padding:20px}
   .acct-header h1{font-size:22px}
 }
+
+
+/* Notes + Recipients UI (audit response — Claude #5, #4) */
+.ops-section{margin-top:24px}
+.ops-card{background:var(--surface);border-radius:18px;border:1px solid var(--line);padding:20px}
+.ops-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.ops-card-title{font-size:14px;font-weight:600;color:var(--ink-soft);letter-spacing:-0.01em}
+.ops-card-sub{font-size:12px;color:var(--ink-muted);margin-top:2px}
+.ops-card-meta{font-size:11px;color:var(--ink-muted);display:flex;gap:8px;align-items:center}
+.ops-unsaved-dot{width:7px;height:7px;border-radius:50%;background:var(--warn);display:inline-block}
+.ops-form{display:flex;gap:8px;align-items:flex-start}
+.ops-input{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13px;font-family:inherit;color:var(--ink);background:var(--surface-raised);outline:none;transition:border-color .15s}
+.ops-input:focus{border-color:var(--accent)}
+.ops-textarea{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;font-family:inherit;color:var(--ink);background:var(--surface-raised);outline:none;min-height:64px;resize:vertical;line-height:1.5;transition:border-color .15s}
+.ops-textarea:focus{border-color:var(--accent)}
+.ops-btn{padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface-raised);color:var(--ink-soft);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
+.ops-btn:hover{border-color:var(--ink-subtle);color:var(--ink)}
+.ops-btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.ops-btn-primary:hover{background:var(--accent);border-color:var(--accent);opacity:0.9;color:#fff}
+.ops-btn-danger{color:var(--bad)}
+.ops-btn-danger:hover{border-color:var(--bad);color:var(--bad)}
+.ops-btn-sm{padding:5px 10px;font-size:12px}
+.ops-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.ops-list-empty{font-size:13px;color:var(--ink-muted);padding:14px;text-align:center;background:var(--surface-raised);border-radius:10px}
+.ops-note{padding:12px 14px;background:var(--surface-raised);border-radius:12px;border:1px solid var(--line)}
+.ops-note-meta{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--ink-muted);margin-bottom:6px;gap:8px}
+.ops-note-time{display:flex;align-items:center;gap:6px}
+.ops-note-text{font-size:13px;line-height:1.5;color:var(--ink-soft);white-space:pre-wrap;word-break:break-word}
+.ops-note.is-unsaved{border-color:rgba(255,159,10,0.4);background:rgba(255,159,10,0.04)}
+.ops-recipient{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface-raised);border-radius:10px;border:1px solid var(--line);gap:10px}
+.ops-recipient.is-unsaved{border-color:rgba(255,159,10,0.4)}
+.ops-recipient-email{font-size:13px;color:var(--ink-soft);font-family:'SF Mono','Monaco',monospace;word-break:break-all}
+.ops-sync-banner{display:none;margin-top:14px;padding:10px 14px;background:rgba(255,159,10,0.08);border:1px solid rgba(255,159,10,0.25);border-radius:10px;font-size:12px;color:#a26500;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ops-sync-banner.is-active{display:flex}
+.ops-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);padding:12px 18px;background:var(--ink);color:#fff;border-radius:12px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:all .2s;z-index:1000;box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+.ops-toast.is-shown{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
@@ -426,6 +462,44 @@ function renderAccount() {
       </div>
     `}
 
+
+    <div class="ops-section">
+      <div class="section-label">Operator notes <span class="section-label-count" id="notes-count">0</span></div>
+      <div class="ops-card">
+        <div class="ops-card-header">
+          <div>
+            <div class="ops-card-title">Add a note to this account's audit trail</div>
+            <div class="ops-card-sub">Saved instantly to your browser. Use "Sync to Drive" in Settings to push to the team.</div>
+          </div>
+        </div>
+        <div class="ops-form">
+          <textarea class="ops-textarea" id="note-input" placeholder="What did you see? e.g. 'Client confirmed Lauries Love is a Grants account — call scheduled Thursday 10am.'"></textarea>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="ops-btn ops-btn-primary" id="note-add-btn">Add note</button>
+          <button class="ops-btn" id="note-clear-btn" type="button">Clear</button>
+        </div>
+        <div class="ops-list" id="notes-list"></div>
+      </div>
+    </div>
+
+    <div class="ops-section">
+      <div class="section-label">Report recipients <span class="section-label-count" id="recipients-count">0</span></div>
+      <div class="ops-card">
+        <div class="ops-card-header">
+          <div>
+            <div class="ops-card-title">Who gets this account's weekly report</div>
+            <div class="ops-card-sub">Stored locally until you sync. The weekly-report send pipeline isn't live yet — these are for the cutover.</div>
+          </div>
+        </div>
+        <div class="ops-form">
+          <input type="email" class="ops-input" id="recipient-input" placeholder="client@example.com" />
+          <button class="ops-btn ops-btn-primary" id="recipient-add-btn">Add</button>
+        </div>
+        <div class="ops-list" id="recipients-list"></div>
+      </div>
+    </div>
+
   `;
 
   // Build factor grid
@@ -464,6 +538,9 @@ function renderAccount() {
   renderKPIs();
 }
 
+  try { skyMountOps("google", account.customer_id, account.account_name); }
+  catch(e) { console.error("ops mount failed", e); }
+
 function renderKPIs() {
   if (!account) return;
   const m = account.m[currentWindow] || {cost:0, conv:0, cpa:null, clicks:0, convVal:0};
@@ -491,6 +568,191 @@ function setWindow(w) {
   try{ localStorage.setItem(STORAGE_KEY, w); }catch(e){}
   document.querySelectorAll(".window-pill").forEach(p => p.classList.toggle("active", p.dataset.window === w));
   renderKPIs();
+}
+
+
+// ============================================================
+// Notes + Recipients module (audit response — Claude #5, #4)
+// Stored in localStorage keyed by ${platform}_${customer_id}.
+// Each note/recipient has a `synced` bool: false = pending sync to Drive.
+// Sync UX lives on settings.html — copy-prompt-to-Claude pattern.
+// ============================================================
+const SKY_NOTES_KEY = "skyway.notes.v1";
+const SKY_RECIPIENTS_KEY = "skyway.recipients.v1";
+
+function skyLoadAll(key) {
+  try { return JSON.parse(localStorage.getItem(key) || "[]"); }
+  catch(e) { return []; }
+}
+function skySaveAll(key, arr) {
+  try { localStorage.setItem(key, JSON.stringify(arr)); } catch(e) {}
+}
+function skyFmtTime(iso) {
+  try {
+    const d = new Date(iso);
+    const now = new Date();
+    const sameDay = d.toDateString() === now.toDateString();
+    const opts = sameDay
+      ? { hour: "numeric", minute: "2-digit" }
+      : { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" };
+    return d.toLocaleString(undefined, opts);
+  } catch(e) { return iso; }
+}
+function skyToast(msg) {
+  let t = document.getElementById("ops-toast");
+  if (!t) {
+    t = document.createElement("div");
+    t.id = "ops-toast";
+    t.className = "ops-toast";
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.classList.add("is-shown");
+  clearTimeout(window._skyToastTimer);
+  window._skyToastTimer = setTimeout(() => t.classList.remove("is-shown"), 2200);
+}
+
+function skyMountOps(platform, customerId, accountName) {
+  if (!platform || !customerId) return;
+
+  // ---------- Notes ----------
+  function renderNotes() {
+    const all = skyLoadAll(SKY_NOTES_KEY);
+    const mine = all.filter(n => n.account_id === customerId && n.platform === platform);
+    mine.sort((a, b) => (b.created_at || "").localeCompare(a.created_at || ""));
+    const countEl = document.getElementById("notes-count");
+    if (countEl) countEl.textContent = String(mine.length);
+    const listEl = document.getElementById("notes-list");
+    if (!listEl) return;
+    if (mine.length === 0) {
+      listEl.innerHTML = '<div class="ops-list-empty">No notes yet. Add one above.</div>';
+      return;
+    }
+    listEl.innerHTML = mine.map(n => `
+      <div class="ops-note${n.synced ? "" : " is-unsaved"}">
+        <div class="ops-note-meta">
+          <div class="ops-note-time">
+            ${n.synced ? "" : '<span class="ops-unsaved-dot" title="Not yet saved to Drive"></span>'}
+            <span>${esc(skyFmtTime(n.created_at))}</span>
+          </div>
+          <button class="ops-btn ops-btn-sm ops-btn-danger" data-note-del="${esc(n.id)}">Delete</button>
+        </div>
+        <div class="ops-note-text">${esc(n.text)}</div>
+      </div>
+    `).join("");
+    listEl.querySelectorAll("[data-note-del]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-note-del");
+        const arr = skyLoadAll(SKY_NOTES_KEY);
+        const next = arr.filter(n => n.id !== id);
+        skySaveAll(SKY_NOTES_KEY, next);
+        renderNotes();
+        skyToast("Note deleted");
+      });
+    });
+  }
+  const noteInput = document.getElementById("note-input");
+  const noteAdd = document.getElementById("note-add-btn");
+  const noteClear = document.getElementById("note-clear-btn");
+  if (noteAdd) {
+    noteAdd.addEventListener("click", () => {
+      const text = (noteInput.value || "").trim();
+      if (!text) { noteInput.focus(); return; }
+      const arr = skyLoadAll(SKY_NOTES_KEY);
+      const note = {
+        id: "note_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8),
+        account_id: customerId,
+        platform: platform,
+        account_name: accountName || customerId,
+        text: text,
+        created_at: new Date().toISOString(),
+        created_by: "Aaron Pilk",
+        synced: false
+      };
+      arr.push(note);
+      skySaveAll(SKY_NOTES_KEY, arr);
+      noteInput.value = "";
+      renderNotes();
+      skyToast("Note saved locally · sync from Settings");
+    });
+  }
+  if (noteClear) noteClear.addEventListener("click", () => { noteInput.value = ""; });
+  renderNotes();
+
+  // ---------- Recipients ----------
+  function renderRecipients() {
+    const all = skyLoadAll(SKY_RECIPIENTS_KEY);
+    const mine = all.find(r => r.account_id === customerId && r.platform === platform);
+    const emails = (mine && Array.isArray(mine.recipients)) ? mine.recipients : [];
+    const isUnsaved = mine && mine.synced === false;
+    const countEl = document.getElementById("recipients-count");
+    if (countEl) countEl.textContent = String(emails.length);
+    const listEl = document.getElementById("recipients-list");
+    if (!listEl) return;
+    if (emails.length === 0) {
+      listEl.innerHTML = '<div class="ops-list-empty">No recipients on file. Add one above.</div>';
+      return;
+    }
+    listEl.innerHTML = emails.map(em => `
+      <div class="ops-recipient${isUnsaved ? " is-unsaved" : ""}">
+        <span class="ops-recipient-email">
+          ${isUnsaved ? '<span class="ops-unsaved-dot" title="Not yet saved to Drive"></span> ' : ""}
+          ${esc(em)}
+        </span>
+        <button class="ops-btn ops-btn-sm ops-btn-danger" data-rcpt-del="${esc(em)}">Remove</button>
+      </div>
+    `).join("");
+    listEl.querySelectorAll("[data-rcpt-del]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const em = btn.getAttribute("data-rcpt-del");
+        const arr = skyLoadAll(SKY_RECIPIENTS_KEY);
+        const idx = arr.findIndex(r => r.account_id === customerId && r.platform === platform);
+        if (idx === -1) return;
+        arr[idx].recipients = (arr[idx].recipients || []).filter(e => e !== em);
+        arr[idx].updated_at = new Date().toISOString();
+        arr[idx].synced = false;
+        if (arr[idx].recipients.length === 0) arr.splice(idx, 1);
+        skySaveAll(SKY_RECIPIENTS_KEY, arr);
+        renderRecipients();
+        skyToast("Recipient removed");
+      });
+    });
+  }
+  const rInput = document.getElementById("recipient-input");
+  const rAdd = document.getElementById("recipient-add-btn");
+  function addRecipient() {
+    const em = (rInput.value || "").trim().toLowerCase();
+    if (!em) { rInput.focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) {
+      skyToast("That doesn't look like a valid email");
+      return;
+    }
+    const arr = skyLoadAll(SKY_RECIPIENTS_KEY);
+    let entry = arr.find(r => r.account_id === customerId && r.platform === platform);
+    if (!entry) {
+      entry = {
+        account_id: customerId,
+        platform: platform,
+        account_name: accountName || customerId,
+        recipients: [],
+        updated_at: new Date().toISOString(),
+        synced: false
+      };
+      arr.push(entry);
+    }
+    if (!entry.recipients.includes(em)) {
+      entry.recipients.push(em);
+      entry.updated_at = new Date().toISOString();
+      entry.synced = false;
+    }
+    skySaveAll(SKY_RECIPIENTS_KEY, arr);
+    rInput.value = "";
+    renderRecipients();
+    skyToast("Recipient added locally · sync from Settings");
+  }
+  if (rAdd) rAdd.addEventListener("click", addRecipient);
+  if (rInput) rInput.addEventListener("keydown", (e) => { if (e.key === "Enter") addRecipient(); });
+  renderRecipients();
 }
 </script>
 <script>try { localStorage.setItem("skyway.platform_context", "google"); } catch(e){}</script>

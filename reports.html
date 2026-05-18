@@ -135,69 +135,96 @@ main{flex:1;min-width:0}
       <header class="topbar">
         <div>
           <h1>Reports</h1>
-          <p class="topbar-desc">Weekly client reports — drafted automatically each Monday morning. Preview, approve, then send. Sent reports keep their snapshot for audit.</p>
+          <p class="topbar-desc">Weekly client reports — generated on demand until the Monday 6am ET scheduler ships. Preview, approve, then export for manual send.</p>
         </div>
         <div class="topbar-badges">
-          <span class="badge badge-warn">No reports yet</span>
-          <span class="badge badge-neutral">Week 2</span>
+          <span class="badge badge-warn">Manual generation</span>
+          <span class="badge badge-neutral">v0.3</span>
         </div>
       </header>
 
       <div class="demo-banner">
         <span class="demo-banner-dot"></span>
-        <div><strong>First batch drops Monday 5/18 at 6am ET.</strong> Friday's data refresh feeds into the report generator over the weekend. Drafts will land here for review before send.</div>
+        <div><strong>Scheduler not live yet.</strong> Reports don't auto-generate on Monday morning — operator-triggered for now. Use the "Copy generate prompt" button below to spin up this week's batch.</div>
       </div>
 
-      <div class="card" style="margin-bottom:16px">
+      <div class="section-label">Generate this week's batch</div>
+      <div class="card">
         <div class="card-header">
           <div>
-            <h2>How sending works</h2>
-            <div class="card-header-sub">Built-in delivery is dry-run only. Operator approves the draft, then exports HTML or PDF for manual send.</div>
+            <h2>Week of <span id="week-of-date">—</span></h2>
+            <div class="card-header-sub">Drafts one client-facing report per active account. Pulls last 7d + 30d numbers, key alerts, scheduled actions from the operator-approved queue, and account-level notes.</div>
+          </div>
+          <button class="button button-primary" id="generate-batch-btn">Copy generate prompt</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:8px">
+          <div>
+            <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Active Google</div>
+            <div style="font-size:24px;color:var(--ink-soft);margin-top:4px;font-weight:600;letter-spacing:-0.02em">50</div>
+            <div style="font-size:12px;color:var(--ink-muted);margin-top:2px">Connected client accounts</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Active Meta</div>
+            <div style="font-size:24px;color:var(--ink-soft);margin-top:4px;font-weight:600;letter-spacing:-0.02em">14</div>
+            <div style="font-size:12px;color:var(--ink-muted);margin-top:2px">Out of 31 connected</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Cross-platform clients</div>
+            <div style="font-size:24px;color:var(--ink-soft);margin-top:4px;font-weight:600;letter-spacing:-0.02em">7</div>
+            <div style="font-size:12px;color:var(--ink-muted);margin-top:2px">Single merged report per client</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Estimated drafts</div>
+            <div style="font-size:24px;color:var(--ink-soft);margin-top:4px;font-weight:600;letter-spacing:-0.02em">~55</div>
+            <div style="font-size:12px;color:var(--ink-muted);margin-top:2px">After deduping cross-platform</div>
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px">
+      </div>
+
+      <div class="section-label">View drafts &amp; sent reports</div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Drive: <span style="font-family:'SF Mono','Monaco',monospace;font-size:13px;color:var(--ink-muted);font-weight:400">/Skyway OS/reports/</span></h2>
+            <div class="card-header-sub">Each generated batch lands in the reports folder as <span style="font-family:'SF Mono','Monaco',monospace">YYYY-MM-DD-batch/</span>. Drafts are HTML files you can preview in-browser before exporting to PDF or sending.</div>
+          </div>
+          <a class="button button-secondary" href="https://drive.google.com/drive/folders/1i3LVii2gh-VQ4VXds9QesPfCWNybAvhc" target="_blank" rel="noopener">Open reports folder ↗</a>
+        </div>
+        <div style="font-size:12px;color:var(--ink-muted);margin-top:4px">Note: the folder may be empty if no batch has been generated yet. Run "Copy generate prompt" above to create one.</div>
+      </div>
+
+      <div class="section-label">How sending works</div>
+      <div class="card" style="margin-bottom:16px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:0">
           <div style="padding:14px;background:var(--surface-raised);border-radius:14px">
             <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Step 1</div>
-            <div style="font-size:13px;color:var(--ink-soft);margin-top:6px;font-weight:500">Auto-draft</div>
-            <div style="font-size:12px;color:var(--ink-muted);margin-top:4px">Monday 6am ET. One per active account.</div>
+            <div style="font-size:13px;color:var(--ink-soft);margin-top:6px;font-weight:500">Generate</div>
+            <div style="font-size:12px;color:var(--ink-muted);margin-top:4px">Click "Copy generate prompt", paste into a Claude chat. Drafts land in Drive in ~5-10 min.</div>
           </div>
           <div style="padding:14px;background:var(--surface-raised);border-radius:14px">
             <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Step 2</div>
-            <div style="font-size:13px;color:var(--ink-soft);margin-top:6px;font-weight:500">Operator review</div>
-            <div style="font-size:12px;color:var(--ink-muted);margin-top:4px">Edit headline + commentary. Mark drafts ready or pull from queue.</div>
+            <div style="font-size:13px;color:var(--ink-soft);margin-top:6px;font-weight:500">Review &amp; edit</div>
+            <div style="font-size:12px;color:var(--ink-muted);margin-top:4px">Open Drive folder, preview each HTML draft, edit headline + commentary in Claude.</div>
           </div>
           <div style="padding:14px;background:var(--surface-raised);border-radius:14px">
             <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Step 3</div>
-            <div style="font-size:13px;color:var(--ink-soft);margin-top:6px;font-weight:500">Export + send</div>
-            <div style="font-size:12px;color:var(--ink-muted);margin-top:4px">Download HTML/PDF or copy report URL. No automated email.</div>
+            <div style="font-size:13px;color:var(--ink-soft);margin-top:6px;font-weight:500">Export</div>
+            <div style="font-size:12px;color:var(--ink-muted);margin-top:4px">Open the HTML in browser, print to PDF, attach to your existing email/Gmail workflow.</div>
+          </div>
+          <div style="padding:14px;background:var(--surface-raised);border-radius:14px">
+            <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Step 4 (future)</div>
+            <div style="font-size:13px;color:var(--ink-soft);margin-top:6px;font-weight:500">Auto-send</div>
+            <div style="font-size:12px;color:var(--ink-muted);margin-top:4px">Gmail integration wires up the recipient list from each account's drill-down. Not built yet.</div>
           </div>
         </div>
       </div>
 
-      <div class="section-label">Upcoming batch</div>
-      <div class="card">
-        <div class="card-header">
-          <div>
-            <h2>Monday 5/18 — first generation</h2>
-            <div class="card-header-sub">Will draft reports for all 40 active accounts (excludes 8 LSA-only and 2 inactive).</div>
-          </div>
-          <button class="button button-secondary" disabled>Force generate now (W3)</button>
-        </div>
-        <div style="display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--ink-muted);margin-top:6px">
-          <div><strong style="color:var(--ink-soft)">40</strong> drafts queued</div>
-          <div>·</div>
-          <div><strong style="color:var(--ink-soft)">7</strong> will include critical alerts</div>
-          <div>·</div>
-          <div><strong style="color:var(--ink-soft)">12</strong> flagged for portfolio sweep mention</div>
-        </div>
-      </div>
-
-      <div class="section-label">Historical (preview)</div>
+      <div class="section-label">Historical batches</div>
       <div class="card">
         <div style="text-align:center;padding:32px 16px;color:var(--ink-muted)">
           <div style="font-size:32px;margin-bottom:8px;color:var(--ink-subtle)">∅</div>
-          <div style="font-size:14px">No reports yet. First batch generates Monday morning.</div>
-          <div style="font-size:12px;margin-top:6px">Past reports will appear here once the system runs its first cycle.</div>
+          <div style="font-size:14px">No reports generated yet.</div>
+          <div style="font-size:12px;margin-top:6px">Run the generate prompt above to create the first batch. Past batches will appear in the Drive folder.</div>
         </div>
       </div>
 
@@ -205,6 +232,91 @@ main{flex:1;min-width:0}
   </main>
 
 </div>
+<script>
+// Reports — generate prompt + week-of label
+(function() {
+  function skyEsc(s) {
+    if (s == null) return "";
+    return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  }
+  function skyToast(msg) {
+    let t = document.getElementById("ops-toast");
+    if (!t) {
+      t = document.createElement("div");
+      t.id = "ops-toast";
+      t.style.cssText = "position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);padding:12px 18px;background:#0a0a0a;color:#fff;border-radius:12px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:all .2s;z-index:1000;box-shadow:0 8px 24px rgba(0,0,0,0.2)";
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.opacity = "1";
+    t.style.transform = "translateX(-50%) translateY(0)";
+    clearTimeout(window._skyToastTimer);
+    window._skyToastTimer = setTimeout(() => {
+      t.style.opacity = "0";
+      t.style.transform = "translateX(-50%) translateY(10px)";
+    }, 2400);
+  }
+  function skyCopy(text, msg) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => skyToast(msg || "Copied"));
+    } else {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); skyToast(msg || "Copied"); }
+      catch(e) { skyToast("Copy failed"); }
+      document.body.removeChild(ta);
+    }
+  }
+  // Week of: Monday of the current week
+  function weekOf() {
+    const now = new Date();
+    const dow = now.getDay(); // 0=Sun..6=Sat
+    const offset = dow === 0 ? -6 : 1 - dow;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() + offset);
+    const opts = { month: "short", day: "numeric", year: "numeric" };
+    return monday.toLocaleDateString(undefined, opts);
+  }
+  const weekEl = document.getElementById("week-of-date");
+  if (weekEl) weekEl.textContent = weekOf();
+
+  function generateBatchPrompt() {
+    const week = weekOf();
+    const lines = [
+      "SKYWAY OS — generate this week's report batch (week of " + week + ")",
+      "",
+      "Draft one client-facing weekly report per active account, save HTML to Drive,",
+      "and report back with a summary.",
+      "",
+      "Steps:",
+      "1. Pull last 7d + 30d metrics from Supermetrics for each active account (50 Google + 14 Meta).",
+      "2. For each account, draft an HTML report with these sections:",
+      "   - Headline: what changed this week in plain language",
+      "   - Numbers: spend, conversions, CPA, week-over-week deltas",
+      "   - Active recommendations: from the Approvals queue, only items not yet marked done/rejected",
+      "   - Account notes: any operator notes added in the dashboard (notes.json)",
+      "   - Footer: 'Generated " + new Date().toISOString().slice(0,10) + " by Skyway OS'",
+      "3. For cross-platform clients (7 of them), merge Google + Meta into a single report",
+      "   under the client's display name (e.g. 'Gulf Stream Boat Club' covers both account IDs).",
+      "4. Save each as HTML to Drive at /Skyway OS/reports/" + new Date().toISOString().slice(0,10) + "-batch/<account-slug>.html",
+      "5. After all drafts are written, summarize: total drafts, accounts with critical alerts,",
+      "   accounts with active recommendations, total combined spend reviewed.",
+      "",
+      "Tone: Skyway voice — plain, direct, function over form. No filler. No 'in conclusion'.",
+      "Strategic findings come from the operator-approved queue, not the AI's confidence scores.",
+      "",
+      "Hard constraint: READ-ONLY on client ad accounts. Never call campaign mutation tools.",
+    ];
+    skyCopy(lines.join("\n"), "Generate prompt copied — paste into a new Claude chat");
+  }
+  const gbtn = document.getElementById("generate-batch-btn");
+  if (gbtn) gbtn.addEventListener("click", generateBatchPrompt);
+})();
+</script>
 <script>
 // Platform context — adjust sidebar pills + Overview/Accounts links based on
 // the user's last-visited platform context (saved on accounts.html / meta-accounts.html).

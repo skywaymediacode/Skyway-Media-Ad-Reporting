@@ -135,13 +135,97 @@ main{flex:1;min-width:0}
       <header class="topbar">
         <div>
           <h1>Settings</h1>
-          <p class="topbar-desc">Connected systems, sync schedule, and workspace configuration. Read-only view of what powers Skyway OS.</p>
+          <p class="topbar-desc">Connected systems, sync state, and operator controls. Actions that need server work copy a prompt to your clipboard — paste it into a new Claude chat to execute.</p>
         </div>
         <div class="topbar-badges">
-          <span class="badge badge-good">v0.2</span>
+          <span class="badge badge-good">v0.3</span>
           <span class="badge badge-neutral">Internal</span>
         </div>
       </header>
+
+      <!-- ============ Sync to Drive ============ -->
+      <div class="section-label">Sync to Drive</div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Push local edits up to the team copy</h2>
+            <div class="card-header-sub">Notes and recipients you added in account drill-downs live in this browser until you sync. Copy the prompt, paste into a new Claude chat, and Claude commits everything to Drive in one shot.</div>
+          </div>
+          <button class="button button-primary" id="sync-btn">Copy sync prompt</button>
+        </div>
+        <div id="sync-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:8px"></div>
+      </div>
+
+      <!-- ============ Operator state ============ -->
+      <div class="section-label">Operator state</div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Mark done / Approve / Reject state</h2>
+            <div class="card-header-sub">Recommendation marks live in this browser only. Export when you want a record for the team, reset to clear the queue and start over.</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="button button-secondary" id="state-export-btn">Export CSV</button>
+            <button class="button button-ghost" id="state-reset-btn" style="color:var(--bad)">Reset all marks…</button>
+          </div>
+        </div>
+        <div id="state-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-top:8px"></div>
+      </div>
+
+      <!-- ============ Data refresh ============ -->
+      <div class="section-label">Data refresh</div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Pull fresh Supermetrics data + regenerate the dashboard</h2>
+            <div class="card-header-sub">Daily 6am ET auto-pull isn't scheduled yet — refresh runs are operator-initiated. Each refresh re-pulls 90d of metrics, re-scores accounts, re-runs alerts, and re-bakes the per-account HTML.</div>
+          </div>
+          <button class="button button-primary" id="refresh-btn">Copy refresh prompt</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px">
+          <div>
+            <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Last refresh</div>
+            <div style="font-size:14px;color:var(--ink-soft);margin-top:6px" id="last-refresh-at">2026-05-16 (Week 2)</div>
+            <div style="font-size:12px;color:var(--ink-muted);margin-top:4px">From meta.json — currently 2+ days stale.</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">What gets regenerated</div>
+            <div style="font-size:13px;color:var(--ink-soft);margin-top:6px;line-height:1.55">accounts.json · account_scores.json · alerts.json · timeline.json · all per-account HTML + GitHub push</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">What stays put</div>
+            <div style="font-size:13px;color:var(--ink-soft);margin-top:6px;line-height:1.55">Notes · recipients · Mark done / Approve / Reject state (those are operator-owned).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ Dashboard password ============ -->
+      <div class="section-label">Dashboard password</div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Rotate the AES-GCM password on google.html / meta.html</h2>
+            <div class="card-header-sub">Both gates re-encrypted at 600,000 PBKDF2 iterations with independent random salts + IVs (per the May 18 audit fix). Rotation generates fresh salts and IVs on every change.</div>
+          </div>
+          <button class="button button-secondary" id="rotate-btn">Copy rotation prompt</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:8px">
+          <div>
+            <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Last rotation</div>
+            <div style="font-size:14px;color:var(--ink-soft);margin-top:6px">2026-05-18 19:00 UTC</div>
+            <div style="font-size:12px;color:var(--ink-muted);margin-top:4px">Per meta.json crypto_protocol audit_history.</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Algorithm</div>
+            <div style="font-size:14px;color:var(--ink-soft);margin-top:6px">AES-GCM-256 · PBKDF2-SHA256</div>
+            <div style="font-size:12px;color:var(--ink-muted);margin-top:4px">600,000 iterations · 16-byte salt · 12-byte IV</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">When to rotate</div>
+            <div style="font-size:13px;color:var(--ink-soft);margin-top:6px;line-height:1.55">After anyone leaves the team. After password lives in any unencrypted channel (email, Slack, screen recording). At least quarterly as hygiene.</div>
+          </div>
+        </div>
+      </div>
 
       <div class="section-label">Workspace</div>
       <div class="card">
@@ -247,6 +331,250 @@ main{flex:1;min-width:0}
   </main>
 
 </div>
+<script>
+// ============================================================
+// Settings page — live state + prompt-copy actions
+// ============================================================
+const SKY_NOTES_KEY = "skyway.notes.v1";
+const SKY_RECIPIENTS_KEY = "skyway.recipients.v1";
+const SKY_REC_STATE_KEY = "skyway.rec_state.v1";
+
+function skyLoad(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key) || fallback); }
+  catch(e) { return JSON.parse(fallback); }
+}
+function skyEsc(s) {
+  if (s == null) return "";
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function skyCopy(text, msg) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => skyToast(msg || "Copied to clipboard"))
+      .catch(() => skyFallbackCopy(text, msg));
+  } else {
+    skyFallbackCopy(text, msg);
+  }
+}
+function skyFallbackCopy(text, msg) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.position = "fixed";
+  ta.style.left = "-9999px";
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); skyToast(msg || "Copied to clipboard"); }
+  catch(e) { skyToast("Copy failed — see console"); console.log(text); }
+  document.body.removeChild(ta);
+}
+function skyToast(msg) {
+  let t = document.getElementById("ops-toast");
+  if (!t) {
+    t = document.createElement("div");
+    t.id = "ops-toast";
+    t.style.cssText = "position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);padding:12px 18px;background:#0a0a0a;color:#fff;border-radius:12px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:all .2s;z-index:1000;box-shadow:0 8px 24px rgba(0,0,0,0.2)";
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = "1";
+  t.style.transform = "translateX(-50%) translateY(0)";
+  clearTimeout(window._skyToastTimer);
+  window._skyToastTimer = setTimeout(() => {
+    t.style.opacity = "0";
+    t.style.transform = "translateX(-50%) translateY(10px)";
+  }, 2400);
+}
+
+// ---------- Sync to Drive ----------
+function renderSyncStats() {
+  const notes = skyLoad(SKY_NOTES_KEY, "[]");
+  const recipients = skyLoad(SKY_RECIPIENTS_KEY, "[]");
+  const pendingNotes = notes.filter(n => !n.synced);
+  const pendingRecipients = recipients.filter(r => !r.synced);
+  const allPending = pendingNotes.length + pendingRecipients.length;
+  const tile = (label, value, sub, tone) => `
+    <div>
+      <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">${skyEsc(label)}</div>
+      <div style="font-size:26px;color:${tone === "warn" ? "var(--warn)" : "var(--ink-soft)"};margin-top:4px;font-weight:600;letter-spacing:-0.02em">${value}</div>
+      <div style="font-size:12px;color:var(--ink-muted);margin-top:2px">${skyEsc(sub)}</div>
+    </div>`;
+  const el = document.getElementById("sync-stats");
+  if (!el) return;
+  el.innerHTML =
+    tile("Pending notes", pendingNotes.length, pendingNotes.length ? "Not yet on Drive" : "All synced", pendingNotes.length ? "warn" : "good") +
+    tile("Pending recipient changes", pendingRecipients.length, pendingRecipients.length ? "Not yet on Drive" : "All synced", pendingRecipients.length ? "warn" : "good") +
+    tile("Total local items", notes.length + recipients.length, "Across all accounts", "good");
+  const btn = document.getElementById("sync-btn");
+  if (btn) btn.disabled = allPending === 0;
+  if (btn && allPending === 0) btn.textContent = "Nothing to sync";
+  else if (btn) btn.textContent = "Copy sync prompt (" + allPending + ")";
+}
+
+function generateSyncPrompt() {
+  const notes = skyLoad(SKY_NOTES_KEY, "[]").filter(n => !n.synced);
+  const recipients = skyLoad(SKY_RECIPIENTS_KEY, "[]").filter(r => !r.synced);
+  if (notes.length === 0 && recipients.length === 0) {
+    skyToast("Nothing pending — try editing notes or recipients first");
+    return;
+  }
+  const lines = [
+    "SKYWAY OS — sync pending local edits to Drive",
+    "",
+    "I added notes and/or recipient changes in the dashboard but they haven't",
+    "been pushed to Drive yet. Please commit them.",
+    "",
+    "Steps:",
+    "1. Read the latest meta.json from Drive (search for title='meta.json' in the Skyway folder, take the newest).",
+    "2. Read the current notes.json (file id under meta.json.current_files['notes.json']).",
+    "3. Append the PENDING NOTES below to that array (preserve any existing entries).",
+    "4. Upload the new notes.json. Get the new file id.",
+    "5. Read the current recipients.json (file id under meta.json.current_files['recipients.json']).",
+    "6. Merge the PENDING RECIPIENT CHANGES below into that array (replace by account_id+platform).",
+    "7. Upload the new recipients.json. Get the new file id.",
+    "8. Update meta.json.current_files with the two new ids and bump last_synced_at to now.",
+    "9. Upload meta.json.",
+    "10. Confirm back with the new file ids and a one-line summary.",
+    "",
+    "PENDING NOTES (" + notes.length + "):",
+    JSON.stringify(notes, null, 2),
+    "",
+    "PENDING RECIPIENT CHANGES (" + recipients.length + "):",
+    JSON.stringify(recipients, null, 2),
+    "",
+    "After Claude confirms the upload, come back to /settings.html and click",
+    '"Mark all synced" (which won\'t exist yet, so for now just trust that the',
+    "Drive copy is authoritative and the next dashboard refresh will reflect it).",
+  ];
+  skyCopy(lines.join("\n"), "Sync prompt copied — paste into a new Claude chat");
+}
+
+// ---------- Operator state ----------
+function renderStateStats() {
+  const state = skyLoad(SKY_REC_STATE_KEY, "{}");
+  const counts = { done: 0, approved: 0, rejected: 0 };
+  Object.values(state).forEach(v => { if (counts.hasOwnProperty(v)) counts[v]++; });
+  const total = counts.done + counts.approved + counts.rejected;
+  const tile = (label, value, tone) => `
+    <div>
+      <div style="font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600">${skyEsc(label)}</div>
+      <div style="font-size:26px;margin-top:4px;font-weight:600;letter-spacing:-0.02em;color:${tone}">${value}</div>
+    </div>`;
+  const el = document.getElementById("state-stats");
+  if (!el) return;
+  el.innerHTML =
+    tile("Marked done", counts.done, "var(--good)") +
+    tile("Approved", counts.approved, "var(--accent)") +
+    tile("Rejected", counts.rejected, "var(--ink-muted)") +
+    tile("Total marked", total, "var(--ink-soft)");
+  const exp = document.getElementById("state-export-btn");
+  const rst = document.getElementById("state-reset-btn");
+  if (exp) exp.disabled = total === 0;
+  if (rst) rst.disabled = total === 0;
+}
+
+function exportStateCSV() {
+  const state = skyLoad(SKY_REC_STATE_KEY, "{}");
+  const rows = [["rec_id", "state", "exported_at"]];
+  const now = new Date().toISOString();
+  Object.entries(state).forEach(([k, v]) => rows.push([k, v, now]));
+  if (rows.length === 1) { skyToast("Nothing to export"); return; }
+  const csv = rows.map(r => r.map(c => /[,"\n]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c).join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "skyway-operator-state-" + now.slice(0, 10) + ".csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  skyToast("CSV downloaded · " + (rows.length - 1) + " rows");
+}
+
+function resetState() {
+  const state = skyLoad(SKY_REC_STATE_KEY, "{}");
+  const total = Object.keys(state).length;
+  if (total === 0) { skyToast("Nothing to reset"); return; }
+  if (!confirm("Clear all " + total + " Mark done / Approve / Reject marks across the queue? This cannot be undone.")) return;
+  localStorage.removeItem(SKY_REC_STATE_KEY);
+  renderStateStats();
+  skyToast("All marks cleared");
+}
+
+// ---------- Data refresh prompt ----------
+function generateRefreshPrompt() {
+  const lines = [
+    "SKYWAY OS — full dashboard refresh",
+    "",
+    "Pull fresh data from Supermetrics + Meta, re-score all accounts, re-run alerts,",
+    "regenerate the dashboard HTML, and push to GitHub.",
+    "",
+    "Steps:",
+    "1. Pull last 90d of metrics for all 50 Google accounts (Supermetrics ds_id=AW, MCC analytics@skyway.media)",
+    "   and all 14 active Meta accounts (Supermetrics ds_id=FA, Sara Rose login).",
+    "2. Re-score each account against the 11-factor model (Google) / current tier classifier (Meta).",
+    "3. Re-run the alert engine — apply alert_volume_floors, alert_suppression_rules, dormancy_rule from meta.json.",
+    "4. Re-run any per-account AI fanout that is stale (more than 7 days old).",
+    "5. Update all derived files in Drive (accounts.json, account_scores.json, alerts.json, timeline.json,",
+    "   per-batch rec files, portfolio_recommendations.json, meta_data.json, meta_fanout_v1_recs.json).",
+    "6. Re-bake the per-account HTML (account.html data, meta-account.html data, accounts.html, meta-accounts.html,",
+    "   approvals.html, google.html dashboard, meta.html dashboard, timeline.html).",
+    "7. Commit and push to skywaymediacode/Skyway-Media-Ad-Reporting main.",
+    "8. Update meta.json.last_refresh_at and meta.json.last_synced_at.",
+    "9. Report back: how many accounts moved tiers, any new critical alerts, total run time.",
+    "",
+    "Hard constraint: READ-ONLY. Never call campaign_create / campaign_update / ads_create_* /",
+    "ads_update_* / ads_activate_entity / ads_update_custom_audience_users against any client account.",
+    "All recommendations flow through manual operator approval in approvals.html.",
+  ];
+  skyCopy(lines.join("\n"), "Refresh prompt copied — paste into a new Claude chat");
+}
+
+// ---------- Password rotation prompt ----------
+function generateRotationPrompt() {
+  const newPw = prompt("New password (16+ characters, mix of upper / lower / digits). Leave blank to cancel.");
+  if (!newPw) return;
+  if (newPw.length < 16) {
+    if (!confirm("Password is only " + newPw.length + " chars. OWASP recommends 16+ for offline-brute-force resistance. Use anyway?")) return;
+  }
+  const lines = [
+    "SKYWAY OS — rotate dashboard gate password",
+    "",
+    "Decrypt google.html and meta.html with the current password, re-encrypt with",
+    "the new password using FRESH random salt + IV on each file. Push to GitHub.",
+    "",
+    "Old password: <ask user — do NOT paste in chat unless on a private device>",
+    "New password: " + newPw,
+    "",
+    "Steps:",
+    "1. Pull the latest google.html and meta.html from the repo.",
+    "2. Decrypt each with the old password (PBKDF2 600K iterations, AES-GCM, salt + IV from each file).",
+    "3. Generate a FRESH random 16-byte salt AND a FRESH random 12-byte IV for EACH file via",
+    "   crypto.getRandomValues(). Do NOT reuse the previous values; do NOT use the same salt/IV across files.",
+    "4. Re-encrypt each plaintext with the NEW password using its own new salt + IV.",
+    "5. Replace SALT_B64, IV_B64, CIPHER_B64 constants in each HTML file. Keep iterations=600000.",
+    "6. Verify both files decrypt cleanly with the new password (run a Python AES-GCM check).",
+    "7. Commit and push.",
+    "8. Update meta.json.crypto_protocol.current_state with the new salt/iv values and rotated_at timestamp.",
+    "9. Append an audit_history entry: {date, finding: 'Routine rotation', fix: 'Re-encrypted with new password and fresh salt/IV per file'}.",
+    "10. Confirm back with both new salt_b64 and iv_b64 values for verification.",
+    "",
+    "Hard constraint: the per-encryption-fresh-IV rule MUST hold. Same key + same IV in AES-GCM",
+    "leaks the plaintext via XOR (see SKYWAY_CODEX_AUDIT.md C1). Never reuse.",
+  ];
+  skyCopy(lines.join("\n"), "Rotation prompt copied — paste into a private Claude chat");
+}
+
+// ---------- wire up ----------
+document.addEventListener("DOMContentLoaded", () => {
+  renderSyncStats();
+  renderStateStats();
+  document.getElementById("sync-btn").addEventListener("click", generateSyncPrompt);
+  document.getElementById("state-export-btn").addEventListener("click", exportStateCSV);
+  document.getElementById("state-reset-btn").addEventListener("click", resetState);
+  document.getElementById("refresh-btn").addEventListener("click", generateRefreshPrompt);
+  document.getElementById("rotate-btn").addEventListener("click", generateRotationPrompt);
+});
+</script>
 <script>
 // Platform context — adjust sidebar pills + Overview/Accounts links based on
 // the user's last-visited platform context (saved on accounts.html / meta-accounts.html).
