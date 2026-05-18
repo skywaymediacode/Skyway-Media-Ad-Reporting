@@ -152,6 +152,19 @@ main{flex:1;min-width:0}
 .campaigns-summary-item{display:flex;flex-direction:column;gap:2px}
 .campaigns-summary-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--meta);opacity:0.7}
 .campaigns-summary-value{font-size:14px;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.factor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.factor{padding:16px;background:var(--surface-raised);border-radius:14px;border:1px solid var(--line);position:relative;display:flex;flex-direction:column;gap:6px;min-height:128px}
+.factor-status-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.factor-label{font-size:11px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.05em}
+.factor-status{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px}
+.factor-status-healthy{background:rgba(52,199,89,0.12);color:#1d6c3a}
+.factor-status-watch{background:rgba(255,159,10,0.12);color:#a26500}
+.factor-status-problem{background:rgba(255,59,48,0.12);color:#a91f1f}
+.factor-status-nodata{background:rgba(10,10,10,0.05);color:var(--ink-muted)}
+.factor-headline{font-size:14.5px;font-weight:500;color:var(--ink-soft);line-height:1.35;letter-spacing:-0.005em;margin-top:2px}
+.factor-detail{font-size:11.5px;color:var(--ink-muted);margin-top:auto;font-variant-numeric:tabular-nums;line-height:1.45}
+.factor.is-problem{background:rgba(255,59,48,0.04);border-color:rgba(255,59,48,0.18)}
+.factor.is-watch{background:rgba(255,159,10,0.04);border-color:rgba(255,159,10,0.18)}
 .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:500;box-shadow:inset 0 0 0 1px transparent;white-space:nowrap}
 .badge-good{background:rgba(52,199,89,0.1);color:var(--good);box-shadow:inset 0 0 0 1px rgba(52,199,89,0.2)}
 .badge-neutral{background:rgba(10,10,10,0.05);color:var(--ink-muted);box-shadow:inset 0 0 0 1px rgba(10,10,10,0.1)}
@@ -199,6 +212,217 @@ const CLIENT_MAP = [{"slug":"adirondack-furniture","display_name":"Adirondack Fu
 const CAMPAIGN_DATA = {"1374179246812994":[{"id":"120242648124460740","name":"COLD DWLS Persective Funnel- Lead","status":"PAUSED","objective":"OUTCOME_LEADS","spend":6177.67,"impressions":131148,"clicks":4325,"website_leads":115,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":2104,"link_ctr":0.0161,"cpc_link":2.9348},{"id":"120244182972630740","name":"COLD DWLS PF Refresh","status":"PAUSED","objective":"OUTCOME_LEADS","spend":2289.81,"impressions":53205,"clicks":3134,"website_leads":3,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":1242,"link_ctr":0.0234,"cpc_link":1.8377},{"id":"120242687261620740","name":"WARM DWLS Persective Funnel- Lead","status":"PAUSED","objective":"OUTCOME_LEADS","spend":366.04,"impressions":9074,"clicks":346,"website_leads":12,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":157,"link_ctr":0.0174,"cpc_link":2.3167},{"id":"120233224703740740","name":"[ENG] 08.25 UPDATED","status":"ACTIVE","objective":"OUTCOME_ENGAGEMENT","spend":179.66,"impressions":31802,"clicks":478,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":0,"link_ctr":0,"cpc_link":179.66},{"id":"120242654917340740","name":"COLD DWLS Persective Funnel - Registration","status":"PAUSED","objective":"OUTCOME_LEADS","spend":109.4,"impressions":2860,"clicks":118,"website_leads":1,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":59,"link_ctr":0.0206,"cpc_link":1.8542}],"610271818554318":[{"id":"120225390634810009","name":"LP - SG Local Sales - OG","status":"ACTIVE","objective":"OUTCOME_SALES","spend":5331.61,"impressions":426073,"clicks":25564,"website_leads":0,"website_purchases":293,"fb_purchases":0,"fb_leads":0,"outbound_clicks":9726,"link_ctr":0.0235,"cpc_link":0.5316},{"id":"120225766099090009","name":"SW - Engagement - 07.25","status":"PAUSED","objective":"OUTCOME_ENGAGEMENT","spend":1107.64,"impressions":329779,"clicks":3567,"website_leads":0,"website_purchases":1,"fb_purchases":0,"fb_leads":0,"outbound_clicks":138,"link_ctr":0.0004,"cpc_link":7.6919},{"id":"120239767283900009","name":"SG St. Pete Engagement 4.13.2026","status":"ACTIVE","objective":"OUTCOME_ENGAGEMENT","spend":1107.64,"impressions":76737,"clicks":1276,"website_leads":0,"website_purchases":1,"fb_purchases":0,"fb_leads":0,"outbound_clicks":147,"link_ctr":0.0022,"cpc_link":6.4774},{"id":"120236066572500009","name":"SG St Pete Engagement 2.3.2026","status":"PAUSED","objective":"OUTCOME_ENGAGEMENT","spend":1107.63,"impressions":204662,"clicks":1136,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":145,"link_ctr":0.0008,"cpc_link":6.4774},{"id":"120236179742890009","name":"SW - LEAD - RECRUITING - 02.26","status":"PAUSED","objective":"OUTCOME_LEADS","spend":205.85,"impressions":14834,"clicks":809,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":110,"outbound_clicks":47,"link_ctr":0.0187,"cpc_link":0.7405}],"1717152123019764":[{"id":"120241336725630615","name":"SWM [LEADS] Palm Beach Gardens April 2026","status":"ACTIVE","objective":"OUTCOME_LEADS","spend":4524.99,"impressions":284368,"clicks":7473,"website_leads":146,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":4545,"link_ctr":0.016,"cpc_link":0.9934},{"id":"120241344062600615","name":"SWM [LEADS] Lighthouse Point April 2026","status":"ACTIVE","objective":"OUTCOME_LEADS","spend":4159.87,"impressions":270892,"clicks":7595,"website_leads":160,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":4766,"link_ctr":0.0176,"cpc_link":0.8715},{"id":"120232908994280615","name":"SWM [LEADS] Palm Beach Gardens | 09.25","status":"PAUSED","objective":"OUTCOME_LEADS","spend":3842.29,"impressions":202733,"clicks":4333,"website_leads":114,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":2830,"link_ctr":0.014,"cpc_link":1.3553},{"id":"120232983924780615","name":"SWM [LEADS] Lighthouse Point | 09.25","status":"PAUSED","objective":"OUTCOME_LEADS","spend":3446.16,"impressions":148365,"clicks":3856,"website_leads":113,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":2389,"link_ctr":0.0161,"cpc_link":1.4407},{"id":"120241344372670615","name":"SWM [LEAD] Tierra Verde April 2026","status":"ACTIVE","objective":"OUTCOME_LEADS","spend":3262.91,"impressions":279677,"clicks":11055,"website_leads":288,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":6344,"link_ctr":0.0227,"cpc_link":0.5142},{"id":"120232916147950615","name":"SWM [LEADS] Tierra Verde | 09.25","status":"PAUSED","objective":"OUTCOME_LEADS","spend":2861.8,"impressions":112759,"clicks":2929,"website_leads":104,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":1771,"link_ctr":0.0157,"cpc_link":1.6132},{"id":"120239132641180615","name":"SWM [LEADS] Jupiter | 01.26","status":"PAUSED","objective":"OUTCOME_LEADS","spend":2372.37,"impressions":140353,"clicks":3117,"website_leads":63,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":1963,"link_ctr":0.014,"cpc_link":1.2085},{"id":"120240258630280615","name":"SWM [LEADS] Tampa April 2026","status":"ACTIVE","objective":"OUTCOME_LEADS","spend":2263.11,"impressions":221474,"clicks":8698,"website_leads":273,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":5128,"link_ctr":0.0232,"cpc_link":0.4412},{"id":"120241345118940615","name":"SWM [LEADS] Delray Beach April 2026","status":"ACTIVE","objective":"OUTCOME_LEADS","spend":2017.52,"impressions":142994,"clicks":5834,"website_leads":146,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":3680,"link_ctr":0.0257,"cpc_link":0.5482},{"id":"120242837612460615","name":"SWM [LEADS] Jupiter April 2026","status":"ACTIVE","objective":"OUTCOME_LEADS","spend":1924.84,"impressions":101107,"clicks":2803,"website_leads":50,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":1679,"link_ctr":0.0166,"cpc_link":1.1444},{"id":"120239192401630615","name":"SWM [LEAD] Bradenton | 01.26","status":"PAUSED","objective":"OUTCOME_LEADS","spend":1377.73,"impressions":116289,"clicks":4479,"website_leads":60,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":2545,"link_ctr":0.0219,"cpc_link":0.5407},{"id":"120241341994600615","name":"SWM [LEADS] Jupiter | March 2026","status":"PAUSED","objective":"OUTCOME_LEADS","spend":1283.13,"impressions":86227,"clicks":2903,"website_leads":60,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":1663,"link_ctr":0.0193,"cpc_link":0.7706},{"id":"120232909195830615","name":"SWM [LEADS] | Delray Beach | 09.25","status":"PAUSED","objective":"OUTCOME_LEADS","spend":1146.07,"impressions":64516,"clicks":2380,"website_leads":59,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":1301,"link_ctr":0.0203,"cpc_link":0.8755},{"id":"120241344798600615","name":"SWM [LEADS] Bradenton | March 2026","status":"PAUSED","objective":"OUTCOME_LEADS","spend":1087.93,"impressions":85622,"clicks":3989,"website_leads":125,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":2056,"link_ctr":0.024,"cpc_link":0.5289},{"id":"120242840101340615","name":"SWM [LEADS] | Palm Beach Gardens | April 2026","status":"PAUSED","objective":"OUTCOME_LEADS","spend":108.45,"impressions":8489,"clicks":228,"website_leads":4,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":134,"link_ctr":0.0158,"cpc_link":0.8093},{"id":"120242839886990615","name":"SWM [LEADS] | Lighthouse Point | April 2026","status":"PAUSED","objective":"OUTCOME_LEADS","spend":87.73,"impressions":5193,"clicks":154,"website_leads":3,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":87,"link_ctr":0.0168,"cpc_link":1.0084}],"1817071415746002":[{"id":"120241443976750368","name":"EUW | Hair Loss | Lead Gen","status":"PAUSED","objective":"OUTCOME_LEADS","spend":2332.67,"impressions":113339,"clicks":3711,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":1938,"link_ctr":0.0171,"cpc_link":1.2024},{"id":"120230517177560368","name":"SW - Engagement - 09.25","status":"ACTIVE","objective":"OUTCOME_ENGAGEMENT","spend":1795.84,"impressions":302790,"clicks":3072,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":463,"link_ctr":0.0015,"cpc_link":3.8703},{"id":"120244255113130368","name":"EUW | Hair Loss | Sales","status":"PAUSED","objective":"OUTCOME_SALES","spend":1077.44,"impressions":40600,"clicks":860,"website_leads":3,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":408,"link_ctr":0.01,"cpc_link":2.6408},{"id":"120242725674310368","name":"Hormones - Women - Web 3.4.2026","status":"PAUSED","objective":"OUTCOME_LEADS","spend":1013.85,"impressions":17935,"clicks":646,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":48,"outbound_clicks":29,"link_ctr":0.0198,"cpc_link":2.8559},{"id":"120244602169400368","name":"SWM - Hair - 4.2.26","status":"PAUSED","objective":"OUTCOME_SALES","spend":953.8,"impressions":42902,"clicks":1188,"website_leads":1,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":477,"link_ctr":0.0111,"cpc_link":1.9996},{"id":"120242224252170368","name":"Hormones - Women - Lead Form 2.24.2026","status":"PAUSED","objective":"OUTCOME_LEADS","spend":928.32,"impressions":14534,"clicks":616,"website_leads":1,"website_purchases":0,"fb_purchases":0,"fb_leads":47,"outbound_clicks":9,"link_ctr":0.0244,"cpc_link":2.6224},{"id":"120244318091640368","name":"EUW | Emsella | Leads","status":"PAUSED","objective":"OUTCOME_LEADS","spend":921.61,"impressions":25906,"clicks":844,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":111,"outbound_clicks":25,"link_ctr":0.019,"cpc_link":1.8732},{"id":"120247004250370368","name":"EUW | Hair Loss | Sales - Final","status":"ACTIVE","objective":"OUTCOME_SALES","spend":723.7,"impressions":28146,"clicks":449,"website_leads":1,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":255,"link_ctr":0.0091,"cpc_link":2.838},{"id":"120247005183180368","name":"Hormones | Sales","status":"PAUSED","objective":"OUTCOME_SALES","spend":661.06,"impressions":20646,"clicks":704,"website_leads":3,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":304,"link_ctr":0.0147,"cpc_link":2.1745},{"id":"120246941557830368","name":"Hairloss Web Traffic","status":"ACTIVE","objective":"OUTCOME_TRAFFIC","spend":558.03,"impressions":71021,"clicks":2602,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":1740,"link_ctr":0.0245,"cpc_link":0.3203},{"id":"120242722049120368","name":"Hormones - Women - Engagement - 3.4.2026","status":"PAUSED","objective":"OUTCOME_ENGAGEMENT","spend":246.36,"impressions":60021,"clicks":456,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":74,"link_ctr":0.0012,"cpc_link":3.3292},{"id":"120241459024860368","name":"Hormones - Women - Lead Form 2.13.2026","status":"PAUSED","objective":"OUTCOME_LEADS","spend":224.93,"impressions":2520,"clicks":106,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":8,"outbound_clicks":1,"link_ctr":0.0218,"cpc_link":4.0896},{"id":"120247009811180368","name":"Hormones | Traffic | Website","status":"PAUSED","objective":"OUTCOME_TRAFFIC","spend":214.36,"impressions":28788,"clicks":914,"website_leads":1,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":622,"link_ctr":0.0216,"cpc_link":0.3446}],"1749336399009315":[{"id":"120231778132320436","name":"SWM - ENG VV - 10.25","status":"ACTIVE","objective":"OUTCOME_ENGAGEMENT","spend":1798.89,"impressions":118066,"clicks":432,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":0,"link_ctr":0,"cpc_link":0}],"1422864024995223":[{"id":"120234909587440547","name":"SWM - SALES - 09.25","status":"PAUSED","objective":"OUTCOME_SALES","spend":1589.23,"impressions":178029,"clicks":7595,"website_leads":4,"website_purchases":92,"fb_purchases":0,"fb_leads":0,"outbound_clicks":3844,"link_ctr":0.0216,"cpc_link":0.4132},{"id":"120233885609980547","name":"SWM - Engagement - 09.25","status":"PAUSED","objective":"OUTCOME_ENGAGEMENT","spend":1026.12,"impressions":303401,"clicks":7103,"website_leads":0,"website_purchases":9,"fb_purchases":0,"fb_leads":1,"outbound_clicks":1144,"link_ctr":0.0038,"cpc_link":0.8946},{"id":"120246444660650547","name":"SWM - SALES - 04.16","status":"ACTIVE","objective":"OUTCOME_SALES","spend":896.71,"impressions":105065,"clicks":3930,"website_leads":4,"website_purchases":34,"fb_purchases":0,"fb_leads":0,"outbound_clicks":1894,"link_ctr":0.0181,"cpc_link":0.4727},{"id":"120246390945350547","name":"SWM - Engagement - 04/15","status":"ACTIVE","objective":"OUTCOME_ENGAGEMENT","spend":651.4,"impressions":134972,"clicks":3304,"website_leads":1,"website_purchases":2,"fb_purchases":0,"fb_leads":0,"outbound_clicks":570,"link_ctr":0.0043,"cpc_link":1.1289}],"588399047928850":[{"id":"120240462381710232","name":"MH Sales | 3.11.2026","status":"ACTIVE","objective":"OUTCOME_SALES","spend":1553.72,"impressions":66816,"clicks":1566,"website_leads":0,"website_purchases":14,"fb_purchases":0,"fb_leads":0,"outbound_clicks":1118,"link_ctr":0.018,"cpc_link":1.2926},{"id":"120241205642020232","name":"MH Post Engagement | 3.26.2026","status":"ACTIVE","objective":"OUTCOME_ENGAGEMENT","spend":577.5,"impressions":100555,"clicks":973,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":79,"link_ctr":0.0008,"cpc_link":7.3101},{"id":"120242977928240232","name":"MH Sales | 3.11.2026","status":"ACTIVE","objective":"OUTCOME_SALES","spend":480.27,"impressions":11926,"clicks":439,"website_leads":0,"website_purchases":20,"fb_purchases":0,"fb_leads":0,"outbound_clicks":288,"link_ctr":0.0241,"cpc_link":1.6676},{"id":"120241145332140232","name":"MH Sales | 3.25.2026","status":"PAUSED","objective":"OUTCOME_SALES","spend":319.77,"impressions":11384,"clicks":327,"website_leads":0,"website_purchases":2,"fb_purchases":0,"fb_leads":0,"outbound_clicks":226,"link_ctr":0.0217,"cpc_link":1.2946},{"id":"120239890402540232","name":"MH Cardio | 3.8.2026","status":"PAUSED","objective":"OUTCOME_SALES","spend":218.51,"impressions":3542,"clicks":166,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":102,"link_ctr":0.0316,"cpc_link":1.951},{"id":"120241097302880232","name":"MH NWC Engagement | 3.25.2026","status":"PAUSED","objective":"OUTCOME_ENGAGEMENT","spend":145.78,"impressions":17223,"clicks":84,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":38,"link_ctr":0.0023,"cpc_link":3.7379},{"id":"120240643270050232","name":"MH Sales | 3.15.2026","status":"PAUSED","objective":"OUTCOME_SALES","spend":82.88,"impressions":2163,"clicks":65,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":38,"link_ctr":0.0185,"cpc_link":2.072}],"795645873022538":[{"id":"120243650914080723","name":"SWM - ENG - 03.31","status":"PAUSED","objective":"OUTCOME_ENGAGEMENT","spend":1525.74,"impressions":265803,"clicks":2962,"website_leads":21,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":405,"link_ctr":0.0015,"cpc_link":3.7487},{"id":"120234348932600723","name":"SWM - TRAFFIC - 09.25","status":"PAUSED","objective":"OUTCOME_TRAFFIC","spend":989.06,"impressions":196760,"clicks":4990,"website_leads":83,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":3265,"link_ctr":0.0166,"cpc_link":0.3025},{"id":"120242862615650723","name":"SWM - ENG - 03.16.26","status":"PAUSED","objective":"OUTCOME_ENGAGEMENT","spend":731.42,"impressions":34144,"clicks":1045,"website_leads":2,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":0,"link_ctr":0.0166,"cpc_link":1.29},{"id":"120233064995760723","name":"SWM - ENG - 09.25","status":"PAUSED","objective":"OUTCOME_ENGAGEMENT","spend":565.39,"impressions":121857,"clicks":822,"website_leads":1,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":0,"link_ctr":0,"cpc_link":565.39},{"id":"120244289505580723","name":"SWM - TRAFFIC - 04/09 Campaign","status":"ACTIVE","objective":"OUTCOME_TRAFFIC","spend":518.78,"impressions":53593,"clicks":1964,"website_leads":30,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":1272,"link_ctr":0.0237,"cpc_link":0.4078}],"461582549558217":[{"id":"120243033029390549","name":"Awareness Campaign - April 2026","status":"PAUSED","objective":"OUTCOME_AWARENESS","spend":950.19,"impressions":863914,"clicks":1538,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":1278,"link_ctr":0.0015,"cpc_link":0.7435},{"id":"120217702280720549","name":"Android Adv+ App Installs | 03.25 Campaign","status":"PAUSED","objective":"OUTCOME_APP_PROMOTION","spend":156.88,"impressions":15835,"clicks":179,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":177,"link_ctr":0.0114,"cpc_link":0.8667},{"id":"120244562079000549","name":"SWM - May 2026 - ENG","status":"ACTIVE","objective":"OUTCOME_ENGAGEMENT","spend":103.83,"impressions":13707,"clicks":199,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":6,"link_ctr":0.0004,"cpc_link":17.305},{"id":"120226074155160549","name":"[Engagement] Summer 2025","status":"PAUSED","objective":"OUTCOME_ENGAGEMENT","spend":42.98,"impressions":25220,"clicks":628,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":2,"link_ctr":0.0028,"cpc_link":0.614},{"id":"120244497173640549","name":"SWM - May 2026 - Engagement","status":"ARCHIVED","objective":"OUTCOME_ENGAGEMENT","spend":0.51,"impressions":32,"clicks":4,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":0,"link_ctr":0.0625,"cpc_link":0.255}],"751074779861391":[{"id":"120243387646760463","name":"3.26 - Engagement Campaign","status":"ACTIVE","objective":"OUTCOME_ENGAGEMENT","spend":824.27,"impressions":145725,"clicks":790,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":118,"link_ctr":0.001,"cpc_link":5.8876},{"id":"120239846917140463","name":"December 2025 - Engagement Campaign - Copy","status":"PAUSED","objective":"OUTCOME_ENGAGEMENT","spend":474.22,"impressions":27205,"clicks":535,"website_leads":1,"website_purchases":0,"fb_purchases":0,"fb_leads":1,"outbound_clicks":340,"link_ctr":0.0186,"cpc_link":0.939},{"id":"120234975718280463","name":"Engagement - St Pete","status":"PAUSED","objective":"OUTCOME_ENGAGEMENT","spend":465.25,"impressions":85774,"clicks":416,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":74,"link_ctr":0.0009,"cpc_link":6.2033}],"10153909615245235":[{"id":"6910699931289","name":"SWM - Traffic - 10.25","status":"ACTIVE","objective":"OUTCOME_TRAFFIC","spend":448.42,"impressions":31013,"clicks":974,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":625,"link_ctr":0.0202,"cpc_link":0.7175},{"id":"6885203336289","name":"SWM - Engagement - 09.25","status":"ACTIVE","objective":"OUTCOME_ENGAGEMENT","spend":179.19,"impressions":33768,"clicks":210,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":0,"link_ctr":0,"cpc_link":0},{"id":"52528541554093","name":"SWM - Traffic - 05.11","status":"ACTIVE","objective":"OUTCOME_TRAFFIC","spend":103.7,"impressions":11174,"clicks":583,"website_leads":0,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":294,"link_ctr":0.0263,"cpc_link":0.3527}],"2370933450049492":[{"id":"120245949329470030","name":"ECRN Creators Traffic","status":"PAUSED","objective":"OUTCOME_TRAFFIC","spend":336.41,"impressions":51780,"clicks":943,"website_leads":3,"website_purchases":0,"fb_purchases":0,"fb_leads":0,"outbound_clicks":837,"link_ctr":0.0162,"cpc_link":0.4019}],"3221766721483638":[{"id":"120246537724150627","name":"121G 5/12/26 New Sales Campaign","status":"ACTIVE","objective":"OUTCOME_SALES","spend":156.46,"impressions":5492,"clicks":333,"website_leads":0,"website_purchases":1,"fb_purchases":0,"fb_leads":0,"outbound_clicks":278,"link_ctr":0.0544,"cpc_link":0.5233}]};
 const CAMPAIGN_STATUS_TONE = {ACTIVE:"good",PAUSED:"neutral",ARCHIVED:"neutral",DELETED:"neutral"};
 const OBJECTIVE_LABEL = {OUTCOME_LEADS:"Leads",OUTCOME_SALES:"Sales",OUTCOME_TRAFFIC:"Traffic",OUTCOME_ENGAGEMENT:"Engagement",OUTCOME_AWARENESS:"Awareness",OUTCOME_APP_PROMOTION:"App installs"};
+const GOOGLE_FACTOR_DATA = {"2241955303":{"factor_inputs":{"cpa_trend":{"score":100,"value":-48.62880091795754},"conversion_trend":{"score":100,"value":66.66666666666667},"ctr_trend":{"score":47.536534446764094,"value":-22.463465553235906},"cpc_trend":{"score":44.672489082969435,"value":25.32751091703057},"conversion_rate_trend":{"score":100,"value":143.72623574144487},"spend_efficiency":{"score":100,"value":"7d CPA $45 vs target $142 [inferred]"},"budget_pacing":{"score":89.84521551945058,"value":"MTD $485, pacing 1.10x [inferred]"},"search_term_waste":{"score":20.843490980009747,"value":"79% on zero-conv ($649/$820)"},"campaign_status":{"score":100,"value":"0 paused hi-spend / 2 total"},"tracking_anomaly":{"score":100,"value":"0 bad weeks (clicks>500 & conv=0)"},"optimization_score":{"score":100,"value":"100"}},"top_risks":["search_term_waste","cpc_trend","ctr_trend"]},"8456911944":{"factor_inputs":{"cpa_trend":{"score":null,"value":"no recent activity"},"conversion_trend":{"score":null,"value":"no recent activity"},"ctr_trend":{"score":null,"value":"no recent activity"},"cpc_trend":{"score":null,"value":"no recent activity"},"conversion_rate_trend":{"score":null,"value":"no recent activity"},"spend_efficiency":{"score":null,"value":"no data"},"budget_pacing":{"score":93.93915016680077,"value":"MTD $490, pacing 0.94x [inferred]"},"search_term_waste":{"score":19.559087413483724,"value":"80% on zero-conv ($314/$390)"},"campaign_status":{"score":100,"value":"0 paused hi-spend / 4 total"},"tracking_anomaly":{"score":100,"value":"0 bad weeks (clicks>500 & conv=0)"},"optimization_score":{"score":null,"value":"N/A"}},"top_risks":["search_term_waste"]},"6477324444":{"factor_inputs":{"cpa_trend":{"score":0,"value":95.0554994954591},"conversion_trend":{"score":7.887296029596342,"value":-62.11270397040366},"ctr_trend":{"score":39.23076923076924,"value":-30.769230769230763},"cpc_trend":{"score":74.40251572327044,"value":-4.402515723270444},"conversion_rate_trend":{"score":18.98659183037106,"value":-51.01340816962894},"spend_efficiency":{"score":0,"value":"7d CPA $19 vs target $7 [inferred]"},"budget_pacing":{"score":92.2298865096101,"value":"MTD $2609, pacing 0.92x [inferred]"},"search_term_waste":{"score":28.201129335842978,"value":"72% on zero-conv ($1335/$1860)"},"campaign_status":{"score":75,"value":"1 paused hi-spend / 13 total"},"tracking_anomaly":{"score":100,"value":"0 bad weeks (clicks>500 & conv=0)"},"optimization_score":{"score":100,"value":"100"}},"top_risks":["cpa_trend","spend_efficiency","conversion_trend"]},"3951878729":{"factor_inputs":{"cpa_trend":{"score":null,"value":null},"conversion_trend":{"score":null,"value":null},"ctr_trend":{"score":75.3156146179402,"value":5.315614617940198},"cpc_trend":{"score":35.68144499178982,"value":34.31855500821018},"conversion_rate_trend":{"score":null,"value":null},"spend_efficiency":{"score":60.950537634408605,"value":"7d CPA $254 vs target $232 [inferred]"},"budget_pacing":{"score":87.92843244754957,"value":"MTD $424, pacing 1.12x [inferred]"},"search_term_waste":{"score":6.032420940738774,"value":"94% on zero-conv ($354/$376)"},"campaign_status":{"score":75,"value":"1 paused hi-spend / 3 total"},"tracking_anomaly":{"score":100,"value":"0 bad weeks (clicks>500 & conv=0)"},"optimization_score":{"score":97.18,"value":"97"}},"top_risks":["search_term_waste","cpc_trend"]},"3106564882":{"factor_inputs":{"cpa_trend":{"score":65.67030147530468,"value":4.329698524695314},"conversion_trend":{"score":30.0,"value":-40.0},"ctr_trend":{"score":86.48648648648648,"value":16.486486486486484},"cpc_trend":{"score":72.63157894736841,"value":-2.6315789473684075},"conversion_rate_trend":{"score":63.497757847533634,"value":-6.502242152466367},"spend_efficiency":{"score":32.41364725785987,"value":"7d CPA $98 vs target $71 [inferred]"},"budget_pacing":{"score":92.48973695856179,"value":"MTD $760, pacing 0.92x [inferred]"},"search_term_waste":{"score":33.415923356458535,"value":"67% on zero-conv ($403/$605)"},"campaign_status":{"score":75,"value":"1 paused hi-spend / 3 total"},"tracking_anomaly":{"score":100,"value":"0 bad weeks (clicks>500 & conv=0)"},"optimization_score":{"score":100,"value":"100"}},"top_risks":["conversion_trend","spend_efficiency","search_term_waste"]},"5413071227":{"factor_inputs":{"cpa_trend":{"score":null,"value":null},"conversion_trend":{"score":null,"value":null},"ctr_trend":{"score":100,"value":154.98489425981876},"cpc_trend":{"score":1.550802139037458,"value":68.44919786096254},"conversion_rate_trend":{"score":null,"value":null},"spend_efficiency":{"score":100,"value":"7d CPA $95 vs target $194 [inferred]"},"budget_pacing":{"score":83.05993833404592,"value":"MTD $217, pacing 1.17x [inferred]"},"search_term_waste":{"score":11.477869467366858,"value":"89% on zero-conv ($118/$133)"},"campaign_status":{"score":100,"value":"0 paused hi-spend / 1 total"},"tracking_anomaly":{"score":100,"value":"0 bad weeks (clicks>500 & conv=0)"},"optimization_score":{"score":100,"value":"100"}},"top_risks":["cpc_trend","search_term_waste"]},"4636798980":{"factor_inputs":{"cpa_trend":{"score":null,"value":null},"conversion_trend":{"score":0,"value":-100.0},"ctr_trend":{"score":80.22727272727272,"value":10.227272727272721},"cpc_trend":{"score":33.611111111111114,"value":36.388888888888886},"conversion_rate_trend":{"score":0,"value":-100.0},"spend_efficiency":{"score":null,"value":"no data"},"budget_pacing":{"score":85.26839167598034,"value":"MTD $331, pacing 0.85x [inferred]"},"search_term_waste":{"score":0,"value":"100% on zero-conv ($2/$2)"},"campaign_status":{"score":100,"value":"0 paused hi-spend / 3 total"},"tracking_anomaly":{"score":100,"value":"0 bad weeks (clicks>500 & conv=0)"},"optimization_score":{"score":97.1,"value":"97"}},"top_risks":["conversion_trend","conversion_rate_trend","search_term_waste"]},"1452954149":{"factor_inputs":{"cpa_trend":{"score":63.81914381914382,"value":6.180856180856181},"conversion_trend":{"score":70.0,"value":0.0},"ctr_trend":{"score":73.67140890316658,"value":3.6714089031665806},"cpc_trend":{"score":68.46547314578005,"value":1.5345268542199502},"conversion_rate_trend":{"score":65.5366631243358,"value":-4.463336875664197},"spend_efficiency":{"score":91.8722350026544,"value":"7d CPA $44 vs target $57 [inferred]"},"budget_pacing":{"score":96.38761275535137,"value":"MTD $686, pacing 0.96x [inferred]"},"search_term_waste":{"score":39.6799628942486,"value":"60% on zero-conv ($520/$862)"},"campaign_status":{"score":100,"value":"0 paused hi-spend / 2 total"},"tracking_anomaly":{"score":100,"value":"0 bad weeks (clicks>500 & conv=0)"},"optimization_score":{"score":93.79,"value":"94"}},"top_risks":["search_term_waste"]}};
+const STATUS_BADGE = {
+  healthy: "✓ healthy",
+  watch: "⚠ watch",
+  problem: "● needs attention",
+  nodata: "— no data"
+};
+const FACTOR_LABELS = {
+  cpa_trend:"Cost per lead trend",
+  conversion_trend:"Lead volume trend",
+  conversion_rate_trend:"Visit-to-lead rate trend",
+  ctr_trend:"Click rate trend",
+  cpc_trend:"Cost per click trend",
+  spend_efficiency:"Cost vs target",
+  budget_pacing:"Budget pacing",
+  search_term_waste:"Wasted search spend",
+  campaign_status:"Campaign status",
+  tracking_anomaly:"Conversion tracking",
+  optimization_score:"Google's optimization score"
+};
+
+function interpretFactor(key, f) {
+  const label = FACTOR_LABELS[key] || key;
+  if (!f || f.score == null) {
+    let headline = "Not enough recent activity to measure";
+    if (typeof f?.value === "string") {
+      if (f.value === "no data" || f.value === "no recent activity") headline = "Not enough recent activity to measure";
+      else if (f.value === "no inferable target") headline = "No target on file — can't measure";
+      else if (f.value === "no inferable budget") headline = "No budget on file — can't measure";
+      else if (f.value.startsWith("N/A")) headline = "Doesn't apply to this account";
+    }
+    return { label, status: "nodata", headline, detail: "" };
+  }
+  const score = f.score;
+  const status = score >= 70 ? "healthy" : score >= 40 ? "watch" : "problem";
+  const value = f.value;
+  // Helpers
+  const abs = Math.abs;
+  const r = (n) => (n >= 100 ? Math.round(n) : Math.round(n * 10) / 10);
+  // Per-factor interpretation
+  switch (key) {
+    case "cpa_trend": {
+      // value = WoW % change. Positive = costs UP (bad). Negative = costs DOWN (good).
+      const v = Number(value);
+      if (isNaN(v)) return { label, status, headline: "Cost per lead is stable", detail: "" };
+      let headline;
+      if (v >= 20) headline = `Cost per lead jumped ${r(abs(v))}% vs last week`;
+      else if (v >= 5) headline = `Cost per lead nudged up ${r(abs(v))}% vs last week`;
+      else if (v <= -20) headline = `Cost per lead dropped ${r(abs(v))}% vs last week — much cheaper`;
+      else if (v <= -5) headline = `Cost per lead is ${r(abs(v))}% lower than last week`;
+      else headline = "Cost per lead holding steady week-over-week";
+      return { label, status, headline, detail: `${v >= 0 ? "+" : ""}${r(v)}% week-over-week` };
+    }
+    case "conversion_trend": {
+      const v = Number(value);
+      if (isNaN(v)) return { label, status, headline: "Lead volume is stable", detail: "" };
+      let headline;
+      if (v <= -50) headline = `Leads collapsed — down ${r(abs(v))}% vs last week`;
+      else if (v <= -20) headline = `Leads dropped ${r(abs(v))}% vs last week`;
+      else if (v <= -5) headline = `Leads down ${r(abs(v))}% vs last week`;
+      else if (v >= 50) headline = `Leads surged ${r(abs(v))}% vs last week`;
+      else if (v >= 5) headline = `Leads grew ${r(abs(v))}% vs last week`;
+      else headline = "Lead volume holding steady week-over-week";
+      return { label, status, headline, detail: `${v >= 0 ? "+" : ""}${r(v)}% week-over-week` };
+    }
+    case "conversion_rate_trend": {
+      const v = Number(value);
+      if (isNaN(v)) return { label, status, headline: "Visit-to-lead rate is stable", detail: "" };
+      let headline;
+      if (v <= -30) headline = `Visit-to-lead rate dropped ${r(abs(v))}% — visitors stopped converting`;
+      else if (v <= -5) headline = `Fewer visitors are turning into leads — down ${r(abs(v))}%`;
+      else if (v >= 30) headline = `Visit-to-lead rate jumped ${r(abs(v))}%`;
+      else if (v >= 5) headline = `Slightly more visitors becoming leads — up ${r(abs(v))}%`;
+      else headline = "Visit-to-lead rate holding steady";
+      return { label, status, headline, detail: `${v >= 0 ? "+" : ""}${r(v)}% week-over-week` };
+    }
+    case "ctr_trend": {
+      const v = Number(value);
+      if (isNaN(v)) return { label, status, headline: "Click rate is stable", detail: "" };
+      let headline;
+      if (v <= -25) headline = `Ads are getting clicked far less — down ${r(abs(v))}%`;
+      else if (v <= -5) headline = `Click rate down ${r(abs(v))}% vs last week`;
+      else if (v >= 25) headline = `Click rate jumped ${r(abs(v))}%`;
+      else if (v >= 5) headline = `Click rate up ${r(abs(v))}% vs last week`;
+      else headline = "Click rate holding steady";
+      return { label, status, headline, detail: `${v >= 0 ? "+" : ""}${r(v)}% week-over-week` };
+    }
+    case "cpc_trend": {
+      const v = Number(value);
+      if (isNaN(v)) return { label, status, headline: "Click costs are stable", detail: "" };
+      let headline;
+      if (v >= 25) headline = `Each click costs ${r(abs(v))}% more this week`;
+      else if (v >= 5) headline = `Clicks are ${r(abs(v))}% more expensive than last week`;
+      else if (v <= -25) headline = `Each click is ${r(abs(v))}% cheaper this week`;
+      else if (v <= -5) headline = `Clicks are ${r(abs(v))}% cheaper than last week`;
+      else headline = "Click costs holding steady";
+      return { label, status, headline, detail: `${v >= 0 ? "+" : ""}${r(v)}% week-over-week` };
+    }
+    case "spend_efficiency": {
+      // value is a string like "7d CPA $19 vs target $7 [inferred]" or "no data"
+      const s = String(value);
+      const m = s.match(/\$([\d.]+) vs target \$([\d.]+)/);
+      const inferred = s.includes("[inferred]");
+      if (!m) return { label, status, headline: s, detail: "" };
+      const cpa = Number(m[1]); const target = Number(m[2]);
+      const ratio = target > 0 ? cpa / target : null;
+      let headline;
+      if (ratio != null && ratio >= 1.8) headline = `Last week's leads cost $${cpa} each — about ${ratio.toFixed(1)}× the target of $${target}`;
+      else if (ratio != null && ratio >= 1.2) headline = `Last week's leads cost $${cpa} — above the target of $${target}`;
+      else if (ratio != null && ratio <= 0.8) headline = `Last week's leads cost $${cpa} — well below target ($${target})`;
+      else headline = `Last week's leads cost $${cpa} — close to the target of $${target}`;
+      const detail = inferred ? "Target is estimated (no client-set target on file)" : "Using client-set target CPA";
+      return { label, status, headline, detail };
+    }
+    case "budget_pacing": {
+      // value like "MTD $2609, pacing 0.92x [inferred]"
+      const s = String(value);
+      const m = s.match(/MTD \$([\d.]+), pacing ([\d.]+)x/);
+      const inferred = s.includes("[inferred]");
+      if (!m) return { label, status, headline: s, detail: "" };
+      const mtd = Number(m[1]); const pace = Number(m[2]);
+      let headline;
+      if (pace >= 1.5) headline = `Overspending — running ${Math.round((pace - 1) * 100)}% faster than the monthly target`;
+      else if (pace >= 1.15) headline = `Slightly ahead of pace — about ${Math.round((pace - 1) * 100)}% over the monthly target rate`;
+      else if (pace <= 0.5) headline = `Underspending — only ${Math.round(pace * 100)}% of where the monthly budget should be`;
+      else if (pace <= 0.85) headline = `Behind pace — running at ${Math.round(pace * 100)}% of the monthly target rate`;
+      else headline = `On pace — month-to-date spend tracks the monthly target`;
+      const detail = `Spent $${Math.round(mtd).toLocaleString()} month-to-date${inferred ? " · budget is estimated" : ""}`;
+      return { label, status, headline, detail };
+    }
+    case "search_term_waste": {
+      // value like "72% on zero-conv ($1335/$1860)"
+      const s = String(value);
+      if (s.startsWith("N/A")) return { label, status: "nodata", headline: "Doesn't apply to this account", detail: "" };
+      const m = s.match(/(\d+)% on zero-conv \(\$([\d.]+)\/\$([\d.]+)\)/);
+      if (!m) return { label, status, headline: s, detail: "" };
+      const pct = Number(m[1]); const wasted = Number(m[2]); const total = Number(m[3]);
+      let headline;
+      if (pct >= 70) headline = `${pct}% of last month's spend went to searches that brought zero leads`;
+      else if (pct >= 50) headline = `${pct}% of search spend went to non-converting terms — high waste`;
+      else if (pct >= 30) headline = `${pct}% of search spend brought no leads — moderate waste`;
+      else headline = `Only ${pct}% of search spend went to non-converting terms — clean`;
+      const detail = `$${wasted.toLocaleString()} of $${total.toLocaleString()} on terms with no leads (last 30 days)`;
+      return { label, status, headline, detail };
+    }
+    case "campaign_status": {
+      // value like "1 paused hi-spend / 13 total"
+      const s = String(value);
+      const m = s.match(/(\d+) paused hi-spend \/ (\d+) total/);
+      if (!m) return { label, status, headline: s, detail: "" };
+      const paused = Number(m[1]); const total = Number(m[2]);
+      let headline;
+      if (paused === 0) headline = total === 0 ? "No campaigns configured" : `All ${total} campaign${total === 1 ? "" : "s"} are running`;
+      else if (paused === total) headline = `Everything is paused — ${paused} of ${total} campaigns`;
+      else headline = `${paused} campaign${paused === 1 ? "" : "s"} paused — verify intentional`;
+      return { label, status, headline, detail: `${paused} of ${total} previously-high-spend campaigns paused right now` };
+    }
+    case "tracking_anomaly": {
+      // value like "0 bad weeks (clicks>500 & conv=0)"
+      const s = String(value);
+      const m = s.match(/(\d+) bad weeks/);
+      if (!m) return { label, status, headline: s, detail: "" };
+      const bad = Number(m[1]);
+      let headline;
+      if (bad === 0) headline = "Conversion tracking looks healthy";
+      else if (bad === 1) headline = "One recent week looks like conversion tracking dropped";
+      else headline = `${bad} recent weeks look like conversion tracking dropped — verify pixel`;
+      return { label, status, headline, detail: "Flagged when a week sees 500+ clicks but zero recorded leads" };
+    }
+    case "optimization_score": {
+      // value is "100" or similar number-as-string, or "N/A"
+      const s = String(value);
+      if (s === "N/A") return { label, status: "nodata", headline: "Doesn't apply to this account", detail: "" };
+      const n = Number(s);
+      if (isNaN(n)) return { label, status, headline: s, detail: "" };
+      let headline;
+      if (n >= 90) headline = `Google rates this account ${Math.round(n)}/100 — well-optimized`;
+      else if (n >= 70) headline = `Google rates this account ${Math.round(n)}/100 — good, room to tune`;
+      else if (n >= 50) headline = `Google rates this account ${Math.round(n)}/100 — has open recommendations`;
+      else headline = `Google rates this account ${Math.round(n)}/100 — many open recommendations`;
+      return { label, status, headline, detail: "From Google Ads' built-in optimization score" };
+    }
+    default:
+      return { label, status, headline: String(value ?? ""), detail: "" };
+  }
+}
+
+function renderGoogleFactorsHTML(googleId) {
+  const entry = GOOGLE_FACTOR_DATA[googleId];
+  if (!entry || !entry.factor_inputs) return "";
+  const factors = entry.factor_inputs;
+  // Order keys: problem first, then watch, then healthy/nodata. Within each group, keep declared order.
+  const FACTOR_ORDER = ["cpa_trend","conversion_trend","ctr_trend","cpc_trend","conversion_rate_trend","spend_efficiency","budget_pacing","search_term_waste","campaign_status","tracking_anomaly","optimization_score"];
+  const interpreted = FACTOR_ORDER.filter(k => factors[k] !== undefined).map(k => ({ key: k, ...interpretFactor(k, factors[k]) }));
+  const priority = { problem: 0, watch: 1, healthy: 2, nodata: 3 };
+  interpreted.sort((a, b) => priority[a.status] - priority[b.status]);
+  if (!interpreted.length) return "";
+  const cards = interpreted.map(f => {
+    const cls = f.status === "problem" ? "factor is-problem" : (f.status === "watch" ? "factor is-watch" : "factor");
+    return `<div class="${cls}">
+      <div class="factor-status-row">
+        <span class="factor-label">${esc(f.label)}</span>
+        <span class="factor-status factor-status-${f.status}">${STATUS_BADGE[f.status]}</span>
+      </div>
+      <div class="factor-headline">${esc(f.headline)}</div>
+      ${f.detail ? `<div class="factor-detail">${esc(f.detail)}</div>` : ""}
+    </div>`;
+  }).join("");
+  return `<div class="section-label">Google account diagnostic <span style="background:rgba(10,10,10,0.05);color:var(--ink-muted);padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;margin-left:8px">11 factors · plain English</span></div>
+<div class="factor-grid">${cards}</div>`;
+}
 function campaignRealConv(c){return (c.website_leads||0)+(c.website_purchases||0)+(c.fb_purchases||0)+(c.fb_leads||0)}
 function renderCampaignsHTML(customerId){
   const list = CAMPAIGN_DATA[customerId];
@@ -364,6 +588,11 @@ function renderClient(){
   html += '<a class="platform-action" href="meta-account.html?id=' + esc(m.id) + '"><span>Open Meta account drill-down</span><span class="platform-action-arrow">→</span></a>';
   html += '</div>';
   html += '</div>';
+
+  // Google account diagnostic — same factor grid that account.html shows, folded
+  // into the CRM view so the operator gets the same plain-English read on the
+  // Google side as they get from the new Meta campaigns table on the Meta side.
+  html += renderGoogleFactorsHTML(g.id);
 
   // Meta campaigns — same data and renderer used on meta-account.html, so the
   // cross-platform CRM view shows the full Meta campaign breakdown instead of
