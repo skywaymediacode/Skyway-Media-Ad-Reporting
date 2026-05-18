@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Account · Skyway OS</title>
 <style>
@@ -280,7 +281,7 @@ function renderAccount() {
         <h1>${esc(a.name)}</h1>
         <div class="acct-header-chips">
           <span class="acct-header-id">${esc(a.customer_id)}</span>
-          <span class="badge badge-${STATUS_TONE[a.status]}">${a.status.replace(/_/g," ")}</span>
+          <span class="badge badge-${STATUS_TONE[a.status] || "neutral"}">${(a.status || "—").replace(/_/g," ")}</span>
           ${a.is_lsa ? '<span class="badge badge-info">Local Services Ads</span>' : '<span class="badge badge-neutral">Search</span>'}
           <span class="badge badge-neutral">${a.time_zone || ""}</span>
           ${a.monthly_budget > 0 ? `<span class="badge badge-neutral">Budget ${money(a.monthly_budget)}/mo</span>` : ""}
@@ -355,23 +356,23 @@ function renderAccount() {
               <span class="quick-action-arrow">↗</span>
             </a>
           ` : `
-            <a class="quick-action-btn" href="https://ads.google.com/aw/overview?__c=${a.customer_id}" target="_blank">
+            <a class="quick-action-btn" href="https://ads.google.com/aw/overview?__c=${esc(a.customer_id)}" target="_blank">
               <span>Open account in Google Ads</span>
               <span class="quick-action-arrow">↗</span>
             </a>
-            <a class="quick-action-btn" href="https://ads.google.com/aw/campaigns?__c=${a.customer_id}" target="_blank">
+            <a class="quick-action-btn" href="https://ads.google.com/aw/campaigns?__c=${esc(a.customer_id)}" target="_blank">
               <span>Campaigns</span>
               <span class="quick-action-arrow">↗</span>
             </a>
-            <a class="quick-action-btn" href="https://ads.google.com/aw/keywords/searchterms?__c=${a.customer_id}" target="_blank">
+            <a class="quick-action-btn" href="https://ads.google.com/aw/keywords/searchterms?__c=${esc(a.customer_id)}" target="_blank">
               <span>Search-term report</span>
               <span class="quick-action-arrow">↗</span>
             </a>
-            <a class="quick-action-btn" href="https://ads.google.com/aw/keywords/negative?__c=${a.customer_id}" target="_blank">
+            <a class="quick-action-btn" href="https://ads.google.com/aw/keywords/negative?__c=${esc(a.customer_id)}" target="_blank">
               <span>Negative keywords</span>
               <span class="quick-action-arrow">↗</span>
             </a>
-            <a class="quick-action-btn" href="https://ads.google.com/aw/overview/recommendations?__c=${a.customer_id}" target="_blank">
+            <a class="quick-action-btn" href="https://ads.google.com/aw/overview/recommendations?__c=${esc(a.customer_id)}" target="_blank">
               <span>Google's recommendations</span>
               <span class="quick-action-arrow">↗</span>
             </a>
@@ -492,5 +493,6 @@ function setWindow(w) {
   renderKPIs();
 }
 </script>
+<script>try { localStorage.setItem("skyway.platform_context", "google"); } catch(e){}</script>
 </body>
 </html>

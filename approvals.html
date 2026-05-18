@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Approvals · Skyway OS</title>
 <style>
@@ -122,6 +123,28 @@ main{flex:1;min-width:0}
 .held-toggle.open .held-toggle-arrow{transform:rotate(90deg)}
 .held-content{display:none}
 .held-content.open{display:block}
+.queue-actions{display:flex;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line);align-items:center;flex-wrap:wrap}
+.action-btn{font-size:12px;padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);cursor:pointer;font-family:inherit;font-weight:500;transition:all .12s ease}
+.action-btn:hover{background:var(--surface-raised);border-color:var(--ink-subtle)}
+.action-btn.active[data-action="done"]{background:var(--google-soft);border-color:var(--good);color:#1d6c3a}
+.action-btn.active[data-action="approve"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.action-btn.active[data-action="reject"]{background:#f2f2f2;border-color:var(--ink-subtle);color:var(--ink-muted)}
+.action-state-label{font-size:11px;color:var(--ink-muted);margin-left:auto}
+.queue-item.state-done{opacity:0.5}
+.queue-item.state-done .queue-item-title{text-decoration:line-through;text-decoration-color:var(--ink-subtle)}
+.queue-item.state-rejected{opacity:0.4}
+.queue-item.state-rejected .queue-item-title{text-decoration:line-through;text-decoration-color:var(--ink-subtle)}
+.queue-item.state-approved{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent-soft) inset}
+.state-summary{font-size:13px;color:var(--ink-soft);margin-bottom:12px;padding:10px 14px;background:var(--surface);border-radius:12px;border:1px solid var(--line);display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.state-summary-pill{display:inline-flex;align-items:center;gap:6px;font-weight:500}
+.state-summary-pill-dot{width:8px;height:8px;border-radius:50%}
+.state-summary-pill.done .state-summary-pill-dot{background:var(--good)}
+.state-summary-pill.approved .state-summary-pill-dot{background:var(--accent)}
+.state-summary-pill.rejected .state-summary-pill-dot{background:var(--ink-subtle)}
+.state-summary-pill.open .state-summary-pill-dot{background:var(--ink-soft)}
+.state-summary-clear{margin-left:auto;font-size:12px;color:var(--info);cursor:pointer;background:none;border:none;padding:0;font-family:inherit}
+.state-summary-clear:hover{text-decoration:underline}
+.queue-error{background:#fff5f5;border:1px solid var(--bad);border-radius:12px;padding:14px 16px;color:#991b1b;font-size:13px;margin-bottom:12px}
 
 #queue-empty{padding:40px 24px;text-align:center;color:var(--ink-muted);font-size:13.5px;line-height:1.6;background:var(--surface);border-radius:14px;border:1px dashed var(--line)}
 #queue-empty-icon{font-size:24px;color:var(--ink-subtle);margin-bottom:6px}
@@ -234,6 +257,8 @@ main{flex:1;min-width:0}
         <input id="search" type="text" placeholder="Search by account name, rec title…" />
       </div>
 
+      <div id="state-summary" class="state-summary" style="display:none"></div>
+      <div id="queue-error-banner" class="queue-error" style="display:none"></div>
       <div id="queue-list"></div>
       <div id="queue-empty" style="display:none">
         <div id="queue-empty-icon">⊙</div>
@@ -337,6 +362,60 @@ function renderEvidence(ev) {
   return parts.join("");
 }
 
+// ──────────────────────────────────────────────────────────────────
+// Operator state — Mark done / Approve / Reject, persisted in localStorage.
+// Keyed by rec id. State machine: null → approved | done | rejected.
+// Clicking the active state again clears it back to null.
+// ──────────────────────────────────────────────────────────────────
+const STATE_KEY = "skyway.rec_state.v1";
+function loadStates() {
+  try {
+    const raw = localStorage.getItem(STATE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) { return {}; }
+}
+function saveStates(s) {
+  try { localStorage.setItem(STATE_KEY, JSON.stringify(s)); } catch (e) {}
+}
+function getState(recId) {
+  const s = loadStates();
+  return s[recId]?.state || null;
+}
+function setState(recId, newState) {
+  const s = loadStates();
+  if (!newState) delete s[recId];
+  else s[recId] = { state: newState, ts: new Date().toISOString() };
+  saveStates(s);
+}
+function clearAllStates() {
+  if (!confirm("Clear all done/approve/reject marks across every queue item? This can't be undone.")) return;
+  try { localStorage.removeItem(STATE_KEY); } catch (e) {}
+  renderQueue();
+  renderStateSummary();
+}
+// Stats across visible items
+function renderStateSummary() {
+  const states = loadStates();
+  const ids = Object.keys(states);
+  const counts = { done: 0, approved: 0, rejected: 0 };
+  ids.forEach(id => {
+    const st = states[id]?.state;
+    if (counts[st] !== undefined) counts[st]++;
+  });
+  const total = DATA.queue.filter(i => i.kind !== "monitor_no_action").length;
+  const open = total - counts.done - counts.rejected;
+  const summary = document.getElementById("state-summary");
+  if (!summary) return;
+  if (ids.length === 0) { summary.style.display = "none"; return; }
+  summary.style.display = "";
+  summary.innerHTML =
+    '<span class="state-summary-pill open"><span class="state-summary-pill-dot"></span>' + open + ' open</span>' +
+    '<span class="state-summary-pill approved"><span class="state-summary-pill-dot"></span>' + counts.approved + ' approved</span>' +
+    '<span class="state-summary-pill done"><span class="state-summary-pill-dot"></span>' + counts.done + ' done</span>' +
+    '<span class="state-summary-pill rejected"><span class="state-summary-pill-dot"></span>' + counts.rejected + ' rejected</span>' +
+    '<button class="state-summary-clear" onclick="clearAllStates()">Clear all marks</button>';
+}
+
 function passesFilters(item) {
   if (platformFilter !== "all" && item.platform !== platformFilter) return false;
   if (riskFilter !== "all" && item.risk !== riskFilter) return false;
@@ -348,17 +427,33 @@ function passesFilters(item) {
 }
 
 function renderQueue() {
-  const actionable = DATA.queue.filter(i => i.kind !== "monitor_no_action").filter(passesFilters);
-  const held = DATA.queue.filter(i => i.kind === "monitor_no_action").filter(passesFilters);
+  try {
+    const actionable = DATA.queue.filter(i => i.kind !== "monitor_no_action").filter(passesFilters);
+    const held = DATA.queue.filter(i => i.kind === "monitor_no_action").filter(passesFilters);
 
-  document.getElementById("queue-shown").textContent = actionable.length;
-  document.getElementById("held-toggle-count").textContent = held.length + " items";
+    document.getElementById("queue-shown").textContent = actionable.length;
+    document.getElementById("held-toggle-count").textContent = held.length + " items";
 
-  const empty = document.getElementById("queue-empty");
-  empty.style.display = actionable.length === 0 ? "block" : "none";
+    const empty = document.getElementById("queue-empty");
+    empty.style.display = actionable.length === 0 ? "block" : "none";
 
-  document.getElementById("queue-list").innerHTML = actionable.map(item => renderQueueItem(item)).join("");
-  document.getElementById("held-content").innerHTML = held.map(item => renderQueueItem(item, true)).join("");
+    const renderSafe = (item, isHeld) => {
+      try { return renderQueueItem(item, isHeld); }
+      catch (err) { console.error("Render failed for rec", item?.id, err); return ""; }
+    };
+    document.getElementById("queue-list").innerHTML = actionable.map(item => renderSafe(item, false)).join("");
+    document.getElementById("held-content").innerHTML = held.map(item => renderSafe(item, true)).join("");
+
+    document.getElementById("queue-error-banner").style.display = "none";
+    renderStateSummary();
+  } catch (err) {
+    console.error("Queue render failed:", err);
+    const banner = document.getElementById("queue-error-banner");
+    if (banner) {
+      banner.style.display = "";
+      banner.textContent = "Render failed — see browser console (Cmd-Opt-J / Ctrl-Shift-J) for details. Try refreshing the page.";
+    }
+  }
 }
 
 function renderQueueItem(item, isHeld) {
@@ -371,14 +466,25 @@ function renderQueueItem(item, isHeld) {
   const accountUrl = item.platform === "meta" ? `meta-account.html?id=${esc(item.cust_id)}` : `account.html?id=${esc(item.cust_id)}`;
   const linkLabel = item.platform === "meta" ? "Open in Meta" : "Open in Google Ads";
   const conf = Math.round((item.confidence || 0) * 100);
+  const kindLabel = KIND_LABELS[item.kind] || (item.kind ? item.kind.replace(/_/g, " ") : "—");
+  const state = getState(item.id);
+  const stateClass = state ? ` state-${state}` : "";
+  // Action buttons — only on actionable items, not on held/monitor_no_action
+  const actions = isHeld ? "" : `
+      <div class="queue-actions" onclick="event.stopPropagation()">
+        <button class="action-btn${state === "approve" ? " active" : ""}" data-action="approve" data-rec-id="${esc(item.id)}">Approve</button>
+        <button class="action-btn${state === "done" ? " active" : ""}" data-action="done" data-rec-id="${esc(item.id)}">Mark done</button>
+        <button class="action-btn${state === "reject" ? " active" : ""}" data-action="reject" data-rec-id="${esc(item.id)}">Reject</button>
+        ${state ? '<span class="action-state-label">marked ' + esc(state) + '</span>' : ''}
+      </div>`;
   return `
-    <div class="queue-item" data-id="${esc(item.id)}" onclick="window.location.href='${accountUrl}'">
+    <div class="queue-item${stateClass}" data-id="${esc(item.id)}" data-state="${esc(state || "")}" onclick="window.location.href='${accountUrl}'">
       <div class="queue-item-header">
         ${platformBadge}
         <span class="queue-item-account">${esc(item.account_name)}${item.is_lsa ? ' <span style="color:var(--ink-subtle);font-weight:400">· LSA</span>' : ''}</span>
         <span class="queue-item-account-id">${item.platform === "meta" ? "act_" : ""}${esc(item.cust_id)}</span>
         ${riskBadge}
-        <span class="badge badge-neutral">${esc(KIND_LABELS[item.kind] || item.kind.replace(/_/g, " "))}</span>
+        <span class="badge badge-neutral">${esc(kindLabel)}</span>
       </div>
       <div class="queue-item-title">${esc(item.title)}</div>
       <div class="queue-item-reason">${esc(item.reason)}</div>
@@ -386,7 +492,7 @@ function renderQueueItem(item, isHeld) {
         <span>confidence ${conf}%</span>
         ${item.impact ? '<span class="queue-item-meta-dot">·</span><span>' + esc(item.impact) + '</span>' : ""}
         ${item.deep_link ? '<span class="queue-item-meta-dot">·</span><a class="queue-item-link" href="' + esc(item.deep_link) + '" target="_blank" onclick="event.stopPropagation()">' + linkLabel + ' ↗</a>' : ""}
-      </div>
+      </div>${actions}
     </div>
   `;
 }
@@ -410,6 +516,38 @@ document.getElementById("held-toggle").addEventListener("click", () => {
   document.getElementById("held-toggle").classList.toggle("open");
   document.getElementById("held-content").classList.toggle("open");
 });
+
+// Action button event delegation — Approve / Mark done / Reject.
+// Clicking the active state again clears it. State persists in localStorage.
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".action-btn");
+  if (!btn) return;
+  e.stopPropagation();
+  const recId = btn.getAttribute("data-rec-id");
+  const action = btn.getAttribute("data-action");
+  if (!recId || !action) return;
+  const current = getState(recId);
+  const next = (current === action) ? null : action;
+  setState(recId, next);
+  renderQueue();
+});
+
+// Platform context — read localStorage and adjust sidebar pills + links.
+// Defaults to "google" when no context is set. Saved on accounts.html / meta-accounts.html load.
+(function applyPlatformContext() {
+  try {
+    var ctx = localStorage.getItem("skyway.platform_context") || "google";
+    if (ctx !== "meta") return;
+    var pills = document.querySelectorAll(".platform-pill");
+    pills.forEach(function (p) { p.classList.remove("active"); });
+    var metaPill = document.querySelector('.platform-pill[href="meta.html"]');
+    if (metaPill) metaPill.classList.add("active");
+    var accountsLink = document.querySelector('.nav-item[href="accounts.html"]');
+    if (accountsLink) accountsLink.setAttribute("href", "meta-accounts.html");
+    var overviewLink = document.querySelector('.nav-item[href="google.html"]');
+    if (overviewLink) overviewLink.setAttribute("href", "meta.html");
+  } catch (e) {}
+})();
 
 renderStats();
 renderPortfolio();

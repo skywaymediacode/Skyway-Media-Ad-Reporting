@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Accounts · Skyway OS</title>
 <style>
@@ -244,7 +245,7 @@ function render(){
       <tr data-cust="${esc(r.customer_id)}" class="acct-row">
         <td><span class="score-cell score-cell-${r.status}">${r.score}</span></td>
         <td><div style="font-weight:500;color:var(--ink-soft)">${esc(r.name)}</div><div class="account-id">${esc(r.customer_id)}${r.is_lsa ? " · LSA" : ""}</div></td>
-        <td><span class="badge badge-${STATUS_TONE[r.status]}">${r.status.replace(/_/g," ")}</span></td>
+        <td><span class="badge badge-${STATUS_TONE[r.status] || "neutral"}">${(r.status || "—").replace(/_/g," ")}</span></td>
         <td class="num">${m.cost > 0 ? money(m.cost) : "—"}</td>
         <td class="num">${m.conv > 0 ? num(Math.round(m.conv * 10) / 10) : "—"}</td>
         <td class="num">${m.cpa != null ? money(m.cpa, true) : "—"}</td>
@@ -283,5 +284,6 @@ document.querySelectorAll(".window-pill").forEach(p => p.addEventListener("click
 document.querySelectorAll(".window-pill").forEach(p => p.classList.toggle("active", p.dataset.window === currentWindow));
 render();
 </script>
+<script>try { localStorage.setItem("skyway.platform_context", "google"); } catch(e){}</script>
 </body>
 </html>

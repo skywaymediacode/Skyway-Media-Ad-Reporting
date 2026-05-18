@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Meta Account · Skyway OS</title>
 <style>
@@ -205,7 +206,7 @@ function renderAccount() {
         <h1>${esc(a.name)}</h1>
         <div class="acct-header-chips">
           <span class="acct-header-id">act_${esc(a.customer_id)}</span>
-          <span class="badge badge-${STATUS_TONE[a.status]}">${a.status.replace(/_/g, " ")}</span>
+          <span class="badge badge-${STATUS_TONE[a.status] || "neutral"}">${(a.status || "—").replace(/_/g, " ")}</span>
           <span class="badge badge-meta">Meta Ads</span>
         </div>
       </div>
@@ -258,19 +259,19 @@ function renderAccount() {
 
     <div class="section-label">Quick actions</div>
     <div class="card">
-      <a class="quick-action-btn" href="https://business.facebook.com/adsmanager/manage/campaigns?act=${a.customer_id}" target="_blank">
+      <a class="quick-action-btn" href="https://business.facebook.com/adsmanager/manage/campaigns?act=${esc(a.customer_id)}" target="_blank">
         <span>Open account in Meta Ads Manager</span>
         <span class="quick-action-arrow">↗</span>
       </a>
-      <a class="quick-action-btn" href="https://business.facebook.com/events_manager2/list/pixel?act=${a.customer_id}" target="_blank">
+      <a class="quick-action-btn" href="https://business.facebook.com/events_manager2/list/pixel?act=${esc(a.customer_id)}" target="_blank">
         <span>Open Events Manager (verify pixel + conversions)</span>
         <span class="quick-action-arrow">↗</span>
       </a>
-      <a class="quick-action-btn" href="https://business.facebook.com/ads/manager/audiences/manage/?act=${a.customer_id}" target="_blank">
+      <a class="quick-action-btn" href="https://business.facebook.com/ads/manager/audiences/manage/?act=${esc(a.customer_id)}" target="_blank">
         <span>Audiences</span>
         <span class="quick-action-arrow">↗</span>
       </a>
-      <a class="quick-action-btn" href="https://business.facebook.com/adsmanager/manage/billing?act=${a.customer_id}" target="_blank">
+      <a class="quick-action-btn" href="https://business.facebook.com/adsmanager/manage/billing?act=${esc(a.customer_id)}" target="_blank">
         <span>Billing &amp; payment</span>
         <span class="quick-action-arrow">↗</span>
       </a>
@@ -350,5 +351,6 @@ function setWindow(w) {
   renderKPIs();
 }
 </script>
+<script>try { localStorage.setItem("skyway.platform_context", "meta"); } catch(e){}</script>
 </body>
 </html>

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Meta Accounts · Skyway OS</title>
 <style>
@@ -217,7 +218,7 @@ function money(n,c){return new Intl.NumberFormat("en-US",{style:"currency",curre
 function num(n){return new Intl.NumberFormat("en-US").format(Math.round(n||0))}
 
 function statusLabel(s) {
-  return s.replace(/_/g, " ");
+  return (s || "—").replace(/_/g, " ");
 }
 
 function render() {
@@ -298,5 +299,6 @@ document.querySelectorAll(".window-pill").forEach(p => p.addEventListener("click
 document.querySelectorAll(".window-pill").forEach(p => p.classList.toggle("active", p.dataset.window === currentWindow));
 render();
 </script>
+<script>try { localStorage.setItem("skyway.platform_context", "meta"); } catch(e){}</script>
 </body>
 </html>
