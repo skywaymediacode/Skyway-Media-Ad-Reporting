@@ -166,7 +166,7 @@ main{flex:1;min-width:0}
       <div class="sidebar-logo-mark">S</div>
       <div>
         <div class="sidebar-logo-name">Skyway OS</div>
-        <div class="sidebar-logo-sub">Internal · v0.3</div>
+        <div class="sidebar-logo-sub" data-build="20260518-2006">Internal · build 20260518-2006</div>
       </div>
     </div>
 
@@ -444,6 +444,12 @@ function renderQueue() {
     document.getElementById("queue-list").innerHTML = actionable.map(item => renderSafe(item, false)).join("");
     document.getElementById("held-content").innerHTML = held.map(item => renderSafe(item, true)).join("");
 
+    // Wire action buttons + row navigation directly after innerHTML rewrite.
+    // Direct handlers per-element are the most reliable approach — no event-
+    // delegation collisions, no capture-phase subtleties. console.log here so
+    // we can verify in DevTools that wiring ran.
+    wireQueueItemHandlers();
+
     document.getElementById("queue-error-banner").style.display = "none";
     renderStateSummary();
   } catch (err) {
@@ -471,14 +477,14 @@ function renderQueueItem(item, isHeld) {
   const stateClass = state ? ` state-${state}` : "";
   // Action buttons — only on actionable items, not on held/monitor_no_action
   const actions = isHeld ? "" : `
-      <div class="queue-actions" onclick="event.stopPropagation()">
+      <div class="queue-actions">
         <button class="action-btn${state === "approved" ? " active" : ""}" data-action="approved" data-rec-id="${esc(item.id)}">Approve</button>
         <button class="action-btn${state === "done" ? " active" : ""}" data-action="done" data-rec-id="${esc(item.id)}">Mark done</button>
         <button class="action-btn${state === "rejected" ? " active" : ""}" data-action="rejected" data-rec-id="${esc(item.id)}">Reject</button>
         ${state ? '<span class="action-state-label">marked ' + esc(state) + '</span>' : ''}
       </div>`;
   return `
-    <div class="queue-item${stateClass}" data-id="${esc(item.id)}" data-state="${esc(state || "")}" onclick="window.location.href='${accountUrl}'">
+    <div class="queue-item${stateClass}" data-id="${esc(item.id)}" data-state="${esc(state || "")}" data-href="${accountUrl}">
       <div class="queue-item-header">
         ${platformBadge}
         <span class="queue-item-account">${esc(item.account_name)}${item.is_lsa ? ' <span style="color:var(--ink-subtle);font-weight:400">· LSA</span>' : ''}</span>
@@ -491,7 +497,7 @@ function renderQueueItem(item, isHeld) {
       <div class="queue-item-meta">
         <span>confidence ${conf}%</span>
         ${item.impact ? '<span class="queue-item-meta-dot">·</span><span>' + esc(item.impact) + '</span>' : ""}
-        ${item.deep_link ? '<span class="queue-item-meta-dot">·</span><a class="queue-item-link" href="' + esc(item.deep_link) + '" target="_blank" onclick="event.stopPropagation()">' + linkLabel + ' ↗</a>' : ""}
+        ${item.deep_link ? '<span class="queue-item-meta-dot">·</span><a class="queue-item-link" href="' + esc(item.deep_link) + '" target="_blank" data-no-nav="1">' + linkLabel + ' ↗</a>' : ""}
       </div>${actions}
     </div>
   `;
@@ -517,25 +523,37 @@ document.getElementById("held-toggle").addEventListener("click", () => {
   document.getElementById("held-content").classList.toggle("open");
 });
 
-// Action button event delegation — Approve / Mark done / Reject.
-// Clicking the active state again clears it. State persists in localStorage.
-// CAPTURE PHASE is required here: the parent .queue-actions div has an
-// inline onclick="event.stopPropagation()" (so action-button clicks don't
-// trigger the queue-item navigation). That stopPropagation also blocks
-// bubble-phase document handlers — so we register in the capture phase,
-// which fires before the bubble path reaches the inline handler.
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest(".action-btn");
-  if (!btn) return;
-  const recId = btn.getAttribute("data-rec-id");
-  const action = btn.getAttribute("data-action");
-  if (!recId || !action) return;
-  const current = getState(recId);
-  const next = (current === action) ? null : action;
-  setState(recId, next);
-  renderQueue();
-  renderStateSummary();
-}, true);
+// Wire up navigation + Approve / Mark done / Reject handlers directly to
+// each rendered element. Called from renderQueue() after innerHTML is
+// rewritten. Direct handlers per element — no event delegation, no
+// stopPropagation chain to worry about. The simplest thing that works.
+function wireQueueItemHandlers() {
+  const buttons = document.querySelectorAll(".action-btn[data-action][data-rec-id]");
+  console.log("[approvals] wiring", buttons.length, "action buttons");
+  buttons.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation(); // don't trigger row navigation
+      const recId = btn.getAttribute("data-rec-id");
+      const action = btn.getAttribute("data-action");
+      if (!recId || !action) return;
+      const current = getState(recId);
+      const next = (current === action) ? null : action;
+      setState(recId, next);
+      renderQueue();
+      renderStateSummary();
+    });
+  });
+  // Row navigation — click anywhere on the queue-item OTHER than a button
+  // or a deep-link sends the operator to that account's drill-down.
+  document.querySelectorAll(".queue-item[data-href]").forEach(row => {
+    row.addEventListener("click", (e) => {
+      if (e.target.closest(".action-btn")) return;
+      if (e.target.closest("[data-no-nav]")) return;
+      const href = row.getAttribute("data-href");
+      if (href) window.location.href = href;
+    });
+  });
+}
 
 // Platform context — read localStorage and adjust sidebar pills + links.
 // Defaults to "google" when no context is set. Saved on accounts.html / meta-accounts.html load.
