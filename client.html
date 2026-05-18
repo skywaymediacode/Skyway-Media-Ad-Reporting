@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Client · Skyway OS</title>
+<style>
+:root{
+  --bg:#f5f5f7;--surface:#ffffff;--surface-raised:#fafafa;--surface-sunken:#f5f5f7;
+  --ink:#0a0a0a;--ink-soft:#1d1d1f;--ink-muted:#6e6e73;--ink-subtle:#86868b;
+  --line:#e5e5ea;
+  --good:#34c759;--warn:#ff9f0a;--bad:#ff3b30;--info:#0a84ff;
+  --accent:#5e5ce6;--accent-soft:#eeeefd;
+  --google:#1a73e8;--google-soft:#e8f0fe;
+  --meta:#0866ff;--meta-soft:#e6f0ff;
+  --shadow-card:0 1px 2px rgba(0,0,0,0.04),0 4px 16px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'SF Pro Text',-apple-system,BlinkMacSystemFont,'Inter',system-ui,sans-serif;font-feature-settings:"ss01","cv11";-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-size:14px;line-height:1.5}
+h1,h2,h3,h4{font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Inter',system-ui,sans-serif;margin:0}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+.layout{min-height:100vh;display:flex}
+.sidebar{width:240px;flex-shrink:0;padding:24px 16px;display:flex;flex-direction:column;gap:4px}
+.sidebar-logo{display:flex;align-items:center;gap:8px;padding:0 12px;margin-bottom:16px}
+.sidebar-logo-mark{width:32px;height:32px;border-radius:14px;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:600;font-size:14px}
+.sidebar-logo-name{font-size:14px;font-weight:600;color:var(--ink-soft);line-height:1.2;letter-spacing:-0.01em}
+.sidebar-logo-sub{font-size:11px;color:var(--ink-muted)}
+.platform-switcher{display:flex;gap:4px;padding:3px;background:var(--surface);border-radius:14px;margin:0 4px 16px;border:1px solid var(--line)}
+.platform-pill{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px 10px;border-radius:11px;font-size:12.5px;font-weight:500;color:var(--ink-muted);transition:all .15s ease}
+.platform-pill:hover{color:var(--ink-soft);background:rgba(10,10,10,0.03)}
+.platform-pill.active{background:var(--ink);color:#fff}
+.platform-pill-icon{width:18px;height:18px;border-radius:6px;background:rgba(10,10,10,0.08);display:grid;place-items:center;font-size:10px;font-weight:700;letter-spacing:0;color:var(--ink-muted)}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:14px;font-size:14px;color:var(--ink-muted);transition:background-color .15s ease,color .15s ease;font-weight:500}
+.nav-item:hover{background:rgba(10,10,10,0.05);color:var(--ink-soft)}
+.nav-item.active{background:var(--ink);color:#fff}
+.sidebar-footer{margin-top:auto;padding:24px 12px 0;font-size:11px;color:var(--ink-muted);line-height:1.5}
+
+main{flex:1;min-width:0}
+.container{max-width:1400px;margin:0 auto;padding:32px}
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-muted);margin-bottom:14px}
+.breadcrumb a:hover{color:var(--ink-soft);text-decoration:underline}
+.breadcrumb-sep{color:var(--ink-subtle)}
+
+.client-header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:24px;flex-wrap:wrap}
+.client-header h1{font-size:32px;font-weight:600;letter-spacing:-0.02em;color:var(--ink-soft);line-height:1.1}
+.client-header-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+
+.combined-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.combined-kpi{background:var(--surface);border-radius:18px;box-shadow:var(--shadow-card);border:1px solid rgba(229,229,234,0.6);padding:20px}
+.combined-kpi-label{font-size:11px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em}
+.combined-kpi-value{font-family:'SF Pro Display',sans-serif;font-size:30px;font-weight:600;letter-spacing:-0.02em;color:var(--ink-soft);margin-top:8px;line-height:1.05}
+.combined-kpi-hint{font-size:12px;color:var(--ink-muted);margin-top:6px}
+
+.section-label{font-size:11px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.06em;margin:24px 0 12px;display:flex;align-items:center;gap:8px}
+.section-label-count{background:rgba(10,10,10,0.05);color:var(--ink-muted);padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;letter-spacing:0}
+
+.platform-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.platform-card{background:var(--surface);border-radius:18px;box-shadow:var(--shadow-card);border:1px solid rgba(229,229,234,0.6);padding:24px;display:flex;flex-direction:column;gap:16px}
+.platform-card-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.platform-card-mark{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600}
+.platform-card-mark-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:13px;font-weight:700;color:#fff}
+.platform-card-mark-icon.is-google{background:var(--google)}
+.platform-card-mark-icon.is-meta{background:var(--meta)}
+.platform-card-id{font-size:11px;color:var(--ink-muted);font-family:'SF Mono','Monaco',monospace;margin-top:2px}
+.score-cell{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:999px;font-size:16px;font-weight:600;font-variant-numeric:tabular-nums;flex-shrink:0}
+.score-cell-problem{background:rgba(255,59,48,0.1);color:var(--bad);box-shadow:inset 0 0 0 1px rgba(255,59,48,0.2)}
+.score-cell-needs_attention{background:rgba(255,159,10,0.1);color:var(--warn);box-shadow:inset 0 0 0 1px rgba(255,159,10,0.2)}
+.score-cell-good{background:rgba(10,132,255,0.1);color:var(--info);box-shadow:inset 0 0 0 1px rgba(10,132,255,0.2)}
+.score-cell-excellent{background:rgba(52,199,89,0.1);color:var(--good);box-shadow:inset 0 0 0 1px rgba(52,199,89,0.2)}
+.score-cell-tracking_gap{background:rgba(255,159,10,0.15);color:var(--warn);box-shadow:inset 0 0 0 1px rgba(255,159,10,0.3)}
+.score-cell-dormant{background:rgba(10,10,10,0.05);color:var(--ink-subtle);box-shadow:inset 0 0 0 1px rgba(10,10,10,0.1)}
+
+.platform-metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.platform-metric{padding:12px 14px;background:var(--surface-raised);border-radius:12px;border:1px solid var(--line)}
+.platform-metric-label{font-size:11px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:0.05em;font-weight:600}
+.platform-metric-value{font-size:18px;font-weight:600;color:var(--ink-soft);margin-top:4px;letter-spacing:-0.01em;font-variant-numeric:tabular-nums}
+.platform-metric-hint{font-size:11px;color:var(--ink-muted);margin-top:2px}
+
+.platform-action{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;background:var(--surface-raised);border-radius:12px;border:1px solid var(--line);font-size:13px;font-weight:500;color:var(--ink-soft);transition:all .15s ease}
+.platform-action:hover{background:var(--surface);border-color:var(--ink-subtle)}
+.platform-action-arrow{color:var(--ink-subtle);font-size:14px}
+
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:500;box-shadow:inset 0 0 0 1px transparent;white-space:nowrap}
+.badge-good{background:rgba(52,199,89,0.1);color:var(--good);box-shadow:inset 0 0 0 1px rgba(52,199,89,0.2)}
+.badge-warn{background:rgba(255,159,10,0.1);color:var(--warn);box-shadow:inset 0 0 0 1px rgba(255,159,10,0.2)}
+.badge-bad{background:rgba(255,59,48,0.1);color:var(--bad);box-shadow:inset 0 0 0 1px rgba(255,59,48,0.2)}
+.badge-info{background:rgba(10,132,255,0.1);color:var(--info);box-shadow:inset 0 0 0 1px rgba(10,132,255,0.2)}
+.badge-neutral{background:rgba(10,10,10,0.05);color:var(--ink-muted);box-shadow:inset 0 0 0 1px rgba(10,10,10,0.1)}
+.badge-google{background:var(--google-soft);color:var(--google);box-shadow:inset 0 0 0 1px rgba(26,115,232,0.2)}
+.badge-meta{background:var(--meta-soft);color:var(--meta);box-shadow:inset 0 0 0 1px rgba(8,102,255,0.2)}
+.badge-accent{background:var(--accent-soft);color:var(--accent);box-shadow:inset 0 0 0 1px rgba(94,92,230,0.2)}
+
+.next-step{padding:14px 16px;background:rgba(94,92,230,0.05);border:1px solid rgba(94,92,230,0.18);border-radius:12px;font-size:13px;color:var(--ink-soft);line-height:1.5}
+.next-step-label{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:4px}
+
+.context-card{padding:18px 20px;background:var(--surface);border-radius:14px;border:1px solid var(--line);margin-bottom:12px}
+.context-card-title{font-size:13.5px;font-weight:600;color:var(--ink-soft);margin-bottom:6px}
+.context-card-body{font-size:13px;color:var(--ink-soft);line-height:1.55}
+
+.empty-page{padding:48px 24px;text-align:center;color:var(--ink-muted);background:var(--surface);border-radius:18px;border:1px solid var(--line)}
+.empty-page-icon{font-size:36px;color:var(--ink-subtle);margin-bottom:8px}
+
+/* Ops UI (notes + recipients — combined view) */
+.ops-section{margin-top:24px}
+.ops-card{background:var(--surface);border-radius:18px;border:1px solid var(--line);padding:20px}
+.ops-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.ops-card-title{font-size:14px;font-weight:600;color:var(--ink-soft);letter-spacing:-0.01em}
+.ops-card-sub{font-size:12px;color:var(--ink-muted);margin-top:2px}
+.ops-unsaved-dot{width:7px;height:7px;border-radius:50%;background:var(--warn);display:inline-block}
+.ops-form{display:flex;gap:8px;align-items:flex-start}
+.ops-input{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13px;font-family:inherit;color:var(--ink);background:var(--surface-raised);outline:none;transition:border-color .15s}
+.ops-input:focus{border-color:var(--accent)}
+.ops-textarea{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;font-family:inherit;color:var(--ink);background:var(--surface-raised);outline:none;min-height:64px;resize:vertical;line-height:1.5}
+.ops-textarea:focus{border-color:var(--accent)}
+.ops-btn{padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface-raised);color:var(--ink-soft);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
+.ops-btn:hover{border-color:var(--ink-subtle);color:var(--ink)}
+.ops-btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.ops-btn-primary:hover{opacity:0.9}
+.ops-btn-sm{padding:5px 10px;font-size:12px}
+.ops-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.ops-list-empty{font-size:13px;color:var(--ink-muted);padding:14px;text-align:center;background:var(--surface-raised);border-radius:10px}
+.ops-note{padding:12px 14px;background:var(--surface-raised);border-radius:12px;border:1px solid var(--line)}
+.ops-note-meta{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--ink-muted);margin-bottom:6px;gap:8px}
+.ops-note-text{font-size:13px;line-height:1.5;color:var(--ink-soft);white-space:pre-wrap;word-break:break-word}
+.ops-note.is-unsaved{border-color:rgba(255,159,10,0.4);background:rgba(255,159,10,0.04)}
+.ops-recipient{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface-raised);border-radius:10px;border:1px solid var(--line);gap:10px}
+.ops-recipient-email{font-size:13px;color:var(--ink-soft);font-family:'SF Mono','Monaco',monospace;word-break:break-all}
+
+@media (max-width:1024px){
+  .combined-kpis{grid-template-columns:repeat(2,1fr)}
+  .platform-grid{grid-template-columns:1fr}
+}
+@media (max-width:768px){
+  .sidebar{display:none}
+  .container{padding:20px}
+  .client-header h1{font-size:24px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-mark">S</div>
+      <div>
+        <div class="sidebar-logo-name">Skyway OS</div>
+        <div class="sidebar-logo-sub" data-build="20260518-2147">Internal · build 20260518-2147</div>
+      </div>
+    </div>
+    <div class="platform-switcher">
+      <a class="platform-pill" href="google.html"><span class="platform-pill-icon">G</span><span>Google Ads</span></a>
+      <a class="platform-pill" href="meta.html"><span class="platform-pill-icon">M</span><span>Meta Ads</span></a>
+    </div>
+    <nav class="nav">
+      <a class="nav-item" href="google.html"><span>Overview</span></a>
+      <a class="nav-item" href="accounts.html"><span>Accounts</span></a>
+      <a class="nav-item" href="timeline.html"><span>Timeline</span></a>
+      <a class="nav-item" href="reports.html"><span>Reports</span></a>
+      <a class="nav-item" href="approvals.html"><span>Approvals</span></a>
+      <a class="nav-item" href="settings.html"><span>Settings</span></a>
+    </nav>
+    <div class="sidebar-footer">Cross-platform client view · combines Google + Meta data for clients that run both.</div>
+  </aside>
+
+  <main>
+    <div class="container">
+      <div class="breadcrumb">
+        <a id="bc-back" href="accounts.html">Accounts</a>
+        <span class="breadcrumb-sep">›</span>
+        <span id="bc-name">—</span>
+      </div>
+      <div id="client-content"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+const CLIENT_MAP = [{"slug":"adirondack-furniture","display_name":"Adirondack Furniture","google":{"id":"2241955303","name":"Adirondack Furniture","score":84,"status":"excellent","is_lsa":false,"spend_90d":2740.8536,"conv_90d":23,"cpa_90d":119.1675,"clicks_90d":1463,"target_cpa":142.19,"next_action":"Add negatives to cut zero-conversion search-term spend","top_risks":["search_term_waste","cpc_trend","ctr_trend"]},"meta":{"id":"795645873022538","name":"Adirondack Furniture","score":72,"status":"good","spend_90d":4411.5,"conv_90d":146,"cpa_90d":30.215753424657535,"real_conv_90d":146,"leads_90d":146,"purch_90d":0}},{"slug":"delta-construction-partners","display_name":"Delta Construction Partners","google":{"id":"8456911944","name":"Delta Construction Partners","score":71,"status":"good","is_lsa":false,"spend_90d":3692.4382,"conv_90d":51,"cpa_90d":72.4007,"clicks_90d":696,"target_cpa":88.88,"next_action":"Add negatives to cut zero-conversion search-term spend","top_risks":["search_term_waste"]},"meta":{"id":"2370933450049492","name":"Delta Construction Partners","score":55,"status":"needs_attention","spend_90d":336.38,"conv_90d":3,"cpa_90d":112.12666666666667,"real_conv_90d":3,"leads_90d":3,"purch_90d":0}},{"slug":"gulf-stream-boat-club","display_name":"Gulf Stream Boat Club","google":{"id":"6477324444","name":"Gulf Stream Boat Club","score":33,"status":"problem","is_lsa":false,"spend_90d":16228.0268,"conv_90d":2605.21,"cpa_90d":6.2291,"clicks_90d":5510,"target_cpa":7.39,"next_action":"Investigate CPA spike — review bid strategy and search-term changes","top_risks":["cpa_trend","spend_efficiency","conversion_trend"]},"meta":{"id":"1717152123019764","name":"Gulf Stream Boat Club","score":85,"status":"excellent","spend_90d":35883.73,"conv_90d":1786,"cpa_90d":20.09167413213886,"real_conv_90d":1786,"leads_90d":1786,"purch_90d":0}},{"slug":"imagine-home-organization","display_name":"Imagine Home Organization","google":{"id":"3951878729","name":"Imagine Home Organization","score":61,"status":"needs_attention","is_lsa":false,"spend_90d":2320.5612,"conv_90d":12,"cpa_90d":193.3801,"clicks_90d":342,"target_cpa":232.5,"next_action":"Add negatives to cut zero-conversion search-term spend","top_risks":["search_term_waste","cpc_trend"]},"meta":{"id":"10153909615245235","name":"Imagine Home Organization","score":30,"status":"tracking_gap","spend_90d":691.02,"conv_90d":0,"cpa_90d":null,"real_conv_90d":0,"leads_90d":0,"purch_90d":0}},{"slug":"dayton-weight-loss","display_name":"Dayton Weight Loss","google":{"id":"3106564882","name":"Dayton Weight Loss","score":59,"status":"needs_attention","is_lsa":false,"spend_90d":4059.3033,"conv_90d":69,"cpa_90d":58.8305,"clicks_90d":1235,"target_cpa":70.93,"next_action":"Investigate conversion drop — check tracking and ad-copy changes","top_risks":["conversion_trend","spend_efficiency","search_term_waste"]},"meta":{"id":"1374179246812994","name":"Dayton Weight loss Secret","score":72,"status":"good","spend_90d":9120.56,"conv_90d":131,"cpa_90d":69.62259541984733,"real_conv_90d":131,"leads_90d":131,"purch_90d":0}},{"slug":"elevate-you-dayton","display_name":"Elevate You Dayton","google":{"id":"5413071227","name":"Elevate You Dayton","score":73,"status":"good","is_lsa":false,"spend_90d":2730.7749,"conv_90d":17,"cpa_90d":160.6338,"clicks_90d":417,"target_cpa":194.47,"next_action":"Review bid caps and quality scores","top_risks":["cpc_trend","search_term_waste"]},"meta":{"id":"1817071415746002","name":"Elevate You","score":35,"status":"problem","spend_90d":11451.54,"conv_90d":10,"cpa_90d":1145.154,"real_conv_90d":10,"leads_90d":10,"purch_90d":0}},{"slug":"lauries-love","display_name":"Lauries Love","google":{"id":"4636798980","name":"LAURIES LOVE INC Grant Account","score":41,"status":"problem","is_lsa":false,"spend_90d":3886.1529,"conv_90d":10,"cpa_90d":388.6153,"clicks_90d":214,"target_cpa":466.34,"next_action":"Investigate conversion drop — check tracking and ad-copy changes","top_risks":["conversion_trend","conversion_rate_trend","search_term_waste"]},"meta":{"id":"461582549558217","name":"Lauries Love","score":30,"status":"tracking_gap","spend_90d":1262.86,"conv_90d":0,"cpa_90d":null,"real_conv_90d":0,"leads_90d":0,"purch_90d":0}},{"slug":"toledo-weight-loss","display_name":"Toledo Weight Loss","google":{"id":"1452954149","name":"Toledo Weight Loss","score":75,"status":"good","is_lsa":false,"spend_90d":4498.4304,"conv_90d":96,"cpa_90d":46.8586,"clicks_90d":1156,"target_cpa":56.51,"next_action":"Add negatives to cut zero-conversion search-term spend","top_risks":["search_term_waste"]},"meta":{"id":"1749336399009315","name":"Toledo Weight Loss Secret","score":30,"status":"tracking_gap","spend_90d":1790.51,"conv_90d":0,"cpa_90d":null,"real_conv_90d":0,"leads_90d":0,"purch_90d":0}}];
+const STRATEGIC_CONTEXT = {
+  "gulf-stream-boat-club": {
+    title: "Cross-platform channel question",
+    body: "Meta delivers 1,786 leads at $20 CPA on $36K over 90 days. Google delivers 2,605 attributed conversions on $16K but the 7-day CPA jumped 95% week-over-week (problem tier). Worth a strategic conversation about channel split — Meta is doing the volume work; Google may belong in a more targeted role."
+  },
+  "lauries-love": {
+    title: "Ad Grants compliance + dual tracking gap",
+    body: "Google side has PMax running on what looks like a Google Ad Grants account (Grants policy permits Search only). Meta side shows zero attributed conversions on $1,263 spend — same pattern as Imagine Home and Toledo Meta. Urgent client conversation, not a quiet pause."
+  },
+  "imagine-home-organization": {
+    title: "Meta tracking gap",
+    body: "Meta side shows $691 over 90 days with zero attributed conversions. Google side is at 'needs attention' with $2,321 / 12 conv. Verify the Meta pixel is firing before drawing any conclusions about creative or audience performance."
+  },
+  "toledo-weight-loss": {
+    title: "Gold-standard reference + Meta tracking gap",
+    body: "Toledo's Google account is the highest-converting weight-loss site in the network ($25 branded CPA). Meta side has zero attributed conversions on $1,791 — almost certainly a pixel issue. Reference structure for the 10 sister weight-loss clinics; fix Meta tracking to unlock the model."
+  },
+  "dayton-weight-loss": {
+    title: "Sister-clinic gap to Toledo",
+    body: "Google at $59 CPA over 90d is healthy for the network. Meta at $70 CPA is matching it. Toledo (the reference) does $25 branded CPA on the Google side — gap is partly market size, partly campaign structure. Worth applying Toledo's keyword + landing-page pattern."
+  },
+  "elevate-you-dayton": {
+    title: "Meta efficiency problem",
+    body: "Google is at 'good' tier ($160 CPA on $2,731 / 17 conv). Meta is at 'problem' tier ($1,145 CPA on $11,452 / 10 conv) — 7× the Google CPA. Either the Meta campaign is bleeding or the tracked conversions are partial. Diagnose Meta side before any budget reallocation."
+  }
+};
+
+const params = new URLSearchParams(location.search);
+const slug = (params.get("slug") || "").toLowerCase();
+const client = CLIENT_MAP.find(c => c.slug === slug);
+const STATUS_LABEL = {problem:"problem", needs_attention:"needs attention", good:"good", excellent:"excellent", tracking_gap:"tracking gap", dormant:"dormant"};
+const ctx = STRATEGIC_CONTEXT[slug];
+
+function esc(s){if(s==null)return"";return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function money(n,short){if(n==null||isNaN(n))return"—";const v=Number(n);if(short&&v>=10000)return"$"+(v/1000).toFixed(1)+"K";return"$"+Math.round(v).toLocaleString();}
+function num(n){if(n==null||isNaN(n))return"—";const v=Number(n);if(v>=10000)return(v/1000).toFixed(1)+"K";return Math.round(v).toLocaleString();}
+function moneyCPA(n){if(n==null||isNaN(n))return"—";const v=Number(n);if(v<10)return"$"+v.toFixed(2);return"$"+Math.round(v);}
+
+function renderClient(){
+  const root = document.getElementById("client-content");
+  if (!client) {
+    root.innerHTML = '<div class="empty-page"><div class="empty-page-icon">∅</div><div style="font-size:14.5px;color:var(--ink-soft);font-weight:500">Client not found</div><div style="font-size:12.5px;margin-top:8px">Unknown slug: <span style="font-family:\'SF Mono\',monospace">' + esc(slug || "(none)") + '</span></div><div style="margin-top:14px;font-size:12px"><a href="accounts.html" style="color:var(--accent)">Back to Google accounts</a> · <a href="meta-accounts.html" style="color:var(--accent)">Meta accounts</a></div></div>';
+    return;
+  }
+  document.title = client.display_name + " · Skyway OS";
+  document.getElementById("bc-name").textContent = client.display_name;
+  const g = client.google, m = client.meta;
+  const combinedSpend = (g.spend_90d || 0) + (m.spend_90d || 0);
+  // Use real_conv_90d on Meta side (leads + purchases, not view content); Google uses conv_90d.
+  const combinedConv = (g.conv_90d || 0) + (m.real_conv_90d || 0);
+  const combinedCPA = combinedConv > 0 ? combinedSpend / combinedConv : null;
+  const splitGoogle = combinedSpend > 0 ? Math.round((g.spend_90d / combinedSpend) * 100) : 0;
+  const splitMeta = 100 - splitGoogle;
+
+  let html = '';
+
+  // Header
+  html += '<div class="client-header"><div><h1>' + esc(client.display_name) + '</h1>';
+  html += '<div class="client-header-chips">';
+  html += '<span class="badge badge-accent">Cross-platform client</span>';
+  html += '<span class="badge badge-google">Google Ads</span>';
+  html += '<span class="badge badge-meta">Meta Ads</span>';
+  html += '</div></div></div>';
+
+  // Combined KPIs (90d)
+  html += '<div class="section-label">Last 90 days — both platforms combined</div>';
+  html += '<div class="combined-kpis">';
+  html += '<div class="combined-kpi"><div class="combined-kpi-label">Total ad spend</div><div class="combined-kpi-value">' + money(combinedSpend) + '</div><div class="combined-kpi-hint">' + splitGoogle + '% Google · ' + splitMeta + '% Meta</div></div>';
+  html += '<div class="combined-kpi"><div class="combined-kpi-label">Total leads</div><div class="combined-kpi-value">' + num(combinedConv) + '</div><div class="combined-kpi-hint">G ' + num(g.conv_90d) + ' · M ' + num(m.real_conv_90d || m.conv_90d || 0) + '</div></div>';
+  html += '<div class="combined-kpi"><div class="combined-kpi-label">Blended cost per lead</div><div class="combined-kpi-value">' + moneyCPA(combinedCPA) + '</div><div class="combined-kpi-hint">Across both platforms</div></div>';
+  const totalClicks = (g.clicks_90d || 0);
+  html += '<div class="combined-kpi"><div class="combined-kpi-label">Google clicks</div><div class="combined-kpi-value">' + num(totalClicks) + '</div><div class="combined-kpi-hint">(Meta clicks not tracked in summary)</div></div>';
+  html += '</div>';
+
+  // Strategic context (if known)
+  if (ctx) {
+    html += '<div class="section-label">Strategic context</div>';
+    html += '<div class="context-card"><div class="context-card-title">' + esc(ctx.title) + '</div><div class="context-card-body">' + esc(ctx.body) + '</div></div>';
+  }
+
+  // Per-platform cards
+  html += '<div class="section-label">Per-platform breakdown</div>';
+  html += '<div class="platform-grid">';
+  // Google card
+  html += '<div class="platform-card"><div class="platform-card-header">';
+  html += '<div><div class="platform-card-mark"><span class="platform-card-mark-icon is-google">G</span>Google Ads</div><div class="platform-card-id">' + esc(g.id) + '</div></div>';
+  html += '<div class="score-cell score-cell-' + esc(g.status) + '">' + (g.score != null ? g.score : "—") + '</div>';
+  html += '</div>';
+  html += '<div><div style="font-size:13.5px;color:var(--ink-soft);font-weight:500">' + esc(g.name) + '</div><div style="font-size:11.5px;color:var(--ink-muted);margin-top:2px">Status: ' + esc(STATUS_LABEL[g.status] || g.status) + (g.is_lsa ? " · LSA" : "") + '</div></div>';
+  html += '<div class="platform-metrics">';
+  html += '<div class="platform-metric"><div class="platform-metric-label">90d spend</div><div class="platform-metric-value">' + money(g.spend_90d) + '</div></div>';
+  html += '<div class="platform-metric"><div class="platform-metric-label">90d leads</div><div class="platform-metric-value">' + num(g.conv_90d) + '</div></div>';
+  html += '<div class="platform-metric"><div class="platform-metric-label">Cost per lead</div><div class="platform-metric-value">' + moneyCPA(g.cpa_90d) + '</div>' + (g.target_cpa > 0 ? '<div class="platform-metric-hint">Target ' + moneyCPA(g.target_cpa) + '</div>' : '') + '</div>';
+  html += '<div class="platform-metric"><div class="platform-metric-label">Clicks</div><div class="platform-metric-value">' + num(g.clicks_90d) + '</div></div>';
+  html += '</div>';
+  if (g.next_action) html += '<div class="next-step"><div class="next-step-label">Recommended next step</div>' + esc(g.next_action) + '</div>';
+  html += '<a class="platform-action" href="account.html?id=' + esc(g.id) + '"><span>Open Google account drill-down</span><span class="platform-action-arrow">→</span></a>';
+  html += '</div>';
+  // Meta card
+  html += '<div class="platform-card"><div class="platform-card-header">';
+  html += '<div><div class="platform-card-mark"><span class="platform-card-mark-icon is-meta">M</span>Meta Ads</div><div class="platform-card-id">act_' + esc(m.id) + '</div></div>';
+  html += '<div class="score-cell score-cell-' + esc(m.status) + '">' + (m.score != null ? m.score : "—") + '</div>';
+  html += '</div>';
+  html += '<div><div style="font-size:13.5px;color:var(--ink-soft);font-weight:500">' + esc(m.name) + '</div><div style="font-size:11.5px;color:var(--ink-muted);margin-top:2px">Status: ' + esc(STATUS_LABEL[m.status] || m.status) + '</div></div>';
+  html += '<div class="platform-metrics">';
+  html += '<div class="platform-metric"><div class="platform-metric-label">90d spend</div><div class="platform-metric-value">' + money(m.spend_90d) + '</div></div>';
+  html += '<div class="platform-metric"><div class="platform-metric-label">90d real leads</div><div class="platform-metric-value">' + num(m.real_conv_90d) + '</div><div class="platform-metric-hint">Excludes view-content events</div></div>';
+  html += '<div class="platform-metric"><div class="platform-metric-label">Cost per lead</div><div class="platform-metric-value">' + moneyCPA(m.cpa_90d) + '</div></div>';
+  html += '<div class="platform-metric"><div class="platform-metric-label">All conversions</div><div class="platform-metric-value">' + num(m.conv_90d) + '</div><div class="platform-metric-hint">Includes view-content</div></div>';
+  html += '</div>';
+  if (m.status === "tracking_gap") html += '<div class="next-step"><div class="next-step-label">Recommended next step</div>Verify the Meta pixel is firing — spend exists but no real conversions are being attributed.</div>';
+  html += '<a class="platform-action" href="meta-account.html?id=' + esc(m.id) + '"><span>Open Meta account drill-down</span><span class="platform-action-arrow">→</span></a>';
+  html += '</div>';
+  html += '</div>';
+
+  // Notes (combined from both platform local entries)
+  html += '<div class="section-label">Operator notes <span class="section-label-count" id="notes-count">0</span></div>';
+  html += '<div class="ops-card">';
+  html += '<div class="ops-card-header"><div><div class="ops-card-title">Notes about ' + esc(client.display_name) + '</div><div class="ops-card-sub">Saved instantly to your browser. Notes you add on either platform\'s drill-down also show up here.</div></div></div>';
+  html += '<div class="ops-form"><textarea class="ops-textarea" id="note-input" placeholder="Cross-platform note (applies to both Google and Meta sides)..."></textarea></div>';
+  html += '<div style="display:flex;gap:8px;margin-top:10px"><button class="ops-btn ops-btn-primary" id="note-add-btn">Add note</button><button class="ops-btn" id="note-clear-btn">Clear</button></div>';
+  html += '<div class="ops-list" id="notes-list"></div>';
+  html += '</div>';
+
+  // Recipients (combined)
+  html += '<div class="section-label">Report recipients <span class="section-label-count" id="recipients-count">0</span></div>';
+  html += '<div class="ops-card">';
+  html += '<div class="ops-card-header"><div><div class="ops-card-title">Who gets reports for ' + esc(client.display_name) + '</div><div class="ops-card-sub">Cross-platform list. Future weekly-report send pipeline will use this for the merged client report.</div></div></div>';
+  html += '<div class="ops-form"><input type="email" class="ops-input" id="recipient-input" placeholder="client@example.com" /><button class="ops-btn ops-btn-primary" id="recipient-add-btn">Add</button></div>';
+  html += '<div class="ops-list" id="recipients-list"></div>';
+  html += '</div>';
+
+  root.innerHTML = html;
+  mountOps();
+}
+
+// ============= Ops module (notes + recipients) =============
+// Reads/writes the SAME localStorage keys as account.html / meta-account.html
+// but unions across BOTH the Google account_id AND the Meta account_id, so
+// notes added on either platform's drill-down show up here too.
+const SKY_NOTES_KEY = "skyway.notes.v1";
+const SKY_RECIPIENTS_KEY = "skyway.recipients.v1";
+
+function skyLoad(key){try{return JSON.parse(localStorage.getItem(key)||"[]");}catch(e){return[];}}
+function skySave(key,arr){try{localStorage.setItem(key,JSON.stringify(arr));}catch(e){}}
+function skyToast(msg){let t=document.getElementById("ops-toast");if(!t){t=document.createElement("div");t.id="ops-toast";t.style.cssText="position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);padding:12px 18px;background:#0a0a0a;color:#fff;border-radius:12px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:all .2s;z-index:1000;box-shadow:0 8px 24px rgba(0,0,0,0.2)";document.body.appendChild(t);}t.textContent=msg;t.style.opacity="1";t.style.transform="translateX(-50%) translateY(0)";clearTimeout(window._skyToastTimer);window._skyToastTimer=setTimeout(()=>{t.style.opacity="0";t.style.transform="translateX(-50%) translateY(10px)";},2200);}
+function skyFmtTime(iso){try{const d=new Date(iso);const opts={month:"short",day:"numeric",hour:"numeric",minute:"2-digit"};return d.toLocaleString(undefined,opts);}catch(e){return iso;}}
+
+function mountOps(){
+  if (!client) return;
+  const gId = client.google.id, mId = client.meta.id;
+
+  function renderNotes(){
+    const all = skyLoad(SKY_NOTES_KEY);
+    const mine = all.filter(n => (n.account_id === gId && n.platform === "google") || (n.account_id === mId && n.platform === "meta"));
+    mine.sort((a,b) => (b.created_at || "").localeCompare(a.created_at || ""));
+    document.getElementById("notes-count").textContent = String(mine.length);
+    const listEl = document.getElementById("notes-list");
+    if (mine.length === 0){ listEl.innerHTML = '<div class="ops-list-empty">No notes yet. Add one above.</div>'; return; }
+    listEl.innerHTML = mine.map(n => {
+      const platBadge = n.platform === "meta" ? '<span class="badge badge-meta" style="font-size:10px">Meta</span>' : '<span class="badge badge-google" style="font-size:10px">Google</span>';
+      return '<div class="ops-note' + (n.synced ? "" : " is-unsaved") + '">' +
+        '<div class="ops-note-meta"><div style="display:flex;align-items:center;gap:6px">' +
+        (n.synced ? "" : '<span class="ops-unsaved-dot" title="Not yet on Drive"></span>') +
+        '<span>' + esc(skyFmtTime(n.created_at)) + '</span>' + platBadge + '</div>' +
+        '<button class="ops-btn ops-btn-sm" data-note-del="' + esc(n.id) + '" style="color:var(--bad)">Delete</button></div>' +
+        '<div class="ops-note-text">' + esc(n.text) + '</div></div>';
+    }).join("");
+    listEl.querySelectorAll("[data-note-del]").forEach(btn => btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-note-del");
+      skySave(SKY_NOTES_KEY, skyLoad(SKY_NOTES_KEY).filter(n => n.id !== id));
+      renderNotes();
+      skyToast("Note deleted");
+    }));
+  }
+  document.getElementById("note-add-btn").addEventListener("click", () => {
+    const inp = document.getElementById("note-input");
+    const text = (inp.value || "").trim();
+    if (!text){ inp.focus(); return; }
+    const arr = skyLoad(SKY_NOTES_KEY);
+    // Cross-platform notes are stored on the Google side by convention; they
+    // show up on both per-platform drill-downs too once we extend those to
+    // also fold in cross-platform notes (future). For now: attach to Google id.
+    arr.push({
+      id: "note_" + Date.now() + "_" + Math.random().toString(36).slice(2,8),
+      account_id: gId,
+      platform: "google",
+      account_name: client.display_name,
+      text: text,
+      created_at: new Date().toISOString(),
+      created_by: "Aaron Pilk",
+      cross_platform: true,
+      synced: false
+    });
+    skySave(SKY_NOTES_KEY, arr);
+    inp.value = "";
+    renderNotes();
+    skyToast("Note saved locally · sync from Settings");
+  });
+  document.getElementById("note-clear-btn").addEventListener("click", () => { document.getElementById("note-input").value = ""; });
+  renderNotes();
+
+  function renderRecipients(){
+    const all = skyLoad(SKY_RECIPIENTS_KEY);
+    // Merge entries for BOTH the Google id and Meta id (dedupe)
+    const merged = new Set();
+    let anyUnsaved = false;
+    all.forEach(r => {
+      if ((r.account_id === gId && r.platform === "google") || (r.account_id === mId && r.platform === "meta")){
+        (r.recipients || []).forEach(e => merged.add(e));
+        if (r.synced === false) anyUnsaved = true;
+      }
+    });
+    const emails = Array.from(merged);
+    document.getElementById("recipients-count").textContent = String(emails.length);
+    const listEl = document.getElementById("recipients-list");
+    if (emails.length === 0){ listEl.innerHTML = '<div class="ops-list-empty">No recipients on file. Add one above.</div>'; return; }
+    listEl.innerHTML = emails.map(em => '<div class="ops-recipient' + (anyUnsaved ? " is-unsaved" : "") + '"><span class="ops-recipient-email">' + (anyUnsaved ? '<span class="ops-unsaved-dot"></span> ' : '') + esc(em) + '</span><button class="ops-btn ops-btn-sm" data-rcpt-del="' + esc(em) + '" style="color:var(--bad)">Remove</button></div>').join("");
+    listEl.querySelectorAll("[data-rcpt-del]").forEach(btn => btn.addEventListener("click", () => {
+      const em = btn.getAttribute("data-rcpt-del");
+      const arr2 = skyLoad(SKY_RECIPIENTS_KEY);
+      arr2.forEach(r => {
+        if ((r.account_id === gId && r.platform === "google") || (r.account_id === mId && r.platform === "meta")){
+          r.recipients = (r.recipients || []).filter(e => e !== em);
+          r.updated_at = new Date().toISOString();
+          r.synced = false;
+        }
+      });
+      skySave(SKY_RECIPIENTS_KEY, arr2.filter(r => !((r.account_id === gId || r.account_id === mId) && (!r.recipients || r.recipients.length === 0))));
+      renderRecipients();
+      skyToast("Recipient removed");
+    }));
+  }
+  function addRecipient(){
+    const inp = document.getElementById("recipient-input");
+    const em = (inp.value || "").trim().toLowerCase();
+    if (!em){ inp.focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){ skyToast("That doesn't look like a valid email"); return; }
+    // Add to the Google-side entry by convention (cross-platform list); the
+    // per-platform views also see it because they read by their own id.
+    const arr = skyLoad(SKY_RECIPIENTS_KEY);
+    let entry = arr.find(r => r.account_id === gId && r.platform === "google");
+    if (!entry){
+      entry = { account_id: gId, platform: "google", account_name: client.display_name, recipients: [], updated_at: new Date().toISOString(), synced: false, cross_platform: true };
+      arr.push(entry);
+    }
+    if (!entry.recipients.includes(em)){
+      entry.recipients.push(em);
+      entry.updated_at = new Date().toISOString();
+      entry.synced = false;
+    }
+    skySave(SKY_RECIPIENTS_KEY, arr);
+    inp.value = "";
+    renderRecipients();
+    skyToast("Recipient added locally · sync from Settings");
+  }
+  document.getElementById("recipient-add-btn").addEventListener("click", addRecipient);
+  document.getElementById("recipient-input").addEventListener("keydown", e => { if (e.key === "Enter") addRecipient(); });
+  renderRecipients();
+}
+
+renderClient();
+</script>
+<script>
+// Platform context — adjust sidebar pills/links based on last-visited platform.
+(function applyPlatformContext(){
+  try{
+    const ctx = localStorage.getItem("skyway.platform_context") || "google";
+    if (ctx === "meta"){
+      document.querySelectorAll(".platform-pill").forEach(p => p.classList.remove("active"));
+      const mp = document.querySelector('.platform-pill[href="meta.html"]');
+      if (mp) mp.classList.add("active");
+      const al = document.querySelector('.nav-item[href="accounts.html"]');
+      if (al) al.setAttribute("href", "meta-accounts.html");
+      const ol = document.querySelector('.nav-item[href="google.html"]');
+      if (ol) ol.setAttribute("href", "meta.html");
+      const bcBack = document.getElementById("bc-back");
+      if (bcBack) bcBack.setAttribute("href", "meta-accounts.html");
+    }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

@@ -166,7 +166,7 @@ main{flex:1;min-width:0}
       <div class="sidebar-logo-mark">S</div>
       <div>
         <div class="sidebar-logo-name">Skyway OS</div>
-        <div class="sidebar-logo-sub" data-build="20260518-2006">Internal · build 20260518-2006</div>
+        <div class="sidebar-logo-sub" data-build="20260518-2147">Internal · build 20260518-2147</div>
       </div>
     </div>
 
@@ -555,20 +555,33 @@ function wireQueueItemHandlers() {
   });
 }
 
-// Platform context — read localStorage and adjust sidebar pills + links.
-// Defaults to "google" when no context is set. Saved on accounts.html / meta-accounts.html load.
+// Platform context — read localStorage and adjust sidebar pills + nav links,
+// AND auto-filter the queue to the active platform. Without this, arriving at
+// Approvals from the Meta side shows a Google+Meta mixed queue, which feels
+// like the two platforms are bleeding into each other. With the filter set,
+// the queue matches whichever side the operator came from (Google or Meta).
+// User can still toggle to "All" using the platform filter pills.
 (function applyPlatformContext() {
   try {
     var ctx = localStorage.getItem("skyway.platform_context") || "google";
-    if (ctx !== "meta") return;
-    var pills = document.querySelectorAll(".platform-pill");
-    pills.forEach(function (p) { p.classList.remove("active"); });
-    var metaPill = document.querySelector('.platform-pill[href="meta.html"]');
-    if (metaPill) metaPill.classList.add("active");
-    var accountsLink = document.querySelector('.nav-item[href="accounts.html"]');
-    if (accountsLink) accountsLink.setAttribute("href", "meta-accounts.html");
-    var overviewLink = document.querySelector('.nav-item[href="google.html"]');
-    if (overviewLink) overviewLink.setAttribute("href", "meta.html");
+    // Sidebar nav adjustments only apply when context is meta.
+    if (ctx === "meta") {
+      var pills = document.querySelectorAll(".platform-pill");
+      pills.forEach(function (p) { p.classList.remove("active"); });
+      var metaPill = document.querySelector('.platform-pill[href="meta.html"]');
+      if (metaPill) metaPill.classList.add("active");
+      var accountsLink = document.querySelector('.nav-item[href="accounts.html"]');
+      if (accountsLink) accountsLink.setAttribute("href", "meta-accounts.html");
+      var overviewLink = document.querySelector('.nav-item[href="google.html"]');
+      if (overviewLink) overviewLink.setAttribute("href", "meta.html");
+    }
+    // Platform filter on the queue — applies for both google + meta context.
+    if (ctx === "google" || ctx === "meta") {
+      platformFilter = ctx;
+      document.querySelectorAll(".filter-pill[data-platform]").forEach(function (p) {
+        p.classList.toggle("active", p.dataset.platform === ctx);
+      });
+    }
   } catch (e) {}
 })();
 
