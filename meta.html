@@ -250,5 +250,6 @@
   });
 </script>
 <script>try { localStorage.setItem("skyway.platform_context", "meta"); } catch(e){}</script>
+<script>try{document.querySelectorAll(".platform-pill[href]").forEach(function(p){p.addEventListener("click",function(){var ctx=p.getAttribute("href").indexOf("meta")>=0?"meta":"google";try{localStorage.setItem("skyway.platform_context",ctx);}catch(e){}});});}catch(e){}</script>
 </body>
 </html>

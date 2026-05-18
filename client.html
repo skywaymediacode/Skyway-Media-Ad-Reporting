@@ -448,11 +448,18 @@ renderClient();
 // Platform context — adjust sidebar pills/links based on last-visited platform.
 (function applyPlatformContext(){
   try{
-    const ctx = localStorage.getItem("skyway.platform_context") || "google";
+    const ref = (document.referrer || "").toLowerCase();
+    const fromMeta = ref.indexOf("/meta.html") >= 0 || ref.indexOf("/meta-accounts.html") >= 0 || ref.indexOf("/meta-account.html") >= 0;
+    const fromGoogle = ref.indexOf("/google.html") >= 0 || ref.indexOf("/accounts.html") >= 0 || ref.indexOf("/account.html") >= 0;
+    let stored = null;
+    try { stored = localStorage.getItem("skyway.platform_context"); } catch (e2) {}
+    const ctx = fromMeta ? "meta" : fromGoogle ? "google" : (stored || "google");
+    try { localStorage.setItem("skyway.platform_context", ctx); } catch (e2) {}
+    document.querySelectorAll(".platform-pill").forEach(p => {
+      const isMeta = (p.getAttribute("href") || "").indexOf("meta") >= 0;
+      p.classList.toggle("active", isMeta === (ctx === "meta"));
+    });
     if (ctx === "meta"){
-      document.querySelectorAll(".platform-pill").forEach(p => p.classList.remove("active"));
-      const mp = document.querySelector('.platform-pill[href="meta.html"]');
-      if (mp) mp.classList.add("active");
       const al = document.querySelector('.nav-item[href="accounts.html"]');
       if (al) al.setAttribute("href", "meta-accounts.html");
       const ol = document.querySelector('.nav-item[href="google.html"]');
@@ -463,5 +470,6 @@ renderClient();
   }catch(e){}
 })();
 </script>
+<script>try{document.querySelectorAll(".platform-pill[href]").forEach(function(p){p.addEventListener("click",function(){var ctx=p.getAttribute("href").indexOf("meta")>=0?"meta":"google";try{localStorage.setItem("skyway.platform_context",ctx);}catch(e){}});});}catch(e){}</script>
 </body>
 </html>

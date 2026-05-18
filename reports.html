@@ -322,17 +322,26 @@ main{flex:1;min-width:0}
 // the user's last-visited platform context (saved on accounts.html / meta-accounts.html).
 (function applyPlatformContext() {
   try {
-    var ctx = localStorage.getItem("skyway.platform_context") || "google";
-    if (ctx !== "meta") return;
-    document.querySelectorAll(".platform-pill").forEach(function (p) { p.classList.remove("active"); });
-    var metaPill = document.querySelector('.platform-pill[href="meta.html"]');
-    if (metaPill) metaPill.classList.add("active");
-    var accountsLink = document.querySelector('.nav-item[href="accounts.html"]');
-    if (accountsLink) accountsLink.setAttribute("href", "meta-accounts.html");
-    var overviewLink = document.querySelector('.nav-item[href="google.html"]');
-    if (overviewLink) overviewLink.setAttribute("href", "meta.html");
+    var ref = (document.referrer || "").toLowerCase();
+    var fromMeta = ref.indexOf("/meta.html") >= 0 || ref.indexOf("/meta-accounts.html") >= 0 || ref.indexOf("/meta-account.html") >= 0;
+    var fromGoogle = ref.indexOf("/google.html") >= 0 || ref.indexOf("/accounts.html") >= 0 || ref.indexOf("/account.html") >= 0;
+    var stored = null;
+    try { stored = localStorage.getItem("skyway.platform_context"); } catch (e2) {}
+    var ctx = fromMeta ? "meta" : fromGoogle ? "google" : (stored || "google");
+    try { localStorage.setItem("skyway.platform_context", ctx); } catch (e2) {}
+    document.querySelectorAll(".platform-pill").forEach(function (p) {
+      var isMeta = (p.getAttribute("href") || "").indexOf("meta") >= 0;
+      p.classList.toggle("active", isMeta === (ctx === "meta"));
+    });
+    if (ctx === "meta") {
+      var accountsLink = document.querySelector('.nav-item[href="accounts.html"]');
+      if (accountsLink) accountsLink.setAttribute("href", "meta-accounts.html");
+      var overviewLink = document.querySelector('.nav-item[href="google.html"]');
+      if (overviewLink) overviewLink.setAttribute("href", "meta.html");
+    }
   } catch (e) {}
 })();
 </script>
+<script>try{document.querySelectorAll(".platform-pill[href]").forEach(function(p){p.addEventListener("click",function(){var ctx=p.getAttribute("href").indexOf("meta")>=0?"meta":"google";try{localStorage.setItem("skyway.platform_context",ctx);}catch(e){}});});}catch(e){}</script>
 </body>
 </html>
