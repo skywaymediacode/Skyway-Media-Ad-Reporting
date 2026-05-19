@@ -1,0 +1,51 @@
+name: Meta Data Pull
+
+# Pulls Meta Ads data via the Marketing API (read-only) and commits
+# the refreshed JSON snapshot back to the repo.
+#
+# Triggers:
+#   - Daily at 09:00 UTC (≈ 5am ET)
+#   - Manually from the Actions tab (workflow_dispatch)
+
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+# The default GITHUB_TOKEN must be able to push the refreshed data file
+# back to main. No external secrets needed for that.
+permissions:
+  contents: write
+
+jobs:
+  pull:
+    name: Pull Meta data → commit JSON
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Pull Meta data
+        env:
+          META_TOKEN: ${{ secrets.META_TOKEN }}
+        run: node scripts/meta-pull.js
+
+      - name: Commit refreshed data (if changed)
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name  "Skyway Data Bot"
+          git add data/meta-pull.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            DATE=$(date -u +%Y-%m-%d)
+            git commit -m "Auto: Meta data refresh ${DATE}"
+            git push
+          fi
