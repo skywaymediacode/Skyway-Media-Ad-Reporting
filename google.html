@@ -249,7 +249,6 @@
     if (e.key === 'Enter') manualUnlock();
   });
 </script>
-<script>try { localStorage.setItem("skyway.platform_context", "google"); } catch(e){}</script>
-<script>try{document.querySelectorAll(".platform-pill[href]").forEach(function(p){p.addEventListener("click",function(){var ctx=p.getAttribute("href").indexOf("meta")>=0?"meta":"google";try{localStorage.setItem("skyway.platform_context",ctx);}catch(e){}});});}catch(e){}</script>
+<script>try{localStorage.setItem("skyway.platform_context","google");}catch(e){}document.addEventListener("click",function(e){var a=e.target&&e.target.closest&&e.target.closest("a[href]");if(!a)return;var href=a.getAttribute("href")||"";if(href.indexOf("://")>=0||href.charAt(0)==="#"||href.charAt(0)==="?")return;try{localStorage.setItem("skyway.platform_context","google");}catch(e2){}},true);document.querySelectorAll(".platform-pill[href]").forEach(function(p){p.addEventListener("click",function(){var ctx=p.getAttribute("href").indexOf("meta")>=0?"meta":"google";try{localStorage.setItem("skyway.platform_context",ctx);}catch(e){}});});</script>
 </body>
 </html>

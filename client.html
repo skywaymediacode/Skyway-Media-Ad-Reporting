@@ -200,7 +200,7 @@ main{flex:1;min-width:0}
       <div class="sidebar-logo-mark">S</div>
       <div>
         <div class="sidebar-logo-name">Skyway OS</div>
-        <div class="sidebar-logo-sub" data-build="20260519-0100">Internal · build 20260519-0100</div>
+        <div class="sidebar-logo-sub" data-build="20260519-0145">Internal · build 20260519-0145</div>
       </div>
     </div>
     <div class="platform-switcher">
@@ -815,12 +815,16 @@ renderClient();
 // Platform context — adjust sidebar pills/links based on last-visited platform.
 (function applyPlatformContext(){
   try{
-    const ref = (document.referrer || "").toLowerCase();
-    const fromMeta = ref.indexOf("/meta.html") >= 0 || ref.indexOf("/meta-accounts.html") >= 0 || ref.indexOf("/meta-account.html") >= 0;
-    const fromGoogle = ref.indexOf("/google.html") >= 0 || ref.indexOf("/accounts.html") >= 0 || ref.indexOf("/account.html") >= 0;
     let stored = null;
     try { stored = localStorage.getItem("skyway.platform_context"); } catch (e2) {}
-    const ctx = fromMeta ? "meta" : fromGoogle ? "google" : (stored || "google");
+    const ref = (document.referrer || "").toLowerCase();
+    const refIsMeta = /\/(meta|meta-accounts|meta-account)\.html(\?|#|$)/.test(ref);
+    const refIsGoogle = /\/(google|accounts|account)\.html(\?|#|$)/.test(ref);
+    let ctx;
+    if (refIsMeta) ctx = "meta";
+    else if (refIsGoogle) ctx = "google";
+    else if (stored === "meta" || stored === "google") ctx = stored;
+    else ctx = "google";
     try { localStorage.setItem("skyway.platform_context", ctx); } catch (e2) {}
     document.querySelectorAll(".platform-pill").forEach(p => {
       const isMeta = (p.getAttribute("href") || "").indexOf("meta") >= 0;
