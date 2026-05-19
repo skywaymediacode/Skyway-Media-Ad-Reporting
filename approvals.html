@@ -169,23 +169,23 @@ main{flex:1;min-width:0}
       <div class="sidebar-logo-mark">S</div>
       <div>
         <div class="sidebar-logo-name">Skyway OS</div>
-        <div class="sidebar-logo-sub" data-build="20260519-0240">Internal · build 20260519-0240</div>
+        <div class="sidebar-logo-sub" data-build="20260519-0240">Internal · build 20260519-0300</div>
       </div>
     </div>
 
     <div class="platform-switcher">
-      <a class="platform-pill active" href="google.html" title="Google Ads dashboard">
+      <a class="platform-pill active" href="accounts.html" title="Google Ads dashboard">
         <span class="platform-pill-icon">G</span>
         <span>Google Ads</span>
       </a>
-      <a class="platform-pill " href="meta.html" title="Meta Ads dashboard">
+      <a class="platform-pill " href="meta-accounts.html" title="Meta Ads dashboard">
         <span class="platform-pill-icon">M</span>
         <span>Meta Ads</span>
       </a>
     </div>
 
     <nav class="nav">
-      <a class="nav-item " href="google.html"><span>Overview</span></a>
+      <a class="nav-item " href="accounts.html"><span>Overview</span></a>
       <a class="nav-item " href="accounts.html"><span>Accounts</span></a>
       <a class="nav-item " href="timeline.html"><span>Timeline</span></a>
       <a class="nav-item " href="reports.html"><span>Reports</span></a>
@@ -593,8 +593,8 @@ function wireQueueItemHandlers() {
     if (ctx === "meta") {
       var accountsLink = document.querySelector('.nav-item[href="accounts.html"]');
       if (accountsLink) accountsLink.setAttribute("href", "meta-accounts.html");
-      var overviewLink = document.querySelector('.nav-item[href="google.html"]');
-      if (overviewLink) overviewLink.setAttribute("href", "meta.html");
+      var overviewLink = document.querySelector('.nav-item[href="accounts.html"]');
+      if (overviewLink) overviewLink.setAttribute("href", "meta-accounts.html");
     }
     // Platform filter on the queue — applies for both google + meta context.
     if (ctx === "google" || ctx === "meta") {
